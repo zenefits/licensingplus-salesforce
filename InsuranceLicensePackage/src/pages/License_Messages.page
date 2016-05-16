@@ -1,0 +1,5 @@
+<apex:page standardController="License__c" extensions="LicenseController">
+    <apex:form >
+        <apex:pageMessages />
+    </apex:form>
+</apex:page>

@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Package xmlns="http://soap.sforce.com/2006/04/metadata">
+    <types>
+        <members>*</members>
+        <name>ApexClass</name>
+    </types>
+    <types>
+        <members>License_Edit</members>
+        <members>License_List</members>
+        <members>License_Messages</members>
+        <members>License_View</members>
+        <name>ApexPage</name>
+    </types>
+    <types>
+        <members>*</members>
+        <name>ApexTrigger</name>
+    </types>
+    <types>
+        <members>*</members>
+        <name>ApprovalProcess</name>
+    </types>
+    <types>
+        <members>*</members>
+        <name>CustomObject</name>
+    </types>
+    <types>
+        <members>*</members>
+        <name>CustomTab</name>
+    </types>
+    <types>
+        <members>License_Templates</members>
+        <members>License_Templates/Insurance_License_Approval_Approved</members>
+        <members>License_Templates/Insurance_License_Approval_Rejected</members>
+        <members>License_Templates/Insurance_License_Approval_Request</members>
+        <members>License_Templates/Insurance_License_Approval_Request_Received</members>
+        <members>License_Templates/License_Expires_in_N_days</members>
+        <members>License_Templates/Populate_License</members>
+        <name>EmailTemplate</name>
+    </types>
+    <types>
+        <members>*</members>
+        <name>Group</name>
+    </types>
+    <types>
+        <members>License__c-Insurance License Layout</members>
+        <members>License__c-Non-Admin Layout</members>
+        <members>Line_of_Authority__c-Line of Authority Layout</members>
+        <members>Line_of_Authority__c-Non-Admin Layout</members>
+        <name>Layout</name>
+    </types>
+    <types>
+        <members>License__c</members>
+        <name>Workflow</name>
+    </types>
+    <version>35.0</version>
+</Package>

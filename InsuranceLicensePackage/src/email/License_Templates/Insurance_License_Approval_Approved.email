@@ -1,0 +1,8 @@
+Your {!License__c.State__c} license has been Approved.
+
+You can view your license by clicking on the link here:
+{!License__c.Link}
+
+Thank you,
+
+Your Compliance Team

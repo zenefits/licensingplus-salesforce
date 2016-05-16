@@ -1,0 +1,13 @@
+{!License__c.OwnerFullName} has requested an Insurance License Approval. Please see below for details:
+
+State:
+{!License__c.State__c}
+
+License Number:
+{!License__c.Number__c}
+
+Expiration Date:
+{!License__c.Expiration_Date__c}
+
+You can view the request by clicking on the link here:
+{!License__c.Link}
