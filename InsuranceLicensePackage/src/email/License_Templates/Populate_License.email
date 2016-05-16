@@ -1,0 +1,10 @@
+Hi {!License__c.OwnerFirstName},
+
+It has been a few days since you applied for your {!License__c.State__c} license. You have already entered in the confirmation ID for this state but we need to have the actual license number which should be available now. Please find and update SFDC with your license number and expiration date.
+
+{!License__c.Link}
+
+License lookups by state can be found on our Licensing Confluence Page:
+https://confluence.inside-zen.com/pages/viewpage.action?spaceKey=SKB&title=Licensing+Information
+
+Thank you!

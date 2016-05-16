@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<EmailTemplate xmlns="http://soap.sforce.com/2006/04/metadata">
+    <available>true</available>
+    <encodingKey>ISO-8859-1</encodingKey>
+    <name>License Expires in N days</name>
+    <style>none</style>
+    <subject>URGENT: Your {!License__c.State__c} license expiring in {!License__c.Expires_Days__c} days</subject>
+    <type>text</type>
+</EmailTemplate>

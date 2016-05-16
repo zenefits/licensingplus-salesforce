@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<EmailTemplate xmlns="http://soap.sforce.com/2006/04/metadata">
+    <available>true</available>
+    <description>Used by the Insurance License Approval Process</description>
+    <encodingKey>ISO-8859-1</encodingKey>
+    <name>Insurance License - Approval Request</name>
+    <style>none</style>
+    <subject>{!License__c.OwnerFullName} has requested an Insurance License approval</subject>
+    <type>text</type>
+</EmailTemplate>

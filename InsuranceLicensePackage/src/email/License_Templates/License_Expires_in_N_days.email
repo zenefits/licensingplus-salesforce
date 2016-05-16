@@ -1,0 +1,3 @@
+Please renew your {!License__c.State__c} license as soon as possible. It expires on {!License__c.Expiration_Date__c}.  Please create a new license with the updated license info.
+
+{!License__c.Link}

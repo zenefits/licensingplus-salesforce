@@ -1,0 +1,37 @@
+<apex:page standardController="License__c" extensions="LicenseController">
+    <apex:form >
+        <apex:sectionHeader title="License" subtitle="{!IF(ISBLANK(License__c.Id), 'New License', License__c.Name)}" /> 
+        <div class="bPageTitle"><div class="ptBreadcrumb">&nbsp;«&nbsp;<apex:commandLink action="{!viewList}" value="Back to List: Insurance Licenses" /></div></div>
+        <apex:pageMessages />
+        <apex:pageBlock mode="maindetail" title="License Detail">
+            <apex:pageBlockButtons >
+                <apex:commandButton rendered="{!OR(isAdmin, AND($User.Id = License__c.OwnerId, NOT(locked)))}" action="{!edit}" value="Edit" />
+                <apex:commandButton rendered="{!AND(NOT(locked), $User.Id = License__c.OwnerId)}" value="Submit for Approval" action="{!URLFOR($Action.License__c.Submit, License__c.Id)}" />
+                <apex:commandButton rendered="{!AND(locked, NOT(ISNULL(approver)))}" value="Approve / Reject" action="{!approveReject}" />
+            </apex:pageBlockButtons>
+            <apex:pageBlockSection title="Information" columns="1">
+                <apex:outputField value="{!License__c.Name}" />
+                <apex:outputField value="{!License__c.RecordTypeId}" />
+                <apex:outputField value="{!License__c.State__c}" />
+                <apex:pageBlockSectionItem >
+                    <apex:outputLabel value="Lines of Authority" />
+                    <apex:outputPanel >
+                        <apex:outputText value="Casualty" rendered="{!License__c.Casualty__c > 0}" />
+                        <apex:outputText value=", Health" rendered="{!AND(License__c.Health__c > 0, License__c.Casualty__c > 0)}" />
+                        <apex:outputText value="Health" rendered="{!AND(License__c.Casualty__c = 0, License__c.Health__c > 0)}" />
+                        <apex:outputText value=", Life" rendered="{!AND(License__c.Life__c > 0, OR(License__c.Casualty__c > 0, License__c.Health__c > 0))}" />
+                        <apex:outputText value="Life" rendered="{!AND(License__c.Casualty__c = 0, License__c.Health__c = 0, License__c.Life__c > 0)}" />
+                        <apex:outputText value=", Property" rendered="{!AND(License__c.Property__c > 0, OR(License__c.Casualty__c > 0, License__c.Health__c > 0, License__c.Life__c > 0))}" />
+                        <apex:outputText value="Property" rendered="{!AND(License__c.Casualty__c = 0, License__c.Health__c = 0, License__c.Life__c = 0, License__c.Property__c > 0)}" />
+                    </apex:outputPanel>
+                </apex:pageBlockSectionItem>
+                <apex:outputField value="{!License__c.Number__c}" />
+                <apex:outputField value="{!License__c.Confirmation_ID__c}" />
+                <apex:outputField value="{!License__c.NPN_Number__c}" rendered="{!recordTypeName = 'Resident_State'}" />
+                <apex:outputField value="{!License__c.Effective_Date__c}" />
+                <apex:outputField value="{!License__c.Expiration_Date__c}" />
+                <apex:outputField value="{!License__c.Status__c}" />
+            </apex:pageBlockSection>
+        </apex:pageBlock>
+    </apex:form>
+</apex:page>

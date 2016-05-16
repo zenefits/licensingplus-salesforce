@@ -1,0 +1,35 @@
+<apex:page standardController="License__c" recordSetVar="licenses" extensions="LicenseSetController">
+    <apex:sectionHeader title="Licenses" />
+    <apex:form >
+        <apex:pageBlock title="Licenses" >
+            <apex:pageBlockButtons location="top">
+                <apex:commandButton action="{!URLFOR($Action.License__c.New, null)}" value="New" />
+            </apex:pageBlockButtons>
+            <apex:pageBlockTable value="{!insuranceLicenses}" var="license" rendered="{!insuranceLicenses.size > 0}">
+                <apex:column width="30%">
+                    <apex:facet name="header">State</apex:facet>
+                    <apex:outputLink value="/{!license.Id}">{!license.State__c}</apex:outputLink>
+                </apex:column>
+                <apex:column >
+                    <apex:facet name="header">License Status</apex:facet>
+                    <apex:outputLink value="/{!license.Id}">{!license.Status__c}</apex:outputLink>
+                </apex:column>
+                <apex:column >
+                    <apex:facet name="header">License Type</apex:facet>
+                    <apex:outputText value="{!license.RecordType.Name}" />
+                </apex:column>
+                <apex:column >
+                    <apex:facet name="header">Lines of Authority</apex:facet>
+                    <apex:outputText value="Life" rendered="{!license.Life__c > 0}" />
+                    <apex:outputText value=", Health" rendered="{!AND(license.Health__c > 0, license.Life__c > 0)}" />
+                    <apex:outputText value="Health" rendered="{!AND(license.Life__c = 0, license.Health__c > 0)}" />
+                    <apex:outputText value=", Property" rendered="{!AND(license.Property__c > 0, OR(license.Life__c > 0, license.Health__c > 0))}" />
+                    <apex:outputText value="Property" rendered="{!AND(license.Life__c = 0, license.Health__c = 0, license.Property__c > 0)}" />
+                    <apex:outputText value=", Casualty" rendered="{!AND(license.Casualty__c > 0, OR(license.Property__c > 0, license.Health__c > 0, license.Life__c > 0))}" />
+                    <apex:outputText value="Casualty" rendered="{!AND(license.Property__c = 0, license.Health__c = 0, license.Life__c = 0, license.Casualty__c > 0)}" />
+                </apex:column>
+            </apex:pageBlockTable>
+            <apex:outputText value="You have no licenses." rendered="{!insuranceLicenses.size = 0}" />
+        </apex:pageBlock>
+    </apex:form>
+</apex:page>
