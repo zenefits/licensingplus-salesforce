@@ -12,11 +12,11 @@ public with sharing class StandardLicenseRuleTriggerHandler {
     	for (Standard_License_Rule__c rule : rules) {
     		String objName = rule.object__c;
     		if (!objs.contains(objName)) {
-    			SObject obj = ruleHelper.getSObject(objName);    		
+    			SObject obj = SObjectUtils.getSObject(objName);    		
     			objs.add(rule.object__c);
     			if (obj!=null) {
     				objByName.put(objName, obj);
-    				Map<String, Schema.SobjectField> objFields = ruleHelper.getSObjectFields(obj);
+    				Map<String, Schema.SobjectField> objFields = SObjectUtils.getSObjectFields(obj);
     				objFieldsByName.put(objName, objFields);
     			}
     		}
@@ -28,7 +28,7 @@ public with sharing class StandardLicenseRuleTriggerHandler {
     		SObject obj = objByName.get(objName);
     		if (obj==null) {
     			// sObject not found;
-    			errorMessage = LicenseRuleValidator.errorMessageByType.get(LicenseRuleValidator.ValidationRuleError.UNDEFINED_SOBJECT_TYPE);
+    			errorMessage = LicenseRuleValidator.errorMessageByType.get(LicenseRuleValidator.LicenseRuleError.UNDEFINED_SOBJECT_TYPE);
     			rule.addError(String.format(errorMessage, new String[]{rule.object__c}));
     		} else {
     			String fieldName = rule.field__c;
@@ -36,14 +36,14 @@ public with sharing class StandardLicenseRuleTriggerHandler {
     			
     			if (!objFields.containsKey(fieldName)) {
     				// sObject field not found
-    				errorMessage = LicenseRuleValidator.errorMessageByType.get(LicenseRuleValidator.ValidationRuleError.UNDEFINED_SOBJECT_FIELD);
+    				errorMessage = LicenseRuleValidator.errorMessageByType.get(LicenseRuleValidator.LicenseRuleError.UNDEFINED_SOBJECT_FIELD);
     				rule.addError(String.format(errorMessage, new String[]{rule.field__c, rule.object__c}));
     			} else {
     				String ruleType = rule.type__c;
     				// validate state field type
     				if (StandardLicenseRuleValidator.STATE_RULE.equalsIgnoreCase(ruleType)) {
     					if (ruleValidator.validateStateFieldIsCorrect(objFields, fieldName)) {
-    						errorMessage = LicenseRuleValidator.errorMessageByType.get(LicenseRuleValidator.ValidationRuleError.SR_STATE_FIELD_NOT_VALID);
+    						errorMessage = LicenseRuleValidator.errorMessageByType.get(LicenseRuleValidator.LicenseRuleError.SR_STATE_FIELD_NOT_VALID);
     						rule.addError(String.format(errorMessage, new String[]{rule.field__c, rule.object__c}));
     					}
     				}   				

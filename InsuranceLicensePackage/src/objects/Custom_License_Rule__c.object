@@ -131,9 +131,9 @@
         <type>Picklist</type>
     </fields>
     <fields>
-        <fullName>Parent_Object__c</fullName>
+        <fullName>Reference_Field__c</fullName>
         <externalId>false</externalId>
-        <label>Parent Object</label>
+        <label>Reference Field</label>
         <length>80</length>
         <required>false</required>
         <trackTrending>false</trackTrending>
