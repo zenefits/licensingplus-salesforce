@@ -7,27 +7,31 @@ public with sharing class CustomLicenseRuleLogicTriggerHandler {
     	Map<String, List<Custom_License_Rule_Logic__c>> ruleLogicByObj = new Map<String, List<Custom_License_Rule_Logic__c>>();
     	
     	for (Custom_License_Rule_Logic__c ruleLogic : ruleLogics) {
-    		String obj = ruleLogic.object__c;
-    		List<Custom_License_Rule_Logic__c> objRuleLogics = ruleLogicByObj.get(obj);
-    		if (objRuleLogics==null) {
+    		String objName = ruleLogic.object__c;
+    		List<Custom_License_Rule_Logic__c> objRuleLogics = ruleLogicByObj.get(objName);
+    		if (objRuleLogics == null) {
     			objRuleLogics = new List<Custom_License_Rule_Logic__c>();
-    			ruleLogicByObj.put(obj, objRuleLogics);
+    			ruleLogicByObj.put(objName, objRuleLogics);
     		}
     		objRuleLogics.add(ruleLogic);
     	}
     	
-    	List<Custom_License_Rule__c> rules = [SELECT id, object__c, parent_object__c, field__c, value__c FROM Custom_License_Rule__c WHERE isActive__c=true AND object__c IN:ruleLogicByObj.keySet()];
+    	List<Custom_License_Rule__c> rules = [SELECT id, object__c, reference_field__c, field__c, value__c, operator__c FROM Custom_License_Rule__c WHERE isActive__c=true AND object__c IN:ruleLogicByObj.keySet()];
     	Map<String, List<Custom_License_Rule__c>> ruleByObj = new Map<String, List<Custom_License_Rule__c>>();
     	
     	for (Custom_License_Rule__c rule : rules) {
-    		String obj = rule.object__c;
-    		List<Custom_License_Rule__c> objRules = ruleByObj.get(obj);
-    		if (objRules==null) {
+    		String objName = rule.object__c;
+    		List<Custom_License_Rule__c> objRules = ruleByObj.get(objName);
+    		if (objRules == null) {
     			objRules = new List<Custom_License_Rule__c>();
-    			ruleByObj.put(obj, objRules);
+    			ruleByObj.put(objName, objRules);
     		}
     		objRules.add(rule);
     	}
+    	
+    	System.debug('PRIVATE---');
+    	System.debug(ruleLogicByObj);
+    	System.debug(ruleByObj);
     	
     	for (String objName : ruleLogicByObj.keySet()) {
     		List<Custom_License_Rule_Logic__c> cruleLogics = ruleLogicByObj.get(objName);
