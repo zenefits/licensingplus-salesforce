@@ -25,9 +25,11 @@ public class LicensingUtils {
     		objById.put(obj.id, obj);
     	}
     	
+    	System.debug('DEBUG - ');
+    	System.debug(objById);
     	List<SObject> filteredObjs = ruleChecker.checkCustomLicenseRules(objById, objName);
     	
-    	// check opportunity standard rules
+    	// check sObject standard rules
     	ruleChecker.checkStandardLicenseRules(filteredObjs, objName);
     }
 
