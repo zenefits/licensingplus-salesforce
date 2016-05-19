@@ -12,7 +12,7 @@ public with sharing class StandardLicenseRuleValidator extends LicenseRuleValida
 			return false;
 		} else {
 			Schema.DisplayType fieldType = objField.getDescribe().getType();
-			if (ruleHelper.isStringType(fieldType)) {
+			if (SObjectUtils.isStringType(fieldType)) {
 				return false;
 			}
 		}
