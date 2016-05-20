@@ -1,42 +1,8 @@
 @isTest
 private class CustomLicenseRuleLogicTest {
-    
-    static List<Custom_License_Rule__c> createCLRs() {
-    	Custom_License_Rule__c rule1 = new Custom_License_Rule__c(
-    		object__c='Account',
-    		field__c='Name',
-    		operator__c='equals',
-    		value__c='Test1234',
-    		isActive__c=true
-    	);
-    	
-    	Custom_License_Rule__c rule2 = new Custom_License_Rule__c(
-    		object__c='Account',
-    		field__c='Rating',
-    		operator__c='includes',
-    		value__c='hot,warm',
-    		isActive__c=true
-    	);
-    	
-    	Custom_License_Rule__c rule3 = new Custom_License_Rule__c(
-    		object__c='Account',
-    		field__c='LastmodifiedDate',
-    		operator__c='greater than',
-    		value__c='2005-10-08T01:02:03Z',
-    		isActive__c=true
-    	);
-    	
-    	List<Custom_License_Rule__c> rules = new List<Custom_License_Rule__c>{
-    		rule1, rule2, rule3
-    	};
-    	
-    	insert rules;
-    	
-    	return rules; 	
-    }
-    
+        
     static testMethod void testInsertUpdateWithQueryException() {
-    	List<Custom_License_Rule__c> rules = createCLRs();
+    	List<Custom_License_Rule__c> rules = LicenseRuleTestDataSeeder.createValidCustomLicenseRules(LicenseRuleTestDataSeeder.ACCOUNT_OBJ);
     	String invalidStr = '{0} OR1 {1}) AND {2}';
     	Custom_License_Rule_Logic__c invalidLogic = new Custom_License_Rule_Logic__c(
     		object__c='Account',
@@ -66,7 +32,7 @@ private class CustomLicenseRuleLogicTest {
     }
     
     static testMethod void testInsertUpdateWithActiveRuleMissingException() {
-    	List<Custom_License_Rule__c> rules = createCLRs();
+    	List<Custom_License_Rule__c> rules = LicenseRuleTestDataSeeder.createValidCustomLicenseRules(LicenseRuleTestDataSeeder.ACCOUNT_OBJ);
     	String invalidStr = '({0} OR {1})';
     	Custom_License_Rule_Logic__c invalidLogic = new Custom_License_Rule_Logic__c(
     		object__c='Account',

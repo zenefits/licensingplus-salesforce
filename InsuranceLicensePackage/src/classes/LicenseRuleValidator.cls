@@ -1,33 +1,4 @@
-public abstract with sharing class LicenseRuleValidator {    
-    
-    public class ValidationResult {
-    	public Boolean isValid;
-    	public String errorMessage;
-    	
-    	public ValidationResult() {
-    		this(true, null, null);
-    	}
-    	
-    	public ValidationResult(LicenseRuleError error) {
-    		this(false, error, null);
-    	}
-    	
-    	public ValidationResult(LicenseRuleError error, String[] arguments) {
-    		this(false, error, arguments);
-    	}
-    	
-    	private ValidationResult(Boolean isValid, LicenseRuleError error, String[] arguments) {
-    		this.isValid = isValid;
-    		if (error != null) {
-    			String messageTemplate = errorMessageByType.get(error);
-	    		if (arguments!=null) {
-	    			this.errorMessage = String.format(messageTemplate, arguments);
-	    		} else {
-	    			this.errorMessage = messageTemplate;
-	    		}
-    		}		
-    	}
-    }
+public abstract with sharing class LicenseRuleValidator {
     
     public enum LicenseRuleError {
     	CRL_QUERY_EXCEPTION,
@@ -38,7 +9,9 @@ public abstract with sharing class LicenseRuleValidator {
     	UNDEFINED_SOBJECT_FIELD,
 		SR_STATE_FIELD_NOT_VALID,
 		S_NO_ACTIVE_STATE_LICENSE,
-    	C_RULE_CHECK_FAILED
+    	C_RULE_CHECK_FAILED,
+    	C_RULE_OPERATOR_NOT_MATCH_FIELD_TYPE,
+    	C_RULE_FIELD_VALUE_NOT_MATCH_FIELD_TYPE
     }
     
     public static final Map<LicenseRuleError, String> errorMessageByType = new Map<LicenseRuleError, String>();
@@ -52,7 +25,9 @@ public abstract with sharing class LicenseRuleValidator {
     	errorMessageByType.put(LicenseRuleError.UNDEFINED_SOBJECT_FIELD, 'Field - {0} on SObject - {1} cannot be found, it is not configured on this org.');
     	errorMessageByType.put(LicenseRuleError.SR_STATE_FIELD_NOT_VALID, 'State Rule field - {0} on object - {1} is not string type');
     	errorMessageByType.put(LicenseRuleError.S_NO_ACTIVE_STATE_LICENSE, 'Owner does not have an active license in state - {0}, fieldName - {1}');
-    	errorMessageByType.put(LicenseRuleError.C_RULE_CHECK_FAILED, 'Opportunity custom license rule check failed, please check whether data matches custom license rules');
+    	errorMessageByType.put(LicenseRuleError.C_RULE_CHECK_FAILED, 'Custom license rule check failed, please check whether data matches custom license rules');
+    	errorMessageByType.put(LicenseRuleError.C_RULE_OPERATOR_NOT_MATCH_FIELD_TYPE, 'Operator - {0} can not be applied to field - {1} on sObject - {2} or referecnce field - {3}');
+    	errorMessageByType.put(LicenseRuleError.C_RULE_FIELD_VALUE_NOT_MATCH_FIELD_TYPE, 'Field value - {0} can not be applied to field type - {1} for field - {2} on sObject - {3} or referecnce field - {4}');
     }
     
     public final LicenseRuleHelper ruleHelper;

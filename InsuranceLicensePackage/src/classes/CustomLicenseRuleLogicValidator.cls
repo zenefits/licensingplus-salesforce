@@ -4,13 +4,12 @@ public with sharing class CustomLicenseRuleLogicValidator extends LicenseRuleVal
     	super(ruleHelper);
     }
     
-    public Boolean validateRuleLogic(List<Custom_License_Rule__c> rules, Custom_License_Rule_Logic__c ruleLogic, String objName) {
+    public void validate(List<Custom_License_Rule__c> rules, Custom_License_Rule_Logic__c ruleLogic, String objName) {
     	if (rules == null || rules.isEmpty()) {
     		if (ruleLogic != null) {
     			String errorMessage = LicenseRuleValidator.errorMessageByType.get(LicenseRuleValidator.LicenseRuleError.CRL_RULE_LOGIC_FOUND);
     			throw new LicenseRuleException(String.format(errorMessage, new String[]{objName}));
     		}    		
-    		return true;
     	} else {
     		if (ruleLogic == null) {
     			String errorMessage = LicenseRuleValidator.errorMessageByType.get(LicenseRuleValidator.LicenseRuleError.CRL_NO_RULE_LOGIC_FOUND);
@@ -27,7 +26,5 @@ public with sharing class CustomLicenseRuleLogicValidator extends LicenseRuleVal
 				throw new LicenseRuleException(String.format(errorMessage, new String[]{objName, logic}), e);
     		}
     	}
-    	    		
-    	return true;
     }
 }
