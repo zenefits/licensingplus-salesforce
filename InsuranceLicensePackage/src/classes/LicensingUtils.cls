@@ -1,9 +1,9 @@
-public class LicensingUtils {
+global class LicensingUtils {
 	
-	public static final LicenseRuleHelper ruleHelper = new LicenseRuleHelper();
-	public static final LicenseRuleChecker ruleChecker = new LicenseRuleChecker(ruleHelper);
+	private static final LicenseRuleHelper ruleHelper = new LicenseRuleHelper();
+	private static final LicenseRuleChecker ruleChecker = new LicenseRuleChecker(ruleHelper);
 	
-    public static Map<String, String> stateMap = new Map<String, String>{
+    global static Map<String, String> stateMap = new Map<String, String>{
         'AK' => 'Alaska', 'AL' => 'Alabama', 'AR' => 'Arkansas', 'AZ' => 'Arizona', 'CA' => 'California', 'CO' => 'Colorado',
         'CT' => 'Connecticut', 'DC' => 'District of Columbia', 'DE' => 'Delaware', 'FL' => 'Florida',
         'GA' => 'Georgia', 'GU' => 'Guam', 'HI' => 'Hawaii', 'IA' => 'Iowa', 'ID' => 'Idaho', 'IL' => 'Illinois',
@@ -18,15 +18,13 @@ public class LicensingUtils {
         'WI' => 'Wisconsin', 'WV' => 'West Virginia', 'WY' => 'Wyoming'
     };
     
-    public static void checkSObjectLicenseRules(List<SObject> newObjs, String objName) {
+    global static void checkSObjectLicenseRules(List<SObject> newObjs, String objName) {
     	// check sObject custom rules
     	Map<String, SObject> objById = new Map<String, SObject>();
     	for (SObject obj : newObjs) {
     		objById.put(obj.id, obj);
     	}
     	
-    	System.debug('DEBUG - ');
-    	System.debug(objById);
     	List<SObject> filteredObjs = ruleChecker.checkCustomLicenseRules(objById, objName);
     	
     	// check sObject standard rules

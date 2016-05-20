@@ -1,12 +1,9 @@
 @isTest
 private class StandardLicenseRuleTest {
-	
-	private static final String INVALID_OBJECT = 'INVALID_INVALID_INVALID__c';
-	private static final String INVALID_FIELD = 'INVALID_INVALID_INVALID__c';
     
     static testMethod void testInsertUpdateWithInvalidObject() { 
-    	Standard_License_Rule__c invalidRule = new Standard_License_Rule__c(object__c=INVALID_OBJECT,
-    	field__c=INVALID_FIELD, type__c=StandardLicenseRuleValidator.STATE_RULE,
+    	Standard_License_Rule__c invalidRule = new Standard_License_Rule__c(object__c=LicenseRuleTestDataSeeder.INVALID_OBJECT,
+    	field__c=LicenseRuleTestDataSeeder.INVALID_FIELD, type__c=StandardLicenseRuleValidator.STATE_RULE,
     	isActive__c=True);
 
     	try {
@@ -21,7 +18,7 @@ private class StandardLicenseRuleTest {
     	field__c='BillingState', type__c=StandardLicenseRuleValidator.STATE_RULE,
     	isActive__c=True);
     	insert validRule;
-		validRule.object__c = INVALID_OBJECT;
+		validRule.object__c = LicenseRuleTestDataSeeder.INVALID_OBJECT;
     	
     	try {
     		update validRule;   
@@ -33,7 +30,7 @@ private class StandardLicenseRuleTest {
     
     static testMethod void testInsertUpdateWithInvalidField() {
 		Standard_License_Rule__c invalidRule = new Standard_License_Rule__c(object__c='Account',
-    	field__c=INVALID_FIELD, type__c=StandardLicenseRuleValidator.STATE_RULE,
+    	field__c=LicenseRuleTestDataSeeder.INVALID_FIELD, type__c=StandardLicenseRuleValidator.STATE_RULE,
     	isActive__c=True);
     	
     	try {
@@ -48,7 +45,7 @@ private class StandardLicenseRuleTest {
     	field__c='BillingState', type__c=StandardLicenseRuleValidator.STATE_RULE,
     	isActive__c=True);
     	insert validRule;
-		validRule.field__c = INVALID_FIELD;
+		validRule.field__c = LicenseRuleTestDataSeeder.INVALID_FIELD;
     	
     	try {
     		update validRule;   

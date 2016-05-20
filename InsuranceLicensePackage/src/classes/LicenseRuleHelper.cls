@@ -86,6 +86,33 @@ public with sharing class LicenseRuleHelper {
 		return logic;
     }
     
+    public Schema.SobjectField validateAndGetSObjectField(String objName, String referenceFieldName, String fieldName, Map<String,Map<String, Schema.SobjectField>> objFieldsByName) {
+    	String errorMessage = LicenseRuleValidator.errorMessageByType.get(LicenseRuleValidator.LicenseRuleError.UNDEFINED_SOBJECT_TYPE);
+    	if (objFieldsByName.get(objName) == null || (objFieldsByName.get(objName).isEmpty())) { 		
+    		throw new LicenseRuleException(String.format(errorMessage, new String[]{objName}));
+    	} 
+    	
+    	if (referenceFieldName != null && (objFieldsByName.get(referenceFieldName) == null || objFieldsByName.get(referenceFieldName).isEmpty())) {
+    		throw new LicenseRuleException(String.format(errorMessage, new String[]{referenceFieldName}));
+    	}
+    	
+    	//validate field on sobject or reference field is defined
+    	Schema.SobjectField objField = objFieldsByName.get(objName).get(fieldName);
+   		errorMessage = LicenseRuleValidator.errorMessageByType.get(LicenseRuleValidator.LicenseRuleError.UNDEFINED_SOBJECT_FIELD);
+    	if (referenceFieldName != null) {   		
+    		objField = objFieldsByName.get(referenceFieldName).get(fieldName);
+			if (objField == null) {
+				throw new LicenseRuleException(String.format(errorMessage, new String[]{fieldName, referenceFieldName}));
+			}
+		} else {
+			if (objField == null) {
+    			throw new LicenseRuleException(String.format(errorMessage, new String[]{fieldName, objName}));
+    		} 
+		}
+		
+		return objField;
+    }
+    
     /** PRIVATE METHODS GOES HERE **/
     
     private String getOperator(Schema.DisplayType displayType, String fieldOperator) {
@@ -135,19 +162,7 @@ public with sharing class LicenseRuleHelper {
     	String fieldValue = rule.value__c;
     	
     	//check if the field is string type
-    	Schema.SobjectField objField = objFieldsByName.get(objName).get(fieldName);
-   		String errorMessage = LicenseRuleValidator.errorMessageByType.get(LicenseRuleValidator.LicenseRuleError.UNDEFINED_SOBJECT_FIELD);
-    	if (referenceFieldName != null) {
-    		objField = objFieldsByName.get(referenceFieldName).get(fieldName);
-			if (objField == null) {
-				throw new LicenseRuleException(String.format(errorMessage, new String[]{referenceFieldName, fieldName}));
-			}
-		} else {
-			if (objField == null) {
-    			throw new LicenseRuleException(String.format(errorMessage, new String[]{objName, fieldName}));
-    		} 
-		}
-		 	
+    	Schema.SobjectField objField = validateAndGetSObjectField(objName, referenceFieldName, fieldName, objFieldsByName);		 	
     	Schema.DescribeFieldResult f = objField.getDescribe();
 		String operator = getOperator(f.getType(), fieldOperator);
 		

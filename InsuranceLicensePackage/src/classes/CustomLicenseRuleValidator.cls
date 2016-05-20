@@ -7,7 +7,7 @@ public with sharing class CustomLicenseRuleValidator extends LicenseRuleValidato
     	'less or equal'
     };
     
-    private static final Set<String> WILD_CARD_OPEARTORS = new Set<String> {
+    private static final Set<String> WILD_CARD_OPERATORS = new Set<String> {
     	'starts with',
     	'contains',
     	'does not contain'
@@ -22,25 +22,87 @@ public with sharing class CustomLicenseRuleValidator extends LicenseRuleValidato
     	super(ruleHelper);
     }
     
-    public boolean validateBooleanField(String value) {
-    	return false;
+    public void validate(Custom_License_Rule__c rule, Map<String, Map<String, Schema.SobjectField>> objFieldsByName) {
+    	String objName = rule.object__c;
+    	String referenceFieldName = rule.reference_field__c;
+    	String operator = rule.operator__c;
+    	String fieldName = rule.field__c;
+    	String fieldValue = rule.value__c;
+    	
+    	//validate sobject and field is defined
+    	Schema.SobjectField objField = ruleHelper.validateAndGetSObjectField(objName, referenceFieldName, fieldName, objFieldsByName);		
+		Schema.DescribeFieldResult f = objField.getDescribe();
+		
+		//validate operator matches field type
+		String errorMessage = LicenseRuleValidator.errorMessageByType.get(LicenseRuleValidator.LicenseRuleError.C_RULE_OPERATOR_NOT_MATCH_FIELD_TYPE);
+		if (!validateOperatorFieldType(operator, f.getType())) {			
+			throw new LicenseRuleException(String.format(errorMessage, new String[]{operator, fieldName, objName, referenceFieldName}));
+		}
+		
+		errorMessage = LicenseRuleValidator.errorMessageByType.get(LicenseRuleValidator.LicenseRuleError.C_RULE_FIELD_VALUE_NOT_MATCH_FIELD_TYPE);
+		//validate field value matches field type
+		if (SObjectUtils.isBooleanType(f.getType())) {
+			if (!validateBooleanField(fieldValue)) {
+				throw new LicenseRuleException(String.format(errorMessage, new String[]{fieldValue, 'Boolean', fieldName, objName, referenceFieldName}));
+			}
+		} else if (SObjectUtils.isNumberType(f.getType())) {
+			if (!validateNumberField(fieldValue)) {
+				throw new LicenseRuleException(String.format(errorMessage, new String[]{fieldValue, 'Number', fieldName, objName, referenceFieldName}));
+			}
+		} else if (SObjectUtils.isDateType(f.getType())) {
+			if (!validateDateField(fieldValue)) {
+				throw new LicenseRuleException(String.format(errorMessage, new String[]{fieldValue, 'Date', fieldName, objName, referenceFieldName}));
+			}
+		} else if (SObjectUtils.isDatetimeType(f.getType())) {
+			if (!validateDatetimeField(fieldValue)) {
+				throw new LicenseRuleException(String.format(errorMessage, new String[]{fieldValue, 'Datetime', fieldName, objName, referenceFieldName}));
+			}
+		}		
     }
     
-    //needs to escape single quotes
-    public boolean validateStringField(String value) {
-    	return false;	
+    private boolean validateBooleanField(String value) {
+    	Boolean result = true;   	
+    	if (value != 'true' && value != 'false') {
+    		LicenseRuleHelper.logInfo('CustomLicenseRuleValidator', 'validateBooleanField', 'invalid boolean field value - ' + value);
+    		result = false;
+    	}
+    	
+    	return result;
     }
     
-    public boolean validateNumberField(String value) {
-    	return false;
+    private Boolean validateNumberField(String value) {
+    	Boolean result = true;
+    	try {
+    		Decimal.valueOf(value);
+    	} catch (TypeException e) {
+    		LicenseRuleHelper.logInfo('CustomLicenseRuleValidator', 'validateNumberField', 'invalid number field value - ' + value);
+    		result = false;
+    	}
+    	return result;
     }
     
-    public boolean validateDateField(String value) {
-    	return false;
+    //Date should be passed in the format of 'YYYY-MM-DD' 
+    private boolean validateDateField(String value) {
+    	Boolean result = true;
+    	try {
+    		Date.valueOf(value);
+    	} catch (TypeException e) {
+    		LicenseRuleHelper.logInfo('CustomLicenseRuleValidator', 'validateDateField', 'invalid date field value - ' + value);
+    		result = false;
+    	}
+    	return result;
     }
     
-    public boolean validateDatetimeField(String value) {
-    	return false;
+    //Datetime should be passed in the format of 'YYYY-MM-DDThh:mm:ssZ' 
+    private boolean validateDatetimeField(String value) {
+    	Boolean result = true;
+    	try {
+    		Datetime.valueOf(value.replace('T',' ').replace('Z',''));
+    	} catch (TypeException e) {
+    		LicenseRuleHelper.logInfo('CustomLicenseRuleValidator', 'validateDatetimeField', 'invalid datetime field value - ' + value);
+    		result = false;
+    	}
+    	return result;
     }
     
     /**
@@ -58,11 +120,18 @@ public with sharing class CustomLicenseRuleValidator extends LicenseRuleValidato
      	excludes(only allow string and reference type)
      **/
      
-     public boolean validateOperatorFieldType(String operator, Schema.DisplayType fieldType) {
+     private boolean validateOperatorFieldType(String operator, Schema.DisplayType fieldType) {
      	if (COMPARISON_OPERATORS.contains(operator)) {
-     		return false;
+     		return SObjectUtils.isDateOrDatetimeOrNumberType(fieldType);
      	}
      	
+     	if (WILD_CARD_OPERATORS.contains(operator)) {
+     		return SObjectUtils.isStringType(fieldType);
+     	}
+     	
+     	if (COLLECTION_OPERATORS.contains(operator)) {
+     		return SObjectUtils.isStringOrReferenceType(fieldType);
+     	}
      	
      	return true;
      }

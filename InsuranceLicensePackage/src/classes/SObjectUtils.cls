@@ -44,28 +44,65 @@ global class SObjectUtils {
 	}
 	
 	global static Map<String, Schema.SobjectField> getSObjectFields(SObject obj) {
-		return obj==null ? null : obj.getSobjectType().getDescribe().fields.getMap();
+		Map<String, Schema.SobjectField> objFieldsByName = new Map<String, Schema.SobjectField>();
+		if (obj != null) {
+			objFieldsByName = obj.getSobjectType().getDescribe().fields.getMap();
+		}
+		
+		return objFieldsByName;
 	}
 	
 	global static List<String> getSObjectFieldReferenceNames(Schema.SObjectField field) {
-		Schema.DescribeFieldResult f = field.getDescribe();
 		List<String> referenceNames = new List<String>();
-		for(Schema.SObjectType reference : f.getReferenceTo()) {
-    		referenceNames.add(reference.getDescribe().getName());
+		if (field != null) {
+			Schema.DescribeFieldResult f = field.getDescribe();					
+			for(Schema.SObjectType reference : f.getReferenceTo()) {
+	    		referenceNames.add(reference.getDescribe().getName());
+			}
 		}
+
 		return referenceNames;
 	} 
 	
 	global static String getSObjectFieldRelationshipName(Schema.SObjectField field) {
-		Schema.DescribeFieldResult f = field.getDescribe();		
-		return f.getRelationshipName();
+		String name = '';		
+		if (field != null) {
+			Schema.DescribeFieldResult f = field.getDescribe();		
+			name = f.getRelationshipName();
+		}
+				
+		return name;
 	}
 	
+	global static Boolean isBooleanType(Schema.DisplayType fieldType) {
+		return BOOLEAN_TYPES.contains(fieldType);
+	}
+	
+	global static Boolean isDateType(Schema.DisplayType fieldType) {
+		return DATE_TYPES.contains(fieldType);
+	}
+	
+	global static Boolean isDatetimeType(Schema.DisplayType fieldType) {
+		return DATETIME_TYPES.contains(fieldType);
+	}
+	
+	global static Boolean isNumberType(Schema.DisplayType fieldType) {
+		return INTEGER_TYPES.contains(fieldType) || DOUBLE_TYPES.contains(fieldType);
+	}
+	
+	global static Boolean isReferenceType(Schema.DisplayType fieldType) {
+		return ID_TYPES.contains(fieldType);
+	}
+		
 	global static Boolean isStringType(Schema.DisplayType fieldType) {
 		return STRING_TYPES.contains(fieldType);
 	}
 	
+	global static Boolean isDateOrDatetimeOrNumberType(Schema.DisplayType fieldType) {
+		return isDateType(fieldType) || isDatetimeType(fieldType) || isNumberType(fieldType);
+	}
+	
 	global static Boolean isStringOrReferenceType(Schema.DisplayType fieldType) {
-		return STRING_TYPES.contains(fieldType) || ID_TYPES.contains(fieldType);
+		return isStringType(fieldType) || isReferenceType(fieldType);
 	}
 }

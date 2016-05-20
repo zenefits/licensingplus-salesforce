@@ -29,16 +29,12 @@ public with sharing class CustomLicenseRuleLogicTriggerHandler {
     		objRules.add(rule);
     	}
     	
-    	System.debug('PRIVATE---');
-    	System.debug(ruleLogicByObj);
-    	System.debug(ruleByObj);
-    	
     	for (String objName : ruleLogicByObj.keySet()) {
     		List<Custom_License_Rule_Logic__c> cruleLogics = ruleLogicByObj.get(objName);
     		List<Custom_License_Rule__c> crules = ruleByObj.get(objName);
     		for (Custom_License_Rule_Logic__c ruleLogic : cruleLogics) {
     			try {
-    				ruleValidator.validateRuleLogic(crules, ruleLogic, objName);	
+    				ruleValidator.validate(crules, ruleLogic, objName);	
     				LicenseRuleHelper.logInfo('CustomLicenseRuleLogicTriggerHandler', 'validate', 'Custom License Rule Logic validation passed: ' + ruleLogic.logic__c);
     			} catch (LicenseRuleException e){
     				LicenseRuleHelper.logInfo('CustomLicenseRuleLogicTriggerHandler', 'validate', 'LicenseRuleException errorMessage: ' + e.getMessage());

@@ -3,6 +3,9 @@ public with sharing class LicenseRuleTestDataSeeder {
     public static final String ACCOUNT_OBJ = 'Account';
     public static final String CASE_OBJ = 'Case';
     public static final String OPPORTUNITY_OBJ = 'Opportunity';
+	public static final String INVALID_OBJECT = 'INVALID_INVALID_INVALID__c';
+	public static final String INVALID_FIELD = 'INVALID_INVALID_INVALID__c';
+	public static final String INVALID_REFERENCE_FIELD = 'INVALID_INVALID_INVALID__c';
     
     public static Map<String, List<Map<String, String>>> cfieldsByObj = new Map<String, List<Map<String, String>>>();
     public static Map<String, List<Map<String, String>>> sfieldsByObj = new Map<String, List<Map<String, String>>>();

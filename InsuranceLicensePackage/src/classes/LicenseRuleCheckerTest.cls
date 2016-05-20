@@ -228,6 +228,13 @@ private class LicenseRuleCheckerTest {
     		update crules;
     		
     		try {
+    			update ruleLogic;
+    			throw new LicenseRuleException('An exception should have been thrown by the trigger but was not.');
+    		} catch (DMLException e) {
+    			system.assert(e.getMessage().contains('FIELD_CUSTOM_VALIDATION_EXCEPTION'));
+    		}
+    		
+    		try {
     			update account;
     			throw new LicenseRuleException('An exception should have been thrown by the trigger but was not.');
     		} catch (DMLException e) {

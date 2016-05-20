@@ -42,10 +42,11 @@ public with sharing class StandardLicenseRuleTriggerHandler {
     				String ruleType = rule.type__c;
     				// validate state field type
     				if (StandardLicenseRuleValidator.STATE_RULE.equalsIgnoreCase(ruleType)) {
-    					if (ruleValidator.validateStateFieldIsCorrect(objFields, fieldName)) {
-    						errorMessage = LicenseRuleValidator.errorMessageByType.get(LicenseRuleValidator.LicenseRuleError.SR_STATE_FIELD_NOT_VALID);
-    						rule.addError(String.format(errorMessage, new String[]{rule.field__c, rule.object__c}));
-    					}
+    					try {
+    						ruleValidator.validate(objFields, objName, fieldName);   						
+    					} catch (LicenseRuleException e) {
+    						rule.addError(e.getMessage());
+    					}					
     				}   				
     			}
     		}
