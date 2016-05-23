@@ -1,7 +1,7 @@
 trigger OpportunityLicenseTrigger on Opportunity (after insert, after update) {
 	if (trigger.isAfter) {
         if (trigger.isInsert || trigger.isUpdate) {
-            LicensingUtils.checkSObjectLicenseRules(trigger.new, 'Opportunity');
+            LicensingUtils.checkSObjectLicenseRules(trigger.newMap, 'Opportunity');
         } 
     }
 }

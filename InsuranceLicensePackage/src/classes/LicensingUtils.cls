@@ -18,14 +18,9 @@ global class LicensingUtils {
         'WI' => 'Wisconsin', 'WV' => 'West Virginia', 'WY' => 'Wyoming'
     };
     
-    global static void checkSObjectLicenseRules(List<SObject> newObjs, String objName) {
-    	// check sObject custom rules
-    	Map<String, SObject> objById = new Map<String, SObject>();
-    	for (SObject obj : newObjs) {
-    		objById.put(obj.id, obj);
-    	}
-    	
-    	List<SObject> filteredObjs = ruleChecker.checkCustomLicenseRules(objById, objName);
+    global static void checkSObjectLicenseRules(Map<Id, SObject> newObjsById, String objName) {
+    	// check sObject custom rules    	
+    	List<SObject> filteredObjs = ruleChecker.checkCustomLicenseRules(newObjsById, objName);
     	
     	// check sObject standard rules
     	ruleChecker.checkStandardLicenseRules(filteredObjs, objName);
