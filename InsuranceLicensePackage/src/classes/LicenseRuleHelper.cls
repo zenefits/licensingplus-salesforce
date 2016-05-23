@@ -212,9 +212,9 @@ public with sharing class LicenseRuleHelper {
     	System.debug(String.format('[{0}] - {1} - {2}', new String[]{clazz, method, info}));
     }
     
-    public static String setToStringWithQuotes(Set<String> strSet) {
+    public static String setToStringWithQuotes(Set<Id> strSet) {
     	String str = '';
-		for(String s : strSet) {
+		for(Id s : strSet) {
    			str += '\'' + s + '\',';
 		}
 		if (str.length() > 0) {

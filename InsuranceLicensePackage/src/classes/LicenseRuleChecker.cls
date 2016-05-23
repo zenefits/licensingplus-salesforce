@@ -52,7 +52,7 @@ public with sharing class LicenseRuleChecker {
 		}
     }
     
-   public List<SObject> checkCustomLicenseRules(Map<String, SObject> objById, String objName) {
+   public List<SObject> checkCustomLicenseRules(Map<Id, SObject> objById, String objName) {
     	List<Custom_License_Rule__c> rules = [SELECT id, field__c, object__c, operator__c, reference_field__c, value__c FROM custom_license_rule__c WHERE isActive__c=true AND object__c=:objName]; 	
     	List<Custom_License_Rule_Logic__c> ruleLogics = [SELECT id, object__c, logic__c FROM custom_license_rule_logic__c WHERE object__c=:objName order by lastmodifieddate limit 1];	
     	List<SObject> filteredObjs = new List<SObject>();
@@ -61,7 +61,7 @@ public with sharing class LicenseRuleChecker {
     		if (!ruleLogics.isEmpty()) {  			
     			Custom_License_Rule_Logic__c ruleLogic = ruleLogics.get(0);   			
     			String formattedRules = ruleHelper.getFormattedRules(rules, ruleLogic);
-				Set<String> objIds = objById.keySet();
+				Set<Id> objIds = objById.keySet();
     			
     			//TODO - fix dynamic SOQL injection
     			String customQuery = String.format(customQueryTemplate, new String[]{objName, LicenseRuleHelper.setToStringWithQuotes(objIds), formattedRules});   			
@@ -75,7 +75,7 @@ public with sharing class LicenseRuleChecker {
 	    				filteredObjIds.add(String.valueOf(filterResult.get('Id')));
 	    			}
 	    			
-					for (String id : objById.keySet()) {
+					for (Id id : objById.keySet()) {
 						SObject obj = objById.get(id);
 						// valid license
 						if (filteredObjIds.contains(id)) {

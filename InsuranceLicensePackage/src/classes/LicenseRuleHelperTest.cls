@@ -49,12 +49,14 @@ private class LicenseRuleHelperTest {
     }
     
     static testmethod void testSetToStringWithQuotes() {
-    	Set<String> strSet = new Set<String>{'a','b','c'};
+    	Set<Id> strSet = new Set<Id>{'000000000000000000','005360000023PA6AAM','005360000023PA7AAM'};
     	
-    	String expected = '\'a\',\'b\',\'c\'';
     	String actual = LicenseRuleHelper.setToStringWithQuotes(strSet);
     	
-    	System.assertEquals(expected, actual);
+    	System.assertEquals(3, actual.split(',').size());
+    	for (String str : strSet) {
+    		System.assert(actual.contains(str));	
+    	}
     }
     
     static testmethod void testConvertCommaSeparatedStringToStringWithQuotes() {
