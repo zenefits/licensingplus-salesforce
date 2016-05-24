@@ -30,7 +30,7 @@ public abstract with sharing class LicenseRuleValidator {
     	errorMessageByType.put(LicenseRuleError.C_RULE_FIELD_VALUE_NOT_MATCH_FIELD_TYPE, 'Field value - {0} can not be applied to field type - {1} for field - {2} on sObject - {3} or referecnce field - {4}');
     }
     
-    public final LicenseRuleHelper ruleHelper;
+    protected final LicenseRuleHelper ruleHelper;
     
     public LicenseRuleValidator(LicenseRuleHelper ruleHelper) {
     	this.ruleHelper = ruleHelper;
