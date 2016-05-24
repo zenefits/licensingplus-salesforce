@@ -52,7 +52,7 @@ public with sharing class StandardLicenseRuleTriggerHandler {
     		}
     		
     		// set the unique rule field to make sure there is only one standard rule per object, per type
-			String uniqueKey = rule.object__c + ';' + rule.field__c + ';' + rule.type__c;
+			String uniqueKey = rule.object__c + ';' + rule.type__c;
 			rule.Unique_Key__c = uniqueKey;	
     	}
     }

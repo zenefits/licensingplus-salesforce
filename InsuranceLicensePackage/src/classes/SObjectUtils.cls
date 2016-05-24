@@ -8,6 +8,7 @@ global class SObjectUtils {
         ,Schema.DisplayType.String
         ,Schema.DisplayType.TextArea
         ,Schema.DisplayType.URL
+        ,Schema.DisplayType.EncryptedString
     };
 
     private static final Set<Schema.DisplayType> INTEGER_TYPES = new Set<Schema.DisplayType>{
