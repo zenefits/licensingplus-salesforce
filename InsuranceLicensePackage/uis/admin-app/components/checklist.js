@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { Link } from 'react-router';
 import { toggleChecklist } from '../actions/checklist-actions';
+import { VIDEO_LINK } from '../constants/constants';
 
 var _csvTemplateLink = (typeof StaticResource === 'undefined') ? '#' : StaticResource.CONFIGURATION_LOA;
 
@@ -84,7 +85,7 @@ class Welcome extends Component {
           <div className='checkbox checkbox-container'>
             <label>
               <input type='checkbox' id='1' checked={this.props.checklist.watch_configuration_video__c} onChange={this.toggleChecklist.bind(this, 'watch_configuration_video__c')}></input>
-               <label htmlFor='1' className='label-check'>Watch our <a href='https://www.youtube.com/watch?v=E-0EpztLz0c' target='_blank'>configuration video</a>.</label>
+               <label htmlFor='1' className='label-check'>Watch our <a href={VIDEO_LINK} target='_blank'>configuration video</a>.</label>
             </label>
           </div>
           <div className='checkbox checkbox-container'>
@@ -116,7 +117,7 @@ class Welcome extends Component {
           <div className='checkbox checkbox-container'>
             <label>
               <input type='checkbox' id='5' checked={this.props.checklist.watch_video__c} onChange={this.toggleChecklist.bind(this, 'watch_video__c')}></input>
-              <label htmlFor='5' className='label-check'>Watch our video on <a href='https://www.youtube.com/watch?v=E-0EpztLz0c' target='blank'>standard compliance rules</a>.</label>
+              <label htmlFor='5' className='label-check'>Watch our video on <a href={VIDEO_LINK} target='_blank'>standard compliance rules</a>.</label>
             </label>
           </div>
           <div>
@@ -136,7 +137,7 @@ class Welcome extends Component {
           <div className='checkbox checkbox-container'>
             <label>
               <input type='checkbox' id='7' checked={this.props.checklist.watch_compliance_video__c} onChange={this.toggleChecklist.bind(this, 'watch_compliance_video__c')}></input>
-              <label htmlFor='7' className='label-check'>Watch our video on how to extend the compliance rule engine.</label>
+              <label htmlFor='7' className='label-check'>Watch our video on <a href={VIDEO_LINK} target='_blank'>how to extend the compliance rule engine</a>.</label>
             </label>
           </div>
           <div>
@@ -159,10 +160,10 @@ class Welcome extends Component {
               </Link>
             </h4>
             <h1>Getting started checklist</h1>
-            <p>Before you begin, you’ll need some information from your compliance team. Follow this checklist to get set up!</p>
+            <p>Before you begin, you’ll need some information from your compliance team. Follow this checklist to get set up.</p>
             <div className='salesforce-link-checklist'>
               <p>
-                <small><span className='glyphicon glyphicon-question-sign'></span> Need more help?<a className='link' href='https://www.youtube.com/watch?v=E-0EpztLz0c' target='_blank'>Watch our video!</a></small>
+                <small><span className='glyphicon glyphicon-question-sign'></span> Need more help?<a className='link' href={VIDEO_LINK} target='_blank'>Watch our video!</a></small>
               </p>
               <p>
                 <a className='link' href='/'>Return to Salesforce</a>

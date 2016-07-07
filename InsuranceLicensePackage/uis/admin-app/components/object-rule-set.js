@@ -587,10 +587,10 @@ class ObjectRuleSet extends Component {
     var links = (
       <div className='salesforce-link-rules'>
         <p>
-          <small><span className='glyphicon glyphicon-question-sign'></span> Need more help?<a href='https://www.youtube.com/watch?v=E-0EpztLz0c' target='blank'>Watch our video!</a></small>
+          <small><span className='glyphicon glyphicon-question-sign'></span> Need more help?<a className='link' href={constants.VIDEO_LINK} target='_blank'>Watch our video!</a></small>
         </p>
         <p>
-          <a href='/'>Exit to Salesforce</a>
+          <a className='link' href='/'>Return to Salesforce</a>
         </p>
       </div>
     )
@@ -606,8 +606,8 @@ class ObjectRuleSet extends Component {
     var sideNavigation = (
       <div className="col-sm-3 zenefits-nav">
         {back}
-        <h1>Activate your compliance rule.</h1>
-        <p>We have already created a few rules that represent standard rules that most team needs.</p>
+        <h1>Activate your compliance rule</h1>
+        <p>We have already created a few rules that represent standard rules that most team need.</p>
         <p>After you have setup the app you can add more rules.</p>
         {links}
       </div>
@@ -635,8 +635,8 @@ class ObjectRuleSet extends Component {
             <h4>{_.capitalize(objectLabel) } Compliance Rule Set </h4>
             <h5 className='heading-table'>Rules Set Filter</h5>
             <div className='heading-table'>
-              <h4>Resident Licence Check</h4>
-              <small>We ensure agent has active resident liscence</small>
+              <h4>Resident License Check</h4>
+              <small>We ensure agent has active resident license</small>
               {toggle}
             </div>
             <span className='filtered-records'>Filtered Records</span>

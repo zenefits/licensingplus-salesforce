@@ -1,7 +1,7 @@
 <apex:page standardController="License__c" extensions="LicenseController">
-    <apex:form >
+    <apex:pageMessages />   
+    <apex:form rendered="{!NOT(hasPageErrors)}">
         <apex:sectionHeader title="License Edit" subtitle="{!IF(ISBLANK(License__c.Id), 'New License', License__c.Name)}" /> 
-        <apex:pageMessages />
         <apex:commandLink action="{!cancel}" value="Go back" rendered="{!!allowed}" />
         <apex:pageBlock mode="edit" title="License Edit" rendered="{!allowed}">
             <apex:pageBlockButtons >

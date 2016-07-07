@@ -60,11 +60,15 @@
     </types>
     <types>
         <members>*</members>
+        <name>PermissionSet</name>
+    </types>
+    <types>
+        <members>*</members>
         <name>StaticResource</name>
     </types>
     <types>
         <members>License__c</members>
         <name>Workflow</name>
     </types>
-    <version>35.0</version>
+    <version>37.0</version>
 </Package>

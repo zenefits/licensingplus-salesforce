@@ -5,11 +5,32 @@ public with sharing class LicenseSetController {
     public List<License> insuranceLicenses { get; private set; }    
     
     public Map<String, Set<String>> loaTypesByName {get; private set;}
+    public boolean hasPageErrors {get; private set;}
 
     public LicenseSetController(ApexPages.StandardSetController controller) {
+
         runAs = ApexPages.currentPage().getParameters().get('runAs');
         insuranceLicenses = new List<License>();         
         loaTypesByName = new Map<String, Set<String>>();
+
+        // custom fields from field set to add to FLS check and License query
+        Set<String> customLicenseFields = new Set<String>();
+        for (Schema.FieldSetMember field : SObjectType.License__c.FieldSets.Custom_License_Fields.getFields()) {
+            customLicenseFields.add(field.getFieldPath());
+        }        
+
+        // Field Level Security checks
+        Boolean noAccess = false;
+        Set<String> licenseFieldsToCheck = new Set<String>{'Id', 'State__c', 'RecordTypeId', 'Status__c', 'OwnerId'};
+        licenseFieldsToCheck.addAll(customLicenseFields);              
+        Set<String> loaFieldsToCheck = new Set<String>{'Name'};    
+        if (!LicenseRuleHelper.enforceCRUDAndFLSInController('License__c', licenseFieldsToCheck, 'query')) {noAccess = true;}  
+        if (!LicenseRuleHelper.enforceCRUDAndFLSInController('Line_of_Authority__c', loaFieldsToCheck, 'query')) {noAccess = true;}        
+        if (noAccess) {
+            hasPageErrors = true;
+            return;
+        }
+        // end Field Level Security checks        
         
         for (String loaSettingName : Lines_of_Authority__c.getAll().keyset()) {
             Lines_of_Authority__c loaSetting = Lines_of_Authority__c.getInstance(loaSettingName);
@@ -23,10 +44,6 @@ public with sharing class LicenseSetController {
     	Set<String> licenseFields = new Set<String>{
     		'Id','State__c','RecordType.Name','Status__c'
     	};
-		Set<String> customLicenseFields = new Set<String>();
-		for (Schema.FieldSetMember field : SObjectType.License__c.FieldSets.Custom_License_Fields.getFields()) {
-			customLicenseFields.add(field.getFieldPath());
-		}
 		licenseFields.addAll(customLicenseFields);
 		String queryTemplate = 'SELECT {0},' +
                        			'(SELECT Name from Lines_Of_Authority__r) ' +
@@ -68,5 +85,5 @@ public with sharing class LicenseSetController {
             
             return String.join(new List<String>(allTypes), ', ');
         }
-    }
+    }   
 }

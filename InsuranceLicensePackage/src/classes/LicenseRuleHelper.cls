@@ -16,7 +16,9 @@ public with sharing class LicenseRuleHelper {
     public Map<String,Set<License__c>> constructLicensesByOwnerId(
     						Set<String> licenseFields, 
     						Set<String> ownerIds) {
-    	
+        
+        LicenseRuleHelper.enforceCRUDAndFLS('License__c', licenseFields, 'query', false);
+        
     	String licenseQueryTemplate = 'SELECT {0} FROM License__c WHERE status__c={1} AND ownerId IN ({2})';
 	    
 	    String licenseFieldsStr = LicenseRuleHelper.setToStringWithoutQuotes(licenseFields);
@@ -334,7 +336,15 @@ public with sharing class LicenseRuleHelper {
     }
     
     public void toggleLicenseRuleSet(String objName, String filterRuleLogicId, Boolean isActive) {
-    	if (filterRuleLogicId == null) {
+
+        LicenseRuleHelper.enforceCRUDAndFLS('License_Rule__c', new Set<String> {'Id', 'isActive__c'}, 'query', false);
+        LicenseRuleHelper.enforceCRUDAndFLS('License_Rule_Logic__c', new Set<String> {'Id', 'isActive__c', 'logic__c'}, 'query', false);
+        
+        LicenseRuleHelper.enforceCRUDAndFLS('License_Rule__c', new Set<String> {'isActive__c'}, 'update', false);
+        LicenseRuleHelper.enforceCRUDAndFLS('License_Rule_Logic__c', new Set<String> {'isActive__c', 'logic__c'}, 'update', false);
+
+        	        
+	    if (filterRuleLogicId == null) {
     		List<License_Rule__c> rules = [SELECT id, isActive__c FROM License_Rule__c WHERE object__c=:objName];
 			for (License_Rule__c rule : rules) {
 				rule.isActive__c = isActive;
@@ -412,6 +422,9 @@ public with sharing class LicenseRuleHelper {
 		}
 		
 		if (deleteStateRule || deleteResidentLicenseRule) {
+	        
+	        LicenseRuleHelper.enforceCRUDAndFLS('License_Rule__c', new Set<String> {'Id', 'recordtypeid'}, 'query', false);
+	        
 			for(License_Rule__c existingRule : [SELECT id, recordtypeid FROM License_Rule__c WHERE object__c=:objName AND (recordtypeid=:licenseStateRuleRecordTypeId OR recordtypeid=:residentLicenseRuleRecordTypeId)]) {
 				if (existingRule.recordtypeid == licenseStateRuleRecordTypeId && deleteStateRule) {
 					rulesToDelete.add(existingRule);
@@ -455,9 +468,13 @@ public with sharing class LicenseRuleHelper {
 		// upsert rules, so the rule id is set				
 		if (!rulesToUpsert.isEmpty()) {
 			logInfo('LicenseRuleHelper', 'updateLicenseRuleSetResult', 'upsert rules ' + objName);
+	        
+	        LicenseRuleHelper.enforceCRUDAndFLS('License_Rule__c', new Set<String> {'recordTypeId', 'license_field__c', 'operator__c', 'value__c', 'field__c'}, 'upsert', false);
+        
 			upsert rulesToUpsert;
 		}
-		
+
+	    LicenseRuleHelper.enforceCRUDAndFLS('License_Rule_Logic__c', new Set<String> {'recordTypeId', 'logic__c', 'filter_rule__c'}, 'upsert', false);
 		
 		// second iteration replace the filter rule logic with the actual rule id, and upsert them
 		List<License_Rule_Logic__c> filterRuleLogics = new List<License_Rule_Logic__c>();
@@ -506,11 +523,17 @@ public with sharing class LicenseRuleHelper {
 		// delete rule logics and rules
 		if (!ruleLogicsToDelete.isEmpty()) {
 			logInfo('LicenseRuleHelper', 'updateLicenseRuleSetResult', 'delete license rule logics ' + objName);
+			
+		    LicenseRuleHelper.enforceCRUDAndFLS('License_Rule_Logic__c', null, 'delete', false);
+			
 			delete ruleLogicsToDelete;
 		}
 		
 		if (!rulesToDelete.isEmpty()) {
 			logInfo('LicenseRuleHelper', 'updateLicenseRuleSetResult', 'delete license rules ' + objName);
+			
+			LicenseRuleHelper.enforceCRUDAndFLS('License_Rule__c', null, 'delete', false);
+			
 			delete rulesToDelete;
 		}
      }
@@ -519,7 +542,10 @@ public with sharing class LicenseRuleHelper {
     	Map<String, List<License_Rule_Logic__c>> ruleLogicsByObjName = new Map<String, List<License_Rule_Logic__c>>();
     	Map<String, List<License_Rule__c>> rulesByObjName = new Map<String, List<License_Rule__c>>();
     	Set<String> objNames = new Set<String>();
-    	
+
+        
+        LicenseRuleHelper.enforceCRUDAndFLS('License_Rule_Logic__c', new Set<String> {'CreatedDate', 'Id', 'Logic__c', 'Object__c', 'Filter_Rule__c', 'RecordTypeid', 'IsActive__c'}, 'query', false);
+            	
     	for (License_Rule_Logic__c ruleLogic : [SELECT CreatedDate, Id, Logic__c, Object__c, Filter_Rule__c, RecordTypeid, RecordType.Name,
 													IsActive__c FROM License_Rule_Logic__c]) {
 			String objName = ruleLogic.object__c;
@@ -531,6 +557,9 @@ public with sharing class LicenseRuleHelper {
 			ruleLogics.add(ruleLogic);
 			objNames.add(objName);
 		}
+		
+        
+        LicenseRuleHelper.enforceCRUDAndFLS('License_Rule__c', new Set<String> {'CreatedDate', 'Id', 'RecordTypeId', 'Object__c', 'Field__c', 'License_Field__c', 'Operator__c', 'Value__c', 'IsActive__c'}, 'query', false);
 		
 		for (License_Rule__c rule : [SELECT CreatedDate, Id, RecordTypeId, Object__c, Field__c, License_Field__c, Operator__c, Value__c, RecordType.Name,
     											IsActive__c FROM License_Rule__c]) {  		
@@ -670,5 +699,89 @@ public with sharing class LicenseRuleHelper {
 			str = str.substring(0, str.length()-1);
 		}
 		return str;
+    }
+   
+    private static boolean enforceCRUD(Schema.DescribeSObjectResult objResult, String dmlType, Boolean addMessage) {
+        boolean hasAccess = true;
+        
+		if (dmlType == 'delete') {
+			hasAccess = objResult.isDeletable();
+		}else if (dmlType == 'insert') {
+            hasAccess = objResult.isCreateable();
+        } else if (dmlType == 'update') {
+            hasAccess = objResult.isUpdateable();
+        } else if (dmlType == 'query') {
+            hasAccess = objResult.isAccessible();
+        } else if (dmlType == 'upsert') {
+        	hasAccess = objResult.isUpdateable() && objResult.isCreateable();
+        }
+            
+        if(!hasAccess){
+        	String errorMessage = RuleValidator.errorMessageByType.get(RuleValidator.RuleError.OBJECT_FAILED_CRUD);
+            errorMessage = String.format(errorMessage, new String[] {dmlType, objResult.getName()});
+            if (addMessage) {
+                ApexPages.addMessage(new ApexPages.message(ApexPages.severity.ERROR, errorMessage));
+            } else {
+                throw new LicenseRuleException(errorMessage);
+            }
+        }    
+        return hasAccess;  
+    }
+    
+    private static boolean enforceFLS(Schema.DescribeSObjectResult objResult, Set<String> fieldsToCheck, String dmlType, Boolean addMessage) {
+        boolean hasAccess = true;
+        
+        if (dmlType == 'delete') {
+        	return hasAccess;
+        }
+        
+        // field map for object
+        Map<String, Schema.SobjectField> fieldMap = objResult.fields.getMap();
+
+        for (String field : fieldsToCheck) {
+            Boolean failFLScheck = false;
+            Schema.SobjectField objField = fieldMap.get(field);
+            
+            // bypass invalid obj field
+            if (objField==null) {
+            	continue;
+            }
+                   
+            if (dmlType == 'insert') {
+                failFLScheck = !objField.getDescribe().isCreateable();
+            } else if (dmlType == 'update') {
+                failFLScheck = !objField.getDescribe().isUpdateable();
+            } else if (dmlType == 'query') {
+                failFLScheck = !objField.getDescribe().isAccessible();
+            } else if (dmlType == 'upsert') {
+                failFLScheck = !objField.getDescribe().isUpdateable() || !objField.getDescribe().isCreateable();
+            }
+
+            if (failFLScheck) {
+                String errorMessage = RuleValidator.errorMessageByType.get(RuleValidator.RuleError.FIELD_FAILED_FLS);
+                errorMessage = String.format(errorMessage, new String[] {dmlType, field, objResult.getName()});
+                if (addMessage) {
+                    ApexPages.addMessage(new ApexPages.message(ApexPages.severity.ERROR, errorMessage));
+                } else {
+                    throw new LicenseRuleException(errorMessage);
+                }
+                hasAccess = false;
+            }
+        } 
+
+        return hasAccess;  
+    }
+    
+    public static boolean enforceCRUDAndFLSInController(String objectName, Set<String> fieldsToCheck, String dmlType) {
+		return enforceCRUDAndFLS(objectName, fieldsToCheck, dmlType, true);
+    }
+    
+    public static boolean enforceCRUDAndFLS(String objectName, Set<String> fieldsToCheck, String dmlType, Boolean addMessage) {
+    	Schema.SObjectType obj = Schema.getGlobalDescribe().get(objectName);
+    	if (obj == null) {
+    		return false;
+    	}
+    	
+    	return enforceCRUD(obj.getDescribe(), dmlType, addMessage) && enforceFLS(obj.getDescribe(), fieldsToCheck, dmlType, addMessage);
     }
 }

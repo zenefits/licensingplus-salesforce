@@ -17,7 +17,9 @@ public abstract with sharing class RuleValidator {
     	RULE_LOGIC_FOUND,
     	NO_OWNER_ID_FIELD_FOUND,
     	UNDEFINED_SOBJECT_TYPE,
-    	UNDEFINED_SOBJECT_FIELD
+    	UNDEFINED_SOBJECT_FIELD,
+        FIELD_FAILED_FLS,
+        OBJECT_FAILED_CRUD
     }
     
     public static final Map<RuleError, String> errorMessageByType = new Map<RuleError, String>();
@@ -31,15 +33,17 @@ public abstract with sharing class RuleValidator {
     	errorMessageByType.put(RuleError.MULTIPLE_LICENSE_FILTER_COMPARISON_RULES, 'You should only have one active license rule logic if no filter rule logic are defined, rule logic id - {0}');
     	errorMessageByType.put(RuleError.NO_LICENSE_STATE_RULE, 'You should configure license state rule if you have configured regular filter rule and filter rule logic, rule logic id - {0}');
     	errorMessageByType.put(RuleError.RESIDENT_LICENSE_CHECK_FAILED, 'Owner does not have an active resident license');
-    	errorMessageByType.put(RuleError.LICENSE_STATE_RULE_CHECK_FAILED, 'Owner does not have an active license in state - {0}, fieldName - {1}, objName - {2}');
-    	errorMessageByType.put(RuleError.LICENSE_FILTER_COMPARISON_RULE_CHECK_FAILED, 'License rule check failed, please check whether data matches license filter or comparison rules');
+    	errorMessageByType.put(RuleError.LICENSE_STATE_RULE_CHECK_FAILED, 'Owner does not have an active license in state - {0}');
+    	errorMessageByType.put(RuleError.LICENSE_FILTER_COMPARISON_RULE_CHECK_FAILED, 'License rule check failed, please contact your salesforce admin to check whether data matches license filter or comparison rules');
     	errorMessageByType.put(RuleError.OPERATOR_NOT_MATCH_FIELD_TYPE, 'Operator - {0} can not be applied to field - {1} on sObject - {2}');
     	errorMessageByType.put(RuleError.FIELD_VALUE_NOT_MATCH_FIELD_TYPE, 'Field value - {0} can not be applied to field type - {1} for field - {2} on sObject - {3}');
     	errorMessageByType.put(RuleError.FIELD_TYPE_NOT_MATCH_LICENSE_FIELD_TYPE, 'Field - {0}({1}) should match the type of license field - {2}({3}) on sObject - {4}');
     	errorMessageByType.put(RuleError.RULE_LOGIC_FOUND, 'No active rules found, but rule logic found for sObject {0}, please delete or turn off the logic');
     	errorMessageByType.put(RuleError.NO_OWNER_ID_FIELD_FOUND, 'OwnerId or OwnerId__c field not found on object, for sobject witout OwnerId field, please create one formula field OwnerId__c to designate the OwnerId');
     	errorMessageByType.put(RuleError.UNDEFINED_SOBJECT_TYPE, 'SObject - {0} cannot be found, it is not configured on this org.');
-    	errorMessageByType.put(RuleError.UNDEFINED_SOBJECT_FIELD, 'Field - {0} on SObject - {1} cannot be found, it is not configured on this org.');
+        errorMessageByType.put(RuleError.UNDEFINED_SOBJECT_FIELD, 'Field - {0} on SObject - {1} cannot be found, it is not configured on this org.');
+        errorMessageByType.put(RuleError.FIELD_FAILED_FLS, 'You do not have access to {0} the field - {1} on object - {2}'); 
+        errorMessageByType.put(RuleError.OBJECT_FAILED_CRUD, 'You do not have access to {0} the object - {1}'); 
     }
     
     protected final LicenseRuleHelper ruleHelper;

@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { Link } from 'react-router';
+import { EMBED_VIDEO_LINK } from '../constants/constants';
 
 class Extend extends Component {
   constructor(props) {
@@ -32,10 +33,8 @@ class Extend extends Component {
           <div className="welcome-vid-container">
             <div className="col-md-3"></div>
             <div className="col-md-6">
-              <div className="welcome-vid-box">
-                <div className="embed-responsive embed-responsive-16by9 welcome-vid-box">
-                    <iframe className="embed-responsive-item" src="https://www.youtube.com/embed/E-0EpztLz0c"></iframe>
-                </div>
+              <div className="embed-responsive embed-responsive-16by9 welcome-vid-box">
+                <iframe className="embed-responsive-item" src={EMBED_VIDEO_LINK}></iframe>
               </div>
             </div>
             <div className="col-md-3"></div>

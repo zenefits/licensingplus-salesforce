@@ -139,6 +139,29 @@ public class LicenseControllerTest {
         List<License__c> licenses = new List<License__c>();
         ApexPages.StandardSetController ssc = new ApexPages.StandardSetController(licenses);
         LicenseSetController lsc = new LicenseSetController(ssc);
+
+        System.assertEquals(false, ApexPages.hasMessages());
+    }
+
+    public static testMethod void testLicenseControllerSet_noAccess() {
+        User readOnlyUser = getReadOnlyUser();
+        insert readOnlyUser;
+
+        test.startTest();
+        system.runAs(readOnlyUser) {
+            Test.setCurrentPage(Page.License_List);
+            
+            List<License__c> licenses = new List<License__c>();
+            ApexPages.StandardSetController ssc = new ApexPages.StandardSetController(licenses);
+            LicenseSetController lsc = new LicenseSetController(ssc);       
+
+            System.assert(ApexPages.hasMessages());     
+            for (ApexPages.Message message : ApexPages.getMessages()) {
+                system.assertEquals(ApexPages.Severity.Error, message.getSeverity());
+                system.assert(message.getSummary().contains('You do not have access'));
+            }       
+        }
+        test.stopTest();
     }
 
     public static testMethod void testNewResident() {        
@@ -215,5 +238,13 @@ public class LicenseControllerTest {
         System.assertNotEquals(lc.saveAndUpload(), null, ApexPages.getMessages());
         
         Test.stopTest();
+    }
+
+    public static User getReadOnlyUser() {
+        Profile readOnlyProfile = [SELECT Id FROM profile WHERE name='Read Only'];
+        User testUser = new User(alias = 'uxxx1', email='readOnly@test.com', emailencodingkey='UTF-8', firstname='FN', lastname='Testing', 
+          languagelocalekey='en_US', localesidkey='en_US', profileid = readOnlyProfile.Id, country='United States', 
+          timezonesidkey='America/Los_Angeles', username='test654CBA@test.com'); 
+        return testUser;
     }
 }

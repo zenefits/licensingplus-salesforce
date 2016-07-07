@@ -195,7 +195,7 @@ var TestData = {
   },
   "checklist": {
     Id: 'a0736000005GIG1AAO',
-    download_spreadsheet__c: true,
+    download_spreadsheet__c: false,
     watch_configuration_video__c: true,
     send_spreadsheet__c: true,
     filled_spreadsheet__c: true,

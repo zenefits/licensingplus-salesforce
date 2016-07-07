@@ -164,7 +164,7 @@ class LinesAuthority extends Component {
     var links = (
       <div className='salesforce-link-lines'>
         <p>
-          <small><span className='glyphicon glyphicon-question-sign'></span> Need more help?<a className='link' href='https://www.youtube.com/watch?v=E-0EpztLz0c' target='_blank'>Watch our video!</a></small>
+          <small><span className='glyphicon glyphicon-question-sign'></span> Need more help?<a className='link' href={constants.VIDEO_LINK} target='_blank'>Watch our video!</a></small>
         </p>
         <p>
           <a className='link' href='/'>Return to Salesforce</a>
@@ -182,8 +182,8 @@ class LinesAuthority extends Component {
     var sideNavigation = (
       <div className='col-sm-3 zenefits-nav'>
         {back}
-        <h1>Set up your lines of authority.</h1>
-        <p>Make sure your compliance team has filled out the spreadsheet and classified your lines of authroity into master groups.</p>
+        <h1>Configure lines of authority</h1>
+        <p>Make sure your compliance team has filled out the spreadsheet and classified your lines of authority into master groups.</p>
         {links}
       </div>
     );
