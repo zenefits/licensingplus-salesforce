@@ -4,6 +4,7 @@ import { connect } from 'react-redux';
 import Toggle from 'react-toggle'
 import { toggleLicenseRuleSet, getAllLicenseRuleSetResults, getSobjectNames } from '../actions/rule-sets-actions';
 import { DropdownButton, MenuItem } from 'react-bootstrap';
+import { VIDEO_LINK } from '../constants/constants';
 
 class RuleSets extends Component {
   constructor(props) {
@@ -71,7 +72,7 @@ class RuleSets extends Component {
     var links = (
       <div className='salesforce-link-rules'>
         <p>
-          <small><span className='glyphicon glyphicon-question-sign'></span> Need more help?<a className='link' href='https://www.youtube.com/watch?v=E-0EpztLz0c' target='_blank'>Watch our video!</a></small>
+          <small><span className='glyphicon glyphicon-question-sign'></span> Need more help?<a className='link' href={VIDEO_LINK} target='_blank'>Watch our video!</a></small>
         </p>
         <p>
           <a className='link' href='/'>Return to Salesforce</a>
@@ -90,7 +91,7 @@ class RuleSets extends Component {
     var sideNavigation = (
       <div className="col-sm-3 zenefits-nav">
         {back}
-        <h1>Activate Compliance Rules</h1>
+        <h1>Activate compliance rules</h1>
         <p>We have already created a few rules that represent standard rules that most teams need. After you have set up the app, you can add more rules.</p>
         {links}
       </div>

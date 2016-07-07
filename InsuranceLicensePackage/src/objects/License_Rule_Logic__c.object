@@ -96,18 +96,6 @@
         <type>Checkbox</type>
     </fields>
     <label>License Rule Logic</label>
-    <listViews>
-        <fullName>All</fullName>
-        <columns>NAME</columns>
-        <columns>Object__c</columns>
-        <columns>isActive__c</columns>
-        <columns>Logic__c</columns>
-        <columns>RECORDTYPE</columns>
-        <columns>LAST_UPDATE</columns>
-        <columns>Filter_Rule__c</columns>
-        <filterScope>Everything</filterScope>
-        <label>All</label>
-    </listViews>
     <nameField>
         <label>License Rule Logic Name</label>
         <type>Text</type>

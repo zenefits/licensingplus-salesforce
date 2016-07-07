@@ -1,3 +1,5 @@
+export const VIDEO_LINK = 'https://vimeo.com/166881985';
+export const EMBED_VIDEO_LINK = 'https://player.vimeo.com/video/166881985';
 export const CHOOSE_FILE = '';
 export const RULE_EXP = /[^0-9()(and|or)\s]/gi;
 export const DATE_EXP = /^(19[0-9][0-9]|20[0-9][0-9])[-](0[1-9]|[12][0-9]|3[01])[-](0[1-9]|1[012])/g;

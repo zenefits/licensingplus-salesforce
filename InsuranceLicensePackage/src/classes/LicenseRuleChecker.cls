@@ -111,7 +111,7 @@ public with sharing class LicenseRuleChecker {
 				// check state license rule
 				if (!hasValidStateRule) {
 					String errorMessage = RuleValidator.errorMessageByType.get(RuleValidator.RuleError.LICENSE_STATE_RULE_CHECK_FAILED);
-					obj.addError(String.format(errorMessage, new String[]{objStateValue, stateRule.field__c, stateRule.object__c}));
+					obj.addError(String.format(errorMessage, new String[]{objStateValue}));
 					break;
 				}
 				
@@ -224,6 +224,9 @@ public with sharing class LicenseRuleChecker {
     }
     
     public void checkLicenseRules(Map<Id, SObject> objById, String objName) {
+
+    	LicenseRuleHelper.enforceCRUDAndFLS('License_Rule_Logic__c', new Set<String> {'Id', 'Logic__c', 'Object__c', 'Filter_Rule__c', 'RecordTypeid'}, 'query', false);
+    	
     	List<License_Rule_Logic__c> ruleLogics = [SELECT Id, Logic__c, Object__c, Filter_Rule__c, RecordTypeid, RecordType.Name
 													FROM License_Rule_Logic__c WHERE Object__c=:objName
 													AND isActive__c = true];
@@ -246,6 +249,8 @@ public with sharing class LicenseRuleChecker {
 		LicenseRuleHelper.logInfo('LicenseRuleChecker', 'checkLicenseRules', LicenseRuleHelper.setToStringWithoutQuotes(filterRuleLogicById.keySet()));
 		LicenseRuleHelper.logInfo('LicenseRuleChecker', 'checkLicenseRules', LicenseRuleHelper.setToStringWithoutQuotes(licenseRuleLogicById.keySet()));
 		LicenseRuleHelper.logInfo('LicenseRuleChecker', 'checkLicenseRules', LicenseRuleHelper.setToStringWithoutQuotes(licenseRuleLogicIdByFilterRuleLogicId.keySet()));
+        
+        LicenseRuleHelper.enforceCRUDAndFLS('License_Rule__c', new Set<String> {'Id', 'RecordTypeId', 'Object__c', 'Field__c', 'License_Field__c', 'Operator__c', 'Value__c'}, 'query', false);
 		
 		List<License_Rule__c> rules = [SELECT Id, RecordTypeId, Object__c, Field__c, License_Field__c, Operator__c, Value__c, RecordType.Name 
     											FROM License_Rule__c WHERE Object__c=:objName and isActive__c=true];

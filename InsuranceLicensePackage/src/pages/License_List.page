@@ -1,10 +1,11 @@
 <apex:page standardController="License__c" recordSetVar="licenses" extensions="LicenseSetController">
-    <apex:sectionHeader title="Licenses" />
-    <apex:form >
+    <apex:pageMessages />    
+    <apex:form rendered="{!NOT(hasPageErrors)}">
+        <apex:sectionHeader title="Licenses" />        
         <apex:pageBlock title="Licenses" >
             <apex:pageBlockButtons location="top">
                 <apex:commandButton action="{!URLFOR($Action.License__c.New, null)}" value="New" />
-            </apex:pageBlockButtons>
+            </apex:pageBlockButtons>                        
             <apex:pageBlockTable value="{!insuranceLicenses}" var="license" rendered="{!insuranceLicenses.size > 0}">
                 <apex:column >
                     <apex:facet name="header">State</apex:facet>
@@ -16,7 +17,7 @@
                 </apex:column>
                 <apex:column >
                     <apex:facet name="header">License Type</apex:facet>
-                    <apex:outputText value="{!license.license.RecordType.Name}" />
+                    <apex:outputField value="{!license.license.RecordType.Name}" />
                 </apex:column>
                 <apex:column >
                     <apex:facet name="header">Lines of Authority</apex:facet>

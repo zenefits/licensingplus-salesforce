@@ -11,7 +11,7 @@ trigger LicenseTrigger on License__c (before insert, before update, after insert
     
     if (trigger.isAfter) {        
         if(trigger.isInsert || trigger.isUpdate) {
-       		LicenseTriggerHandler.setResidentLicense(trigger.new, trigger.oldMap);
+            LicenseTriggerHandler.setResidentLicense(trigger.new, trigger.oldMap);
         }
     }
     
