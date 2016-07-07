@@ -1,0 +1,606 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomObject xmlns="http://soap.sforce.com/2006/04/metadata">
+    <actionOverrides>
+        <actionName>Accept</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>CancelEdit</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>Clone</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>Delete</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>Edit</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>Follow</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>List</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>New</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>SaveEdit</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>Tab</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>View</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <allowInChatterGroups>false</allowInChatterGroups>
+    <compactLayoutAssignment>SYSTEM</compactLayoutAssignment>
+    <deploymentStatus>Deployed</deploymentStatus>
+    <enableActivities>false</enableActivities>
+    <enableBulkApi>true</enableBulkApi>
+    <enableFeeds>false</enableFeeds>
+    <enableHistory>false</enableHistory>
+    <enableReports>false</enableReports>
+    <enableSearch>true</enableSearch>
+    <enableSharing>true</enableSharing>
+    <enableStreamingApi>true</enableStreamingApi>
+    <fields>
+        <fullName>Field__c</fullName>
+        <externalId>false</externalId>
+        <label>Field</label>
+        <length>255</length>
+        <required>false</required>
+        <trackTrending>false</trackTrending>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>License_Field__c</fullName>
+        <externalId>false</externalId>
+        <label>License Field</label>
+        <length>255</length>
+        <required>false</required>
+        <trackTrending>false</trackTrending>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Object__c</fullName>
+        <externalId>false</externalId>
+        <label>Object</label>
+        <length>255</length>
+        <required>true</required>
+        <trackTrending>false</trackTrending>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Operator__c</fullName>
+        <externalId>false</externalId>
+        <label>Operator</label>
+        <picklist>
+            <picklistValues>
+                <fullName>contains</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>does not contain</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>equals</fullName>
+                <default>true</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>greater or equal</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>greater than</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>in</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>less or equal</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>less than</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>not blank</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>not equal to</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>not in</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>starts with</fullName>
+                <default>false</default>
+            </picklistValues>
+            <restrictedPicklist>true</restrictedPicklist>
+            <sorted>false</sorted>
+        </picklist>
+        <trackTrending>false</trackTrending>
+        <type>Picklist</type>
+    </fields>
+    <fields>
+        <fullName>Value__c</fullName>
+        <externalId>false</externalId>
+        <label>Value</label>
+        <length>255</length>
+        <required>false</required>
+        <trackTrending>false</trackTrending>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>isActive__c</fullName>
+        <defaultValue>false</defaultValue>
+        <externalId>false</externalId>
+        <label>isActive</label>
+        <trackTrending>false</trackTrending>
+        <type>Checkbox</type>
+    </fields>
+    <label>License Rule</label>
+    <listViews>
+        <fullName>Active</fullName>
+        <columns>NAME</columns>
+        <columns>RECORDTYPE</columns>
+        <columns>Object__c</columns>
+        <columns>Field__c</columns>
+        <columns>License_Field__c</columns>
+        <columns>Operator__c</columns>
+        <columns>Value__c</columns>
+        <columns>isActive__c</columns>
+        <filterScope>Everything</filterScope>
+        <filters>
+            <field>isActive__c</field>
+            <operation>equals</operation>
+            <value>1</value>
+        </filters>
+        <label>Active</label>
+    </listViews>
+    <listViews>
+        <fullName>Active_Insurance_Quote</fullName>
+        <columns>NAME</columns>
+        <columns>RECORDTYPE</columns>
+        <columns>Object__c</columns>
+        <columns>Field__c</columns>
+        <columns>License_Field__c</columns>
+        <columns>Operator__c</columns>
+        <columns>Value__c</columns>
+        <columns>isActive__c</columns>
+        <filterScope>Everything</filterScope>
+        <filters>
+            <field>isActive__c</field>
+            <operation>equals</operation>
+            <value>1</value>
+        </filters>
+        <filters>
+            <field>Object__c</field>
+            <operation>equals</operation>
+            <value>Insurance_Quote__c</value>
+        </filters>
+        <label>Active Insurance Quote</label>
+    </listViews>
+    <listViews>
+        <fullName>Active_Opportunity</fullName>
+        <columns>NAME</columns>
+        <columns>RECORDTYPE</columns>
+        <columns>Object__c</columns>
+        <columns>Field__c</columns>
+        <columns>License_Field__c</columns>
+        <columns>Operator__c</columns>
+        <columns>Value__c</columns>
+        <columns>isActive__c</columns>
+        <filterScope>Everything</filterScope>
+        <filters>
+            <field>isActive__c</field>
+            <operation>equals</operation>
+            <value>1</value>
+        </filters>
+        <filters>
+            <field>Object__c</field>
+            <operation>equals</operation>
+            <value>Opportunity</value>
+        </filters>
+        <label>Active Opportunity</label>
+    </listViews>
+    <listViews>
+        <fullName>Active_Policy</fullName>
+        <columns>NAME</columns>
+        <columns>RECORDTYPE</columns>
+        <columns>Object__c</columns>
+        <columns>Field__c</columns>
+        <columns>License_Field__c</columns>
+        <columns>Operator__c</columns>
+        <columns>Value__c</columns>
+        <columns>isActive__c</columns>
+        <filterScope>Everything</filterScope>
+        <filters>
+            <field>Object__c</field>
+            <operation>equals</operation>
+            <value>Policy__c</value>
+        </filters>
+        <label>Active Policy</label>
+    </listViews>
+    <listViews>
+        <fullName>All</fullName>
+        <columns>RECORDTYPE</columns>
+        <columns>OBJECT_ID</columns>
+        <columns>NAME</columns>
+        <columns>Field__c</columns>
+        <columns>isActive__c</columns>
+        <columns>License_Field__c</columns>
+        <columns>Object__c</columns>
+        <columns>Operator__c</columns>
+        <columns>Value__c</columns>
+        <columns>UPDATEDBY_USER.ALIAS</columns>
+        <columns>UPDATEDBY_USER</columns>
+        <columns>LAST_UPDATE</columns>
+        <filterScope>Everything</filterScope>
+        <label>All</label>
+    </listViews>
+    <nameField>
+        <label>License Rule Name</label>
+        <type>Text</type>
+    </nameField>
+    <pluralLabel>License Rules</pluralLabel>
+    <recordTypes>
+        <fullName>License_Comparison_Rule</fullName>
+        <active>true</active>
+        <description>If configured, engine will compare license field with the field on the object</description>
+        <label>License Comparison Rule</label>
+        <picklistValues>
+            <picklist>Operator__c</picklist>
+            <values>
+                <fullName>contains</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>does not contain</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>equals</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>greater or equal</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>greater than</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>less or equal</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>less than</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>not blank</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>not equal to</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>starts with</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+    </recordTypes>
+    <recordTypes>
+        <fullName>License_Filter_Rule</fullName>
+        <active>true</active>
+        <description>Filter license records, e.g. for owner&apos;s licenses, only recentlyAdded checkbox is checked then it is a valid license</description>
+        <label>License Filter Rule</label>
+        <picklistValues>
+            <picklist>Operator__c</picklist>
+            <values>
+                <fullName>contains</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>does not contain</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>equals</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>greater or equal</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>greater than</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>in</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>less or equal</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>less than</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>not blank</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>not equal to</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>not in</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>starts with</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+    </recordTypes>
+    <recordTypes>
+        <fullName>License_State_Rule</fullName>
+        <active>true</active>
+        <description>if configured, the owner of the record must have a active license on a particular state</description>
+        <label>License State Rule</label>
+        <picklistValues>
+            <picklist>Operator__c</picklist>
+            <values>
+                <fullName>contains</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>does not contain</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>equals</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>greater or equal</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>greater than</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>less or equal</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>less than</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>not blank</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>not equal to</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>starts with</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+    </recordTypes>
+    <recordTypes>
+        <fullName>Regular_Filter_Rule</fullName>
+        <active>true</active>
+        <description>Defines how to filter object records, e.g: account type=Insurance, only run license control on those records.</description>
+        <label>Regular Filter Rule</label>
+        <picklistValues>
+            <picklist>Operator__c</picklist>
+            <values>
+                <fullName>contains</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>does not contain</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>equals</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>greater or equal</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>greater than</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>in</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>less or equal</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>less than</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>not blank</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>not equal to</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>not in</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>starts with</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+    </recordTypes>
+    <recordTypes>
+        <fullName>Resident_License_Rule</fullName>
+        <active>true</active>
+        <description>If turned on, the owner of the object record must have a resident license.</description>
+        <label>Resident License Rule</label>
+        <picklistValues>
+            <picklist>Operator__c</picklist>
+            <values>
+                <fullName>contains</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>does not contain</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>equals</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>greater or equal</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>greater than</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>less or equal</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>less than</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>not blank</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>not equal to</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>starts with</fullName>
+                <default>false</default>
+            </values>
+        </picklistValues>
+    </recordTypes>
+    <searchLayouts/>
+    <sharingModel>ReadWrite</sharingModel>
+    <validationRules>
+        <fullName>Field_Value_Rule</fullName>
+        <active>true</active>
+        <errorConditionFormula>IF(
+  RecordType.Name = &apos;Regular Filter Rule&apos;, 
+  IF(
+    OR(
+      ISBLANK(Field__c),
+      AND(
+        ISBLANK(Value__c),
+        NOT(ISPICKVAL(Operator__c, &apos;not blank&apos;)) 
+      )
+    ), 
+    true, 
+    false
+  ), 
+  false
+)</errorConditionFormula>
+        <errorMessage>For Regular Filter Rule, you must specify both field and value, unless operator is set to &apos;not blank&apos;</errorMessage>
+    </validationRules>
+    <validationRules>
+        <fullName>License_Field_Field_Rule</fullName>
+        <active>true</active>
+        <errorConditionFormula>IF(
+  RecordType.Name = &apos;License Comparison Rule&apos;,
+    IF(
+      OR(
+        ISBLANK(Field__c),
+        ISBLANK(License_Field__c)
+      ), true, false), false)</errorConditionFormula>
+        <errorMessage>For License Comparison Rule or License State Rule, you must set field and license field.</errorMessage>
+    </validationRules>
+    <validationRules>
+        <fullName>License_Field_Value_Rule</fullName>
+        <active>true</active>
+        <errorConditionFormula>IF( 
+    RecordType.Name = &apos;License Filter Rule&apos;,
+    IF( 
+       OR( 
+          ISBLANK(License_Field__c),
+          AND(
+            ISBLANK(Value__c), 
+            NOT(ISPICKVAL(Operator__c, &apos;not blank&apos;)) 
+          )
+      ), true, false), false)</errorConditionFormula>
+        <errorMessage>For License Filter Rule you must specify both value and license field, unless operator is set to &apos;not blank&apos;</errorMessage>
+    </validationRules>
+    <validationRules>
+        <fullName>License_State_Rule</fullName>
+        <active>true</active>
+        <errorConditionFormula>IF(
+  RecordType.Name = &apos;License State Rule&apos;,
+    IF(
+      OR(
+        ISBLANK(Field__c),
+        License_Field__c&lt;&gt;&apos;State__c&apos;,
+        TEXT(Operator__c)&lt;&gt;&apos;equals&apos;
+      ), true, false), false)</errorConditionFormula>
+        <errorMessage>For License state rule, you must specify field__c and set license_field__c to &apos;State__c&apos; and operator__c to &apos;equals&apos;</errorMessage>
+    </validationRules>
+    <validationRules>
+        <fullName>Resident_License_Rule</fullName>
+        <active>true</active>
+        <errorConditionFormula>IF( 
+    RecordType.Name = &apos;Resident License Rule&apos;,
+    IF( 
+       OR( 
+          Value__c&lt;&gt;&apos;Resident State&apos;, 
+          License_Field__c&lt;&gt;&apos;RecordType.Name&apos;,
+          TEXT(Operator__c)&lt;&gt;&apos;equals&apos;
+      ), true, false), false)</errorConditionFormula>
+        <errorMessage>Resident License Rule has preset value as follows: value__c=&apos;Resident State&apos;, license_field__c=&apos;RecordType.Name&apos;, operator__c=&apos;equals&apos;, please do not change these field values.</errorMessage>
+    </validationRules>
+</CustomObject>

@@ -1,0 +1,14 @@
+<apex:page standardController="License__c" extensions="LicenseController">
+    <apex:form >
+        <apex:pageBlock mode="maindetail">
+            <apex:pageBlockSection >
+                <apex:pageBlockSectionItem >
+                    <apex:outputLabel value="Insurance License as PDF" />
+                    <apex:outputPanel >
+                        <apex:outputLink rendered="{!NOT(ISNULL(licensePDF.Id))}" value="{!URLFOR($Action.Attachment.Download, licensePDF.Id)}" target="_blank">{!licensePDF.Name}</apex:outputLink>            
+                    </apex:outputPanel>
+                </apex:pageBlockSectionItem>
+            </apex:pageBlockSection>
+        </apex:pageBlock>
+    </apex:form>
+</apex:page>

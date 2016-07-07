@@ -127,20 +127,6 @@
         <triggerType>onAllChanges</triggerType>
     </rules>
     <rules>
-        <fullName>License %23 Reminder</fullName>
-        <active>true</active>
-        <formula>AND(   NOT(ISBLANK(Confirmation_ID__c)),   ISBLANK(Number__c),   Owner:User.IsActive = true  )</formula>
-        <triggerType>onCreateOrTriggeringUpdate</triggerType>
-        <workflowTimeTriggers>
-            <actions>
-                <name>Populate_License</name>
-                <type>Alert</type>
-            </actions>
-            <timeLength>7</timeLength>
-            <workflowTimeTriggerUnit>Days</workflowTimeTriggerUnit>
-        </workflowTimeTriggers>
-    </rules>
-    <rules>
         <fullName>License Expiring Soon - N days</fullName>
         <active>true</active>
         <formula>AND(   Status__c = &apos;Active&apos;,   NOT(ISBLANK(Expiration_Date__c)),   Owner:User.IsActive )</formula>

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<CustomObject xmlns="http://soap.sforce.com/2006/04/metadata">
+<CustomObject xmlns="http://soap.sforce.com/2006/04/metadata" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
     <actionOverrides>
         <actionName>Accept</actionName>
         <type>Default</type>
@@ -63,15 +63,11 @@
     <enableSearch>true</enableSearch>
     <enableSharing>true</enableSharing>
     <enableStreamingApi>true</enableStreamingApi>
-    <fields>
-        <fullName>Application_Date__c</fullName>
-        <externalId>false</externalId>
-        <label>Application Date</label>
-        <required>false</required>
-        <trackHistory>true</trackHistory>
-        <trackTrending>false</trackTrending>
-        <type>Date</type>
-    </fields>
+    <fieldSets>
+        <fullName>Custom_License_Fields</fullName>
+        <description>package will override license list and new, edit page, if you want to show your custom fields, please put into this set.</description>
+        <label>Custom License Fields</label>
+    </fieldSets>
     <fields>
         <fullName>Approved__c</fullName>
         <defaultValue>false</defaultValue>
@@ -82,39 +78,12 @@
         <type>Checkbox</type>
     </fields>
     <fields>
-        <fullName>Casualty__c</fullName>
-        <externalId>false</externalId>
-        <label>Casualty</label>
-        <summaryFilterItems>
-            <field>Line_of_Authority__c.Casualty__c</field>
-            <operation>equals</operation>
-            <value>True</value>
-        </summaryFilterItems>
-        <summaryForeignKey>Line_of_Authority__c.License__c</summaryForeignKey>
-        <summaryOperation>count</summaryOperation>
-        <trackHistory>false</trackHistory>
-        <trackTrending>false</trackTrending>
-        <type>Summary</type>
-    </fields>
-    <fields>
         <fullName>Class__c</fullName>
         <externalId>false</externalId>
         <label>Class</label>
         <length>255</length>
         <required>false</required>
         <trackHistory>false</trackHistory>
-        <trackTrending>false</trackTrending>
-        <type>Text</type>
-        <unique>false</unique>
-    </fields>
-    <fields>
-        <fullName>Confirmation_ID__c</fullName>
-        <externalId>false</externalId>
-        <inlineHelpText>If license is still pending, then provide your application confirmation number</inlineHelpText>
-        <label>Confirmation ID Number</label>
-        <length>255</length>
-        <required>false</required>
-        <trackHistory>true</trackHistory>
         <trackTrending>false</trackTrending>
         <type>Text</type>
         <unique>false</unique>
@@ -147,36 +116,6 @@
         <type>Checkbox</type>
     </fields>
     <fields>
-        <fullName>Health__c</fullName>
-        <externalId>false</externalId>
-        <label>Health</label>
-        <summaryFilterItems>
-            <field>Line_of_Authority__c.Health__c</field>
-            <operation>equals</operation>
-            <value>True</value>
-        </summaryFilterItems>
-        <summaryForeignKey>Line_of_Authority__c.License__c</summaryForeignKey>
-        <summaryOperation>count</summaryOperation>
-        <trackHistory>false</trackHistory>
-        <trackTrending>false</trackTrending>
-        <type>Summary</type>
-    </fields>
-    <fields>
-        <fullName>Life__c</fullName>
-        <externalId>false</externalId>
-        <label>Life</label>
-        <summaryFilterItems>
-            <field>Line_of_Authority__c.Life__c</field>
-            <operation>equals</operation>
-            <value>True</value>
-        </summaryFilterItems>
-        <summaryForeignKey>Line_of_Authority__c.License__c</summaryForeignKey>
-        <summaryOperation>count</summaryOperation>
-        <trackHistory>false</trackHistory>
-        <trackTrending>false</trackTrending>
-        <type>Summary</type>
-    </fields>
-    <fields>
         <fullName>Manager_Email__c</fullName>
         <externalId>false</externalId>
         <label>Manager Email</label>
@@ -201,7 +140,7 @@
         <fullName>NPN_Number_Formula__c</fullName>
         <externalId>false</externalId>
         <formula>IF(RecordType.Name = &apos;Non-Resident State&apos;, Resident_License__r.NPN_Number__c, NPN_Number__c)</formula>
-        <label>NPN Number</label>
+        <label>NPN Number (Resident License)</label>
         <required>false</required>
         <trackHistory>false</trackHistory>
         <trackTrending>false</trackTrending>
@@ -247,21 +186,6 @@
         <trackHistory>true</trackHistory>
         <trackTrending>false</trackTrending>
         <type>Checkbox</type>
-    </fields>
-    <fields>
-        <fullName>Property__c</fullName>
-        <externalId>false</externalId>
-        <label>Property</label>
-        <summaryFilterItems>
-            <field>Line_of_Authority__c.Property__c</field>
-            <operation>equals</operation>
-            <value>True</value>
-        </summaryFilterItems>
-        <summaryForeignKey>Line_of_Authority__c.License__c</summaryForeignKey>
-        <summaryOperation>count</summaryOperation>
-        <trackHistory>false</trackHistory>
-        <trackTrending>false</trackTrending>
-        <type>Summary</type>
     </fields>
     <fields>
         <fullName>Resident_License__c</fullName>
@@ -546,20 +470,12 @@
         <fullName>Type__c</fullName>
         <externalId>false</externalId>
         <label>Type</label>
-        <picklist>
-            <picklistValues>
-                <fullName>Health</fullName>
-                <default>false</default>
-            </picklistValues>
-            <picklistValues>
-                <fullName>P&amp;C</fullName>
-                <default>false</default>
-            </picklistValues>
-            <sorted>false</sorted>
-        </picklist>
+        <length>255</length>
+        <required>false</required>
         <trackHistory>true</trackHistory>
         <trackTrending>false</trackTrending>
-        <type>Picklist</type>
+        <type>Text</type>
+        <unique>false</unique>
     </fields>
     <label>Insurance License</label>
     <listViews>
@@ -786,17 +702,6 @@
                 <default>false</default>
             </values>
         </picklistValues>
-        <picklistValues>
-            <picklist>Type__c</picklist>
-            <values>
-                <fullName>Health</fullName>
-                <default>true</default>
-            </values>
-            <values>
-                <fullName>P%26C</fullName>
-                <default>false</default>
-            </values>
-        </picklistValues>
     </recordTypes>
     <recordTypes>
         <fullName>Resident_State</fullName>
@@ -806,7 +711,19 @@
         <picklistValues>
             <picklist>State__c</picklist>
             <values>
+                <fullName>Alabama</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Alaska</fullName>
+                <default>false</default>
+            </values>
+            <values>
                 <fullName>Arizona</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Arkansas</fullName>
                 <default>false</default>
             </values>
             <values>
@@ -814,7 +731,35 @@
                 <default>false</default>
             </values>
             <values>
+                <fullName>Colorado</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Connecticut</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Delaware</fullName>
+                <default>false</default>
+            </values>
+            <values>
                 <fullName>District of Columbia</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Florida</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Georgia</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Hawaii</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Idaho</fullName>
                 <default>false</default>
             </values>
             <values>
@@ -822,22 +767,151 @@
                 <default>false</default>
             </values>
             <values>
+                <fullName>Indiana</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Iowa</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Kansas</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Kentucky</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Louisiana</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Maine</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Maryland</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Massachusetts</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Michigan</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Minnesota</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Mississippi</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Missouri</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Montana</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Nebraska</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Nevada</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>New Hampshire</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>New Jersey</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>New Mexico</fullName>
+                <default>false</default>
+            </values>
+            <values>
                 <fullName>New York</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>North Carolina</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>North Dakota</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Ohio</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Oklahoma</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Oregon</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Pennsylvania</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Rhode Island</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>South Carolina</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>South Dakota</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Tennessee</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Texas</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Utah</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Vermont</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Virginia</fullName>
                 <default>false</default>
             </values>
             <values>
                 <fullName>Washington</fullName>
                 <default>false</default>
             </values>
-        </picklistValues>
-        <picklistValues>
-            <picklist>Type__c</picklist>
             <values>
-                <fullName>Health</fullName>
-                <default>true</default>
+                <fullName>West Virginia</fullName>
+                <default>false</default>
             </values>
             <values>
-                <fullName>P%26C</fullName>
+                <fullName>Wisconsin</fullName>
+                <default>false</default>
+            </values>
+            <values>
+                <fullName>Wyoming</fullName>
                 <default>false</default>
             </values>
         </picklistValues>
@@ -855,21 +929,9 @@
         <searchResultsAdditionalFields>Effective_Date__c</searchResultsAdditionalFields>
         <searchResultsAdditionalFields>Expiration_Date__c</searchResultsAdditionalFields>
         <searchResultsAdditionalFields>Force_Expire__c</searchResultsAdditionalFields>
-        <searchResultsAdditionalFields>Application_Date__c</searchResultsAdditionalFields>
+        <searchResultsAdditionalFields xsi:nil="true"/>
     </searchLayouts>
     <sharingModel>Read</sharingModel>
-    <validationRules>
-        <fullName>Confirmation_ID_required</fullName>
-        <active>true</active>
-        <errorConditionFormula>AND(
-  NOT(ISCHANGED(Resident_License__c)),
-  NOT(ISCHANGED(Force_Expire__c)),
-  ISBLANK(Confirmation_ID__c),
-  ISBLANK(Number__c)
-)</errorConditionFormula>
-        <errorDisplayField>Confirmation_ID__c</errorDisplayField>
-        <errorMessage>Confirmation ID required</errorMessage>
-    </validationRules>
     <validationRules>
         <fullName>Expiration_greater_then_Effective</fullName>
         <active>true</active>
@@ -881,20 +943,6 @@
 )</errorConditionFormula>
         <errorDisplayField>Expiration_Date__c</errorDisplayField>
         <errorMessage>Expiration Date must be greater than Effective Date</errorMessage>
-    </validationRules>
-    <validationRules>
-        <fullName>License_Application_Date_required</fullName>
-        <active>true</active>
-        <errorConditionFormula>AND(
-    NOT(ISCHANGED(Resident_License__c)),
-    NOT(ISCHANGED(Force_Expire__c)),
-    ISBLANK(Number__c),
-    ISBLANK(Application_Date__c),
-    $UserRole.Name != &apos;Admin&apos;,
-    TODAY() &lt;= DATE(2015, 12, 10) 
-)</errorConditionFormula>
-        <errorDisplayField>Application_Date__c</errorDisplayField>
-        <errorMessage>License Application Date required if no License Number provided</errorMessage>
     </validationRules>
     <validationRules>
         <fullName>License_Dates_required</fullName>

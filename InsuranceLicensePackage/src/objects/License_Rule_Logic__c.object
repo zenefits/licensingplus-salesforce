@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomObject xmlns="http://soap.sforce.com/2006/04/metadata">
+    <actionOverrides>
+        <actionName>Accept</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>CancelEdit</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>Clone</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>Delete</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>Edit</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>Follow</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>List</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>New</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>SaveEdit</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>Tab</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>View</actionName>
+        <type>Default</type>
+    </actionOverrides>
+    <allowInChatterGroups>false</allowInChatterGroups>
+    <compactLayoutAssignment>SYSTEM</compactLayoutAssignment>
+    <deploymentStatus>Deployed</deploymentStatus>
+    <enableActivities>false</enableActivities>
+    <enableBulkApi>true</enableBulkApi>
+    <enableFeeds>false</enableFeeds>
+    <enableHistory>false</enableHistory>
+    <enableReports>false</enableReports>
+    <enableSearch>true</enableSearch>
+    <enableSharing>true</enableSharing>
+    <enableStreamingApi>true</enableStreamingApi>
+    <fields>
+        <fullName>Filter_Rule__c</fullName>
+        <deleteConstraint>SetNull</deleteConstraint>
+        <externalId>false</externalId>
+        <label>Filter Rule</label>
+        <referenceTo>License_Rule_Logic__c</referenceTo>
+        <relationshipLabel>License Rule Logics (Filter Rule)</relationshipLabel>
+        <relationshipName>Filter_Rules</relationshipName>
+        <required>false</required>
+        <trackTrending>false</trackTrending>
+        <type>Lookup</type>
+    </fields>
+    <fields>
+        <fullName>Logic__c</fullName>
+        <externalId>false</externalId>
+        <label>Logic</label>
+        <length>255</length>
+        <required>true</required>
+        <trackTrending>false</trackTrending>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Object__c</fullName>
+        <externalId>false</externalId>
+        <label>Object</label>
+        <length>255</length>
+        <required>true</required>
+        <trackTrending>false</trackTrending>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>isActive__c</fullName>
+        <defaultValue>false</defaultValue>
+        <externalId>false</externalId>
+        <label>isActive</label>
+        <trackTrending>false</trackTrending>
+        <type>Checkbox</type>
+    </fields>
+    <label>License Rule Logic</label>
+    <listViews>
+        <fullName>All</fullName>
+        <columns>NAME</columns>
+        <columns>Object__c</columns>
+        <columns>isActive__c</columns>
+        <columns>Logic__c</columns>
+        <columns>RECORDTYPE</columns>
+        <columns>LAST_UPDATE</columns>
+        <columns>Filter_Rule__c</columns>
+        <filterScope>Everything</filterScope>
+        <label>All</label>
+    </listViews>
+    <nameField>
+        <label>License Rule Logic Name</label>
+        <type>Text</type>
+    </nameField>
+    <pluralLabel>License Rule Logics</pluralLabel>
+    <recordTypes>
+        <fullName>Filter_Rule</fullName>
+        <active>true</active>
+        <description>rule logic to filter records</description>
+        <label>Filter Rule</label>
+    </recordTypes>
+    <recordTypes>
+        <fullName>License_Rule</fullName>
+        <active>true</active>
+        <description>rule logic to filter license records</description>
+        <label>License Rule</label>
+    </recordTypes>
+    <searchLayouts/>
+    <sharingModel>ReadWrite</sharingModel>
+    <validationRules>
+        <fullName>Filter_Rule</fullName>
+        <active>true</active>
+        <errorConditionFormula>IF( 
+    RecordType.Name = &apos;Filter Rule&apos;, 
+    IF(  
+       NOT(ISBLANK(Filter_Rule__c))
+    , true, false), false)</errorConditionFormula>
+        <errorMessage>For filter rule logic, do not set Filter_Logic__c field</errorMessage>
+    </validationRules>
+</CustomObject>

@@ -1,39 +1,173 @@
-public abstract with sharing class LicenseRuleValidator {
+public with sharing class LicenseRuleValidator extends RuleValidator{
     
-    public enum LicenseRuleError {
-    	CRL_QUERY_EXCEPTION,
-    	CRL_NO_RULE_LOGIC_FOUND,
-    	CRL_ACTIVE_RULE_MISSING,
-    	CRL_RULE_LOGIC_FOUND,
-    	UNDEFINED_SOBJECT_TYPE,
-    	UNDEFINED_SOBJECT_FIELD,
-		SR_STATE_FIELD_NOT_VALID,
-		S_NO_ACTIVE_STATE_LICENSE,
-    	C_RULE_CHECK_FAILED,
-    	C_RULE_OPERATOR_NOT_MATCH_FIELD_TYPE,
-    	C_RULE_FIELD_VALUE_NOT_MATCH_FIELD_TYPE
-    }
+    private static final Set<String> WILD_CARD_OPERATORS = new Set<String> {
+    	'starts with',
+    	'contains',
+    	'does not contain'
+    };
     
-    public static final Map<LicenseRuleError, String> errorMessageByType = new Map<LicenseRuleError, String>();
+    private static final Set<String> COLLECTION_OPERATORS = new Set<String> {
+    	'in',
+    	'not in'
+    };
     
-    static {
-    	errorMessageByType.put(LicenseRuleError.CRL_QUERY_EXCEPTION, 'There are some issues on your custom license rules configuration for sObject {0} with logic {1}');
-    	errorMessageByType.put(LicenseRuleError.CRL_NO_RULE_LOGIC_FOUND, 'Active custom license rules found, but no custom license rule logic found for sObject {0}, pleease create the logic');
-    	errorMessageByType.put(LicenseRuleError.CRL_RULE_LOGIC_FOUND, 'No active custom license rules found, but custom license rule logic found for sObject {0}, please delete the logic');
-    	errorMessageByType.put(LicenseRuleError.CRL_ACTIVE_RULE_MISSING, 'Active Control Rule not included in the logic, logic - {0}, rule id - {1}');
-    	errorMessageByType.put(LicenseRuleError.UNDEFINED_SOBJECT_TYPE, 'SObject - {0} cannot be found, it is not configured on this org.');
-    	errorMessageByType.put(LicenseRuleError.UNDEFINED_SOBJECT_FIELD, 'Field - {0} on SObject - {1} cannot be found, it is not configured on this org.');
-    	errorMessageByType.put(LicenseRuleError.SR_STATE_FIELD_NOT_VALID, 'State Rule field - {0} on object - {1} is not string type');
-    	errorMessageByType.put(LicenseRuleError.S_NO_ACTIVE_STATE_LICENSE, 'Owner does not have an active license in state - {0}, fieldName - {1}');
-    	errorMessageByType.put(LicenseRuleError.C_RULE_CHECK_FAILED, 'Custom license rule check failed, please check whether data matches custom license rules');
-    	errorMessageByType.put(LicenseRuleError.C_RULE_OPERATOR_NOT_MATCH_FIELD_TYPE, 'Operator - {0} can not be applied to field - {1} on sObject - {2} or referecnce field - {3}');
-    	errorMessageByType.put(LicenseRuleError.C_RULE_FIELD_VALUE_NOT_MATCH_FIELD_TYPE, 'Field value - {0} can not be applied to field type - {1} for field - {2} on sObject - {3} or referecnce field - {4}');
-    }
-    
-    protected final LicenseRuleHelper ruleHelper;
     
     public LicenseRuleValidator(LicenseRuleHelper ruleHelper) {
-    	this.ruleHelper = ruleHelper;
+    	super(ruleHelper);
+    }
+    
+    public void validate(License_Rule__c rule, Map<String, Map<String, Schema.SobjectField>> objFieldsByName) {
+    	if (rule.recordTypeId == LicenseRuleHelper.regularFilterRuleRecordTypeId) {
+    		validateRegularFilterRule(rule, objFieldsByName);
+    	} else if (rule.recordTypeId == LicenseRuleHelper.licenseFilterRuleRecordTypeId) {
+    		validateLicenseFilterRule(rule, objFieldsByName);
+    	} else if (rule.recordTypeId == LicenseRuleHelper.licenseComparisonRuleRecordTypeId) {
+    		validateLicenseComparisonRule(rule, objFieldsByName);
+    	}	
+    }
+    
+    private void validateFilterRule(License_Rule__c rule, Map<String, Map<String, Schema.SobjectField>> objFieldsByName, Boolean isRegularFilterRule) {
+    	String objName = isRegularFilterRule ? rule.object__c : 'License__c';
+    	String operator = rule.operator__c;
+    	String fieldName = isRegularFilterRule ? rule.field__c : rule.license_field__c;
+    	String fieldValue = rule.value__c;
+    	  			
+		// do not validate 'not blank' operator
+		if (operator == 'not blank') {
+			return;
+		}
+    	
+    	//validate sobject and field is defined
+    	Schema.SobjectField objField = ruleHelper.validateAndGetSObjectField(objName, null, fieldName, objFieldsByName);		
+		Schema.DescribeFieldResult f = objField.getDescribe();
+		
+		//validate operator matches field type
+		String errorMessage = RuleValidator.errorMessageByType.get(RuleValidator.RuleError.OPERATOR_NOT_MATCH_FIELD_TYPE);
+		if (!validateOperatorFieldType(operator, f.getType())) {			
+			throw new LicenseRuleException(String.format(errorMessage, new String[]{operator, fieldName, objName, ''}));
+		}
+		
+		errorMessage = RuleValidator.errorMessageByType.get(RuleValidator.RuleError.FIELD_VALUE_NOT_MATCH_FIELD_TYPE);
+		//validate field value matches field type
+		if (SObjectUtils.isBooleanType(f.getType())) {
+			if (!validateBooleanField(fieldValue)) {
+				throw new LicenseRuleException(String.format(errorMessage, new String[]{fieldValue, 'Boolean', fieldName, objName}));
+			}
+		} else if (SObjectUtils.isNumberType(f.getType())) {
+			if (!validateNumberField(fieldValue)) {
+				throw new LicenseRuleException(String.format(errorMessage, new String[]{fieldValue, 'Number', fieldName, objName}));
+			}
+		} else if (SObjectUtils.isDateType(f.getType())) {
+			if (!validateDateField(fieldValue)) {
+				throw new LicenseRuleException(String.format(errorMessage, new String[]{fieldValue, 'Date', fieldName, objName}));
+			}
+		} else if (SObjectUtils.isDatetimeType(f.getType())) {
+			if (!validateDatetimeField(fieldValue)) {
+				throw new LicenseRuleException(String.format(errorMessage, new String[]{fieldValue, 'Datetime', fieldName, objName}));
+			}
+		}		
+    }
+    
+    private boolean validateBooleanField(String value) {
+    	Boolean result = true;   	
+    	if (value != 'true' && value != 'false') {
+    		LicenseRuleHelper.logInfo('LicenseRuleValidator', 'validateBooleanField', 'invalid boolean field value - ' + value);
+    		result = false;
+    	}
+    	
+    	return result;
+    }
+    
+    private Boolean validateNumberField(String value) {
+    	Boolean result = true;
+    	try {
+    		Decimal.valueOf(value);
+    	} catch (TypeException e) {
+    		LicenseRuleHelper.logInfo('LicenseRuleValidator', 'validateNumberField', 'invalid number field value - ' + value);
+    		result = false;
+    	}
+    	return result;
+    }
+    
+    //Date should be passed in the format of 'YYYY-MM-DD' 
+    private boolean validateDateField(String value) {
+    	Boolean result = true;
+    	try {
+    		Date.valueOf(value);
+    	} catch (TypeException e) {
+    		LicenseRuleHelper.logInfo('LicenseRuleValidator', 'validateDateField', 'invalid date field value - ' + value);
+    		result = false;
+    	}
+    	return result;
+    }
+    
+    //Datetime should be passed in the format of 'YYYY-MM-DDThh:mm:ssZ' 
+    private boolean validateDatetimeField(String value) {
+    	Boolean result = true;
+    	try {
+    		Datetime.valueOf(value.replace('T',' ').replace('Z',''));
+    	} catch (TypeException e) {
+    		LicenseRuleHelper.logInfo('LicenseRuleValidator', 'validateDatetimeField', 'invalid datetime field value - ' + value);
+    		result = false;
+    	}
+    	return result;
+    }
+    
+    /**
+     operator__c field supported values:
+     	equals 
+     	greater than (only allow date and number display type)
+     	greater or equal (only allow date and number display type)
+     	less than (only allow date and number display type)
+     	less or equal (only allow date and number display type)
+     	not equal to
+     	starts with (only allow string type)
+     	contains (only allow string type)
+     	does not contain (only allow string type)
+     	in (only allow string and reference type)
+     	not in (only allow string and reference type)
+     	not blank
+     **/
+     
+     private boolean validateOperatorFieldType(String operator, Schema.DisplayType fieldType) {     	
+     	if (WILD_CARD_OPERATORS.contains(operator)) {
+     		return SObjectUtils.isStringOrReferenceType(fieldType);
+     	}
+     	
+     	if (COLLECTION_OPERATORS.contains(operator)) {
+     		return SObjectUtils.isStringOrReferenceType(fieldType) || SObjectUtils.isNumberType(fieldType);
+     	}
+     	
+     	return true;
+     }
+    
+    private void validateRegularFilterRule(License_Rule__c rule, Map<String, Map<String, Schema.SobjectField>> objFieldsByName) {
+    	validateFilterRule(rule, objFieldsByName, true);
+    }
+    
+    private void validateLicenseFilterRule(License_Rule__c rule, Map<String, Map<String, Schema.SobjectField>> objFieldsByName) {
+    	validateFilterRule(rule, objFieldsByName, false);
+    }
+    
+    private void validateLicenseComparisonRule(License_Rule__c rule, Map<String, Map<String, Schema.SobjectField>> objFieldsByName) {
+    	String objName = rule.object__c;
+    	String operator = rule.operator__c;
+    	String fieldName = rule.field__c;
+    	String licenseFieldName = rule.license_field__c;
+    	
+    	//validate sobject and field is defined
+    	Schema.SobjectField objField = ruleHelper.validateAndGetSObjectField(objName, null, fieldName, objFieldsByName);		
+		Schema.DescribeFieldResult objF = objField.getDescribe();
+		
+		Schema.SobjectField licenseField = ruleHelper.validateAndGetSObjectField('License__c', null, licenseFieldName, objFieldsByName);		
+		Schema.DescribeFieldResult licenseF = licenseField.getDescribe();
+		
+		SObjectUtils.FIELD_TYPE licenseFtype = SObjectUtils.getFieldType(licenseF.getType());
+		SObjectUtils.FIELD_TYPE objFtype = SObjectUtils.getFieldType(objF.getType());
+		if (licenseFtype!=objFtype) {
+			String errorMessage = RuleValidator.errorMessageByType.get(RuleValidator.RuleError.FIELD_TYPE_NOT_MATCH_LICENSE_FIELD_TYPE);
+			throw new LicenseRuleException(String.format(errorMessage, new String[]{fieldName, objFtype.name(), licenseFieldName, licenseFtype.name(), objName}));
+		}  	
     }
 	
 }

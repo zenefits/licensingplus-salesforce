@@ -1,4 +1,4 @@
-global class LicensingUtils {
+global with sharing class LicensingUtils {
 	
 	private static final LicenseRuleHelper ruleHelper = new LicenseRuleHelper();
 	private static final LicenseRuleChecker ruleChecker = new LicenseRuleChecker(ruleHelper);
@@ -18,12 +18,8 @@ global class LicensingUtils {
         'WI' => 'Wisconsin', 'WV' => 'West Virginia', 'WY' => 'Wyoming'
     };
     
-    global static void checkSObjectLicenseRules(Map<Id, SObject> newObjsById, String objName) {
-    	// check sObject custom rules    	
-    	List<SObject> filteredObjs = ruleChecker.checkCustomLicenseRules(newObjsById, objName);
-    	
-    	// check sObject standard rules
-    	ruleChecker.checkStandardLicenseRules(filteredObjs, objName);
+    global static void checkSObjectLicenseRules(Map<Id, SObject> newObjsById, String objName) {    	
+    	ruleChecker.checkLicenseRules(newObjsById, objName);
     }
 
 }

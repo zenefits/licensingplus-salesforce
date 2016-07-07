@@ -5,26 +5,36 @@
         <name>ApexClass</name>
     </types>
     <types>
-        <members>License_Edit</members>
-        <members>License_List</members>
-        <members>License_Messages</members>
-        <members>License_View</members>
+        <members>*</members>
         <name>ApexPage</name>
     </types>
     <types>
-        <members>*</members>
+        <members>AccountLicenseTrigger</members>
+        <members>CaseLicenseTrigger</members>
+        <members>LicenseRuleLogicTrigger</members>
+        <members>LicenseRuleTrigger</members>
+        <members>LicenseTrigger</members>
+        <members>OpportunityLicenseTrigger</members>
         <name>ApexTrigger</name>
     </types>
     <types>
-        <members>*</members>
-        <name>ApprovalProcess</name>
+        <members>License_Compliance</members>
+        <name>CustomApplication</name>
     </types>
     <types>
-        <members>*</members>
+        <members>Checklist__c</members>
+        <members>License_Rule_Logic__c</members>
+        <members>License_Rule__c</members>
+        <members>License__c</members>
+        <members>Line_of_Authority__c</members>
+        <members>Lines_of_Authority__c</members>
         <name>CustomObject</name>
     </types>
     <types>
-        <members>*</members>
+        <members>License_Admin</members>
+        <members>License_Rule_Logic__c</members>
+        <members>License_Rule__c</members>
+        <members>License__c</members>
         <name>CustomTab</name>
     </types>
     <types>
@@ -47,6 +57,10 @@
         <members>Line_of_Authority__c-Line of Authority Layout</members>
         <members>Line_of_Authority__c-Non-Admin Layout</members>
         <name>Layout</name>
+    </types>
+    <types>
+        <members>*</members>
+        <name>StaticResource</name>
     </types>
     <types>
         <members>License__c</members>
