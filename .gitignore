@@ -33,6 +33,7 @@ InsuranceLicensePackage/uis/admin-app/node_modules
 InsuranceLicensePackage/uis/admin-app/resource-bundles/
 #.resource is also compiled and generated file
 InsuranceLicensePackage/uis/admin-app/dist/
+InsuranceLicensePackage/uis/admin-app/.babelrc
 coverage/
 
 # Mavensmate
