@@ -1,7 +1,7 @@
 public class LicenseTriggerHandler {
     
-    static Id residentLicenseType = Schema.SObjectType.License__c.getRecordTypeInfosByName().get('Resident State').getRecordTypeId();
-    static Id nonResidentLicenseType = Schema.SObjectType.License__c.getRecordTypeInfosByName().get('Non-Resident State').getRecordTypeId();
+    public static Id residentLicenseType = Schema.SObjectType.License__c.getRecordTypeInfosByName().get('Resident State').getRecordTypeId();
+    public static Id nonResidentLicenseType = Schema.SObjectType.License__c.getRecordTypeInfosByName().get('Non-Resident State').getRecordTypeId();
     
     //On license insertion, set Type and resident license and do some validation
     public static void setTypeAndResidentLicense(List<License__c> newList) {

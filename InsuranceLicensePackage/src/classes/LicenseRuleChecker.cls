@@ -1,110 +1,340 @@
 public with sharing class LicenseRuleChecker {
 	
-    public final LicenseRuleHelper ruleHelper;       
+    private final LicenseRuleHelper ruleHelper;
     
     public LicenseRuleChecker (LicenseRuleHelper ruleHelper) {
     	this.ruleHelper = ruleHelper;
     }
     
-    private void checkStateRule(String fieldName, List<SObject> objs) {
-    	Set<String> ownerIds = new Set<String>();
-		for (SObject obj : objs) {
-			ownerIds.add(String.valueOf(obj.get('OwnerId')));	
-		}
-		
-		Map<String, Set<String>> statesByOwnerId = ruleHelper.constructLicenseStateByOwnerId(ownerIds);
-		
-		for (SObject obj : objs) {
-			String ownerId = String.valueOf(obj.get('OwnerId'));
-			Set<String> states = statesByOwnerId.get(ownerId);
-			
-			String errorMessage = LicenseRuleValidator.errorMessageByType.get(LicenseRuleValidator.LicenseRuleError.S_NO_ACTIVE_STATE_LICENSE);
-			if (obj.get(fieldName) == null) {
-				obj.addError(String.format(errorMessage, new String[]{'', fieldName}));
-			} else {
-				String stateValue = String.valueOf(obj.get(fieldName));
-				if (LicensingUtils.stateMap.get(stateValue) != null) {
-					stateValue = LicensingUtils.stateMap.get(stateValue);
-				}
-		
-				errorMessage = String.format(errorMessage, new String[]{stateValue, fieldName});
-				if (states == null) {
-					obj.addError(errorMessage);
-				} else {
-					if (!states.contains(stateValue.toLowerCase())) {
-						obj.addError(errorMessage);
-					}
-				}	
-			}					
-		}  		
-    }
-    
-   public void checkStandardLicenseRules(List<SObject> objs, String objName) {
-		List<Standard_License_Rule__c> standardControlRules = [SELECT id, field__c, object__c, type__c FROM Standard_License_Rule__c 
-    															WHERE object__c=:objName AND isActive__c = true
-    															ORDER BY type__c desc, lastmodifieddate asc];
-    															
-		for (Standard_License_Rule__c rule : standardControlRules) {
-			String ruleType = rule.type__c;
-			if (StandardLicenseRuleValidator.STATE_RULE.equalsIgnoreCase(ruleType)) {
-				checkStateRule(rule.field__c, objs);
-			}
-		}
-    }
-    
-   public List<SObject> checkCustomLicenseRules(Map<Id, SObject> objById, String objName) {
-    	List<Custom_License_Rule__c> rules = [SELECT id, field__c, object__c, operator__c, reference_field__c, value__c FROM custom_license_rule__c WHERE isActive__c=true AND object__c=:objName]; 	
-    	List<Custom_License_Rule_Logic__c> ruleLogics = [SELECT id, object__c, logic__c FROM custom_license_rule_logic__c WHERE object__c=:objName order by lastmodifieddate limit 1];	
-    	List<SObject> filteredObjs = new List<SObject>();
-    	String customQueryTemplate = 'SELECT id FROM {0} WHERE id in ({1}) AND ({2})';
-    	if (!rules.isEmpty()) {
-    		if (!ruleLogics.isEmpty()) {  			
-    			Custom_License_Rule_Logic__c ruleLogic = ruleLogics.get(0);   			
-    			String formattedRules = ruleHelper.getFormattedRules(rules, ruleLogic);
-				Set<Id> objIds = objById.keySet();
-    			
-    			//TODO - fix dynamic SOQL injection
-    			String customQuery = String.format(customQueryTemplate, new String[]{objName, LicenseRuleHelper.setToStringWithQuotes(objIds), formattedRules});   			
-    			LicenseRuleHelper.logInfo('LicenseRuleChecker', 'checkCustomLicenseRules', 'QUERY - ' + customQuery);
-    			try {
-    				List<SObject> filteredResults = Database.query(customQuery); 
-    				Set<String> filteredObjIds = new Set<String>();
-    				
-	    			// ADDING ERRORS FOR FILTERED OUT SOBJECTS
-	    			for (SObject filterResult : filteredResults) {
-	    				filteredObjIds.add(String.valueOf(filterResult.get('Id')));
-	    			}
-	    			
-					for (Id id : objById.keySet()) {
-						SObject obj = objById.get(id);
-						// valid license
-						if (filteredObjIds.contains(id)) {
-							filteredObjs.add(obj);					
-						} else {
-							String errorMessage = LicenseRuleValidator.errorMessageByType.get(LicenseRuleValidator.LicenseRuleError.C_RULE_CHECK_FAILED);
-							obj.addError(errorMessage);
-						}
-					}
-    			} catch (QueryException e) {
-    				LicenseRuleHelper.logInfo('LicenseRuleChecker', 'checkCustomLicenseRules', 'QueryException errorMessage: ' + e.getMessage());
-    				String errorMessage = LicenseRuleValidator.errorMessageByType.get(LicenseRuleValidator.LicenseRuleError.CRL_QUERY_EXCEPTION);
-    				throw new LicenseRuleException(String.format(errorMessage, new String[]{objName, formattedRules}), e);
-    			}			
-    			
-    		} else {
-    			String errorMessage = LicenseRuleValidator.errorMessageByType.get(LicenseRuleValidator.LicenseRuleError.CRL_NO_RULE_LOGIC_FOUND);
-    			throw new LicenseRuleException(String.format(errorMessage, new String[]{objName}));
+    private String getOwnerId(SObject obj) {
+    	Object ownerIdObj = null;
+    	try {
+    		ownerIdObj = obj.get('OwnerId');
+    	} catch (SObjectException e) {
+    		try {
+    			ownerIdObj = obj.get('OwnerId__c');
+    		} catch (SObjectException se) {
+    			LicenseRuleHelper.logInfo('LicenseRuleChecker', 'getOwnerId', 'no owner id column on sobject');
+    			System.debug(se);
     		}
-    	} else {
-    		if (!ruleLogics.isEmpty()) {
-    			String errorMessage = LicenseRuleValidator.errorMessageByType.get(LicenseRuleValidator.LicenseRuleError.CRL_RULE_LOGIC_FOUND);
-    			throw new LicenseRuleException(String.format(errorMessage, new String[]{ruleLogics.get(0).object__c}));
-    		}
-    		
-    		filteredObjs = objById.values();
     	}
     	
+    	return (ownerIdObj==null) ? null : (String)ownerIdObj;
+    }
+    
+    private void validateLicenseRule(Map<String, Set<License__c>> licensesByOwnerId,
+    						Map<String, Set<Id>> objIdsByFilterRuleLogicId,
+    						Map<String, String> licenseRuleLogicIdByFilterRuleLogicId, 
+    						Map<String, License_Rule_Logic__c> licenseRuleLogicById,
+    						Map<Id, SObject> objById,
+    						Map<String, License_Rule__c> ruleById,
+    						Map<String, Map<String, Schema.SobjectField>> objFieldsByName,
+    						License_Rule__c stateRule,
+    						License_Rule__c residentLicenseRule) {
     	
-    	return filteredObjs;
+    	for(String ruleLogicId : objIdsByFilterRuleLogicId.keySet()) {  		
+    		String licenseRuleLogicId = licenseRuleLogicIdByFilterRuleLogicId.get(ruleLogicId);
+    		License_Rule_Logic__c licenseRuleLogic = licenseRuleLogicById.get(licenseRuleLogicId);
+    		
+    		// there are no license rule logic setup
+    		Set<String> ruleIdArray = null;
+    		String ruleLogicStr = null;
+    		if (licenseRuleLogic != null) {
+    			ruleLogicStr = licenseRuleLogic.logic__c;
+    			ruleIdArray = ruleHelper.getRuleIdArray(ruleLogicStr);   
+    			LicenseRuleHelper.logInfo('LicenseRuleChecker', 'validateLicenseRule', 'license filter rule ids: ' + LicenseRuleHelper.setToStringWithoutQuotes(ruleIdArray));			
+    		}
+		    		
+    		Set<Id> objIds = objIdsByFilterRuleLogicId.get(ruleLogicId);
+    		for (Id objId : objIds) {
+    			Boolean hasValidLicenseRule = false;
+    			Boolean hasValidStateRule = false;
+    			Boolean hasResidentLicense = false;
+    			SObject obj = objById.get(objId);
+    			String objStateValue = obj.get(stateRule.field__c) == null ? null : String.valueOf(obj.get(stateRule.field__c));
+				if (LicensingUtils.stateMap.get(objStateValue) != null) {
+					objStateValue = LicensingUtils.stateMap.get(objStateValue);
+				}
+    			String ownerId = getOwnerId(obj);
+    			    			
+    			if (licensesByOwnerId.containsKey(ownerId)) {
+    				// check license rule  			
+					for (License__c license : licensesByOwnerId.get(ownerId)) {
+						// if needs checking resident license rule
+						if (residentLicenseRule != null && !hasResidentLicense) {
+							hasResidentLicense = (license.recordTypeId == LicenseTriggerHandler.residentLicenseType);
+						}
+										
+						String licenseStateValue = (String)license.get(stateRule.license_field__c);
+						LicenseRuleHelper.loginfo('LicenseRuleChecker', 'validateLicenseRule', 'License state value - ' + licenseStateValue + ' Object state value - ' + objStateValue);
+						if (objStateValue == licenseStateValue && !hasValidLicenseRule) {
+							hasValidStateRule = true;
+							if (licenseRuleLogic != null) {
+								String logic = ruleLogicStr;
+				    			for (String ruleId : ruleIdArray) {
+				    				License_Rule__c rule = ruleById.get(ruleId);
+				    				Boolean result = false;
+				    				if (rule==null) {
+				    					String errorMessage = RuleValidator.errorMessageByType.get(RuleValidator.RuleError.RULE_NOT_FOUND);
+										throw new LicenseRuleException(String.format(errorMessage, new String[]{ 'License Filter Rule or License Comparison Rule', ruleLogicStr, ruleId}));
+				    				} else {
+				    					Boolean isLicenseComparisonRule = (rule.recordtypeId == LicenseRuleHelper.licenseComparisonRuleRecordTypeId);
+				    					Boolean isLicenseFilterRule = (rule.recordtypeId == LicenseRuleHelper.licenseFilterRuleRecordTypeId);			    					
+					    				if (isLicenseComparisonRule) {
+					    					result = ruleHelper.evaluateLicenseComparisonRule(obj, rule, license, objFieldsByName);
+					    				} else if (isLicenseFilterRule){
+					    					result = ruleHelper.evaluateLicenseFilterRule(license, rule, objFieldsByName);
+					    				} else {
+					    					String errorMessage = RuleValidator.errorMessageByType.get(RuleValidator.RuleError.WRONG_RULE_TYPE);
+											throw new LicenseRuleException(String.format(errorMessage, new String[]{rule.recordtype.name, licenseRuleLogic.recordtype.name}));
+					    				}
+					    			}
+				    				logic = logic.replace(ruleId, String.valueOf(result));
+				    			}
+			    				
+			    				LicenseRuleHelper.logInfo('LicenseRuleChecker', 'validateLicenseRule', 'BEFORE evaluate license rule ' + logic);
+			    				BooleanExpressionEvaluator licenseLogicBooleanEval = new BooleanExpressionEvaluator(logic); 
+								hasValidLicenseRule = licenseLogicBooleanEval.eval();
+							}
+						}					
+					}
+    			}
+  			
+				LicenseRuleHelper.loginfo('LicenseRuleChecker', 'validateLicenseRule', 'RESIDENT RULE - ' + hasResidentLicense + ' STATE RULE - ' + hasValidStateRule + ' LICENSE RULE - ' + hasValidLicenseRule);
+				// check resident license rule
+				if (residentLicenseRule != null && !hasResidentLicense) {
+					String errorMessage = RuleValidator.errorMessageByType.get(RuleValidator.RuleError.RESIDENT_LICENSE_CHECK_FAILED);
+					obj.addError(errorMessage);
+					break;
+				}
+				
+				// check state license rule
+				if (!hasValidStateRule) {
+					String errorMessage = RuleValidator.errorMessageByType.get(RuleValidator.RuleError.LICENSE_STATE_RULE_CHECK_FAILED);
+					obj.addError(String.format(errorMessage, new String[]{objStateValue, stateRule.field__c, stateRule.object__c}));
+					break;
+				}
+				
+				// check filter licese rule  				
+				if (licenseRuleLogic!=null && !hasValidLicenseRule) {
+    				String errorMessage = RuleValidator.errorMessageByType.get(RuleValidator.RuleError.LICENSE_FILTER_COMPARISON_RULE_CHECK_FAILED);
+    				obj.addError(errorMessage);
+    			}    				  			
+	    	}  		 
+    	}	
+    }
+     
+    private void validate(
+    					Set<String> licenseFields,
+    					Map<Id, SObject> objById, 
+    					Map<String, License_Rule__c> ruleById,
+    					Map<String, Map<String, Schema.SobjectField>> objFieldsByName,
+    					Map<String, License_Rule_Logic__c> filterRuleLogicById,
+    					Map<String, License_Rule_Logic__c> licenseRuleLogicById,
+    					Map<String, String> licenseRuleLogicIdByFilterRuleLogicId,
+    					License_Rule__c stateRule,
+    					License_Rule__c residentLicenseRule) {
+    	
+    	Map<String, Set<Id>> objIdsByFilterRuleLogicId = new Map<String, Set<Id>>(); 
+    	Set<String> ownerIds = new Set<String>();
+		
+		// no filter rule logic
+		if (filterRuleLogicById.isEmpty()) {
+			LicenseRuleHelper.logInfo('LicenseRuleChecker', 'validate', 'no rule logic found');
+			Set<Id> objIds = new Set<Id>();
+			for (SObject obj : objById.values()) {
+	    		String ownerId = getOwnerId(obj);   		
+				// bypass if ownerId is null
+				if (ownerId!=null) {
+					ownerIds.add(ownerId);
+					objIds.add(obj.id);
+				} else {
+	    			String errorMessage = RuleValidator.errorMessageByType.get(RuleValidator.RuleError.NO_OWNER_ID_FIELD_FOUND);
+					obj.addError(errorMessage);
+	    		}	
+			}	
+			objIdsByFilterRuleLogicId.put(LicenseRuleHelper.NO_RULE_LOGIC_ID, objIds);
+		// filter rule logic exists
+		} else {
+			for (SObject obj : objById.values()) {
+	    		String ownerId = getOwnerId(obj);   		
+				// bypass if ownerId is null
+				if (ownerId!=null) {
+					ownerIds.add(ownerId);
+	    			for (License_Rule_Logic__c ruleLogic : filterRuleLogicById.values()) {
+		    			String logic = ruleLogic.logic__c;
+		    			Set<String> ruleIdArray = ruleHelper.getRuleIdArray(logic);
+		    			LicenseRuleHelper.logInfo('LicenseRuleChecker', 'validate', 'regular filter rule ids: ' + LicenseRuleHelper.setToStringWithoutQuotes(ruleIdArray));
+		    			for (String ruleId : ruleIdArray) {
+		    				License_Rule__c rule = ruleById.get(ruleId);
+		    				if (rule==null) {
+		    					String errorMessage = RuleValidator.errorMessageByType.get(RuleValidator.RuleError.RULE_NOT_FOUND);
+								throw new LicenseRuleException(String.format(errorMessage, new String[]{'Regular Filter Rule', ruleLogic.logic__c, ruleId}));
+		    				} else{
+		    					Boolean isRegularFilterRule = (rule.recordtypeId == LicenseRuleHelper.regularFilterRuleRecordTypeId);    				
+			    				if (isRegularFilterRule) {
+			    					Boolean result = ruleHelper.evaluateRegularFilterRule(obj, rule, objFieldsByName);
+			    					logic = logic.replace(ruleId, String.valueOf(result));
+			    				} else {
+			    					String errorMessage = RuleValidator.errorMessageByType.get(RuleValidator.RuleError.WRONG_RULE_TYPE);
+									throw new LicenseRuleException(String.format(errorMessage, new String[]{rule.recordtype.name, ruleLogic.recordtype.name}));
+			    				}
+		    				}
+		    				
+		    				LicenseRuleHelper.logInfo('LicenseRuleChecker', 'validate', 'BEFORE evaluate filter rule ' + logic);
+		    			}
+		    			
+		    			BooleanExpressionEvaluator filterRuleBooleanEval = new BooleanExpressionEvaluator(logic); 
+		    			Boolean ruleResult = filterRuleBooleanEval.eval();
+		    			if (ruleResult) {
+		    				Set<Id> filteredObjIds = objIdsByFilterRuleLogicId.get(ruleLogic.id);	
+		    				if (filteredObjIds==null) {
+		    					filteredObjIds = new Set<Id>();
+		    					objIdsByFilterRuleLogicId.put(ruleLogic.id, filteredObjIds);
+		    				}
+		    				filteredObjIds.add(obj.id);
+		    			}
+		    		}
+	    		}  else {
+	    			String errorMessage = RuleValidator.errorMessageByType.get(RuleValidator.RuleError.NO_OWNER_ID_FIELD_FOUND);
+					obj.addError(errorMessage);
+	    		}		
+			}		
+    	}
+    	
+    	for (String ruleLogicId : objIdsByFilterRuleLogicId.keySet()) {
+    		Set<Id> objIds = objIdsByFilterRuleLogicId.get(ruleLogicId);
+    		LicenseRuleHelper.logInfo('LicenseRuleChecker', 'validate', 'rule logic id: ' + ruleLogicId);
+    		System.debug('[LicenseRuleChecker] - validate - objIds matched: ' + objIds);
+    	}
+    	
+    	if (!ownerIds.isEmpty()) {
+	    	Map<String, Set<License__c>> licensesByOwnerId = ruleHelper.constructLicensesByOwnerId(licenseFields, ownerIds);
+	    	    	
+	    	validateLicenseRule(licensesByOwnerId,
+	    						objIdsByFilterRuleLogicId,
+	    						licenseRuleLogicIdByFilterRuleLogicId, 
+	    						licenseRuleLogicById,
+	    						objById,
+	    						ruleById,
+	    						objFieldsByName,
+	    						stateRule,
+	    						residentLicenseRule);
+    	}
+    }
+    
+    public void checkLicenseRules(Map<Id, SObject> objById, String objName) {
+    	List<License_Rule_Logic__c> ruleLogics = [SELECT Id, Logic__c, Object__c, Filter_Rule__c, RecordTypeid, RecordType.Name
+													FROM License_Rule_Logic__c WHERE Object__c=:objName
+													AND isActive__c = true];
+		
+		Map<String, License_Rule_Logic__c> filterRuleLogicById = new Map<String, License_Rule_Logic__c>();
+		Map<String, License_Rule_Logic__c> licenseRuleLogicById = new Map<String, License_Rule_Logic__c>();
+		Map<String, String> licenseRuleLogicIdByFilterRuleLogicId = new Map<String, String>();
+		
+		for (License_Rule_Logic__c ruleLogic : ruleLogics) {
+			if (ruleLogic.recordTypeId == LicenseRuleHelper.filterRuleLogicRecordTypeId) {
+				filterRuleLogicById.put(ruleLogic.id, ruleLogic);
+			} else if (ruleLogic.recordTypeId == LicenseRuleHelper.licenseRuleLogicRecordTypeId){
+				licenseRuleLogicById.put(ruleLogic.id, ruleLogic);
+				if (ruleLogic.filter_rule__c != null) {
+					licenseRuleLogicIdByFilterRuleLogicId.put(ruleLogic.filter_rule__c, ruleLogic.id);
+				}
+			}
+		}
+		
+		LicenseRuleHelper.logInfo('LicenseRuleChecker', 'checkLicenseRules', LicenseRuleHelper.setToStringWithoutQuotes(filterRuleLogicById.keySet()));
+		LicenseRuleHelper.logInfo('LicenseRuleChecker', 'checkLicenseRules', LicenseRuleHelper.setToStringWithoutQuotes(licenseRuleLogicById.keySet()));
+		LicenseRuleHelper.logInfo('LicenseRuleChecker', 'checkLicenseRules', LicenseRuleHelper.setToStringWithoutQuotes(licenseRuleLogicIdByFilterRuleLogicId.keySet()));
+		
+		List<License_Rule__c> rules = [SELECT Id, RecordTypeId, Object__c, Field__c, License_Field__c, Operator__c, Value__c, RecordType.Name 
+    											FROM License_Rule__c WHERE Object__c=:objName and isActive__c=true];
+    	
+    	Map<String, License_Rule__c> ruleById = new Map<String, License_Rule__c>();
+    	Set<String> licenseFields = new Set<String>();
+    	// always add Id, OwnerId and RecordTypeId column
+    	licenseFields.add('Id');
+    	licenseFields.add('RecordTypeId');
+    	licenseFields.add('OwnerId');
+    	License_Rule__c stateRule = null;
+    	License_Rule__c residentLicenseRule = null;
+    	
+    	for (License_Rule__c rule : rules) {
+    		if (rule.recordTypeId == LicenseRuleHelper.licenseStateRuleRecordTypeId) {
+    			stateRule = rule;
+    		} else if (rule.recordTypeId == LicenseRuleHelper.residentLicenseRuleRecordTypeId) {
+    			residentLicenseRule = rule;
+    		} else {
+    			ruleById.put(rule.id, rule); 
+    		}
+    		  		
+    		if (rule.license_field__c != null) {
+				licenseFields.add(rule.license_field__c);
+			}		
+    	}
+    	
+    	LicenseRuleHelper.logInfo('LicenseRuleChecker', 'checkLicenseRules', stateRule == null ? 'state rule not found' : 'state rule found with state field ' + stateRule.field__c);
+    	LicenseRuleHelper.logInfo('LicenseRuleChecker', 'checkLicenseRules', residentLicenseRule == null ? 'resident license rule not found' : 'resident license rule found with resident license field ' + residentLicenseRule.license_field__c);
+    	LicenseRuleHelper.logInfo('LicenseRuleChecker', 'checkLicenseRules', LicenseRuleHelper.setToStringWithoutQuotes(licenseFields));
+	
+		Set<String> sObjectNames = new Set<String>();
+		sObjectNames.add(objName);
+		sObjectNames.add('License__c');
+		Map<String, Map<String, Schema.SobjectField>> objFieldsByName = ruleHelper.getObjFieldsByName(sObjectNames);
+	    	
+		if (filterRuleLogicById.isEmpty()) {
+			if (stateRule == null) {
+				if (!licenseRuleLogicById.isEmpty()) {
+					LicenseRuleHelper.logInfo('LicenseRuleChecker', 'checkLicenseRules', '[ERROR] - no filter rule logic, no state, license rule logic found');
+					String errorMessage = RuleValidator.errorMessageByType.get(RuleValidator.RuleError.ONLY_LICENSE_FILTER_COMPARISON_RULE);
+					throw new LicenseRuleException(String.format(errorMessage, new String[]{LicenseRuleHelper.setToStringWithoutQuotes(licenseRuleLogicById.keySet())}));
+				
+				} else {
+					LicenseRuleHelper.logInfo('LicenseRuleChecker', 'checkLicenseRules', 'no filter rule logic, no state, no license rule logic');
+				}
+			} else {				
+				if (licenseRuleLogicById.isEmpty() || licenseRuleLogicById.size() == 1) {
+					LicenseRuleHelper.logInfo('LicenseRuleChecker', 'checkLicenseRules', 'no filter rule logic, state, one or no license rule logic found');
+					String licenseRuleLogicId = null;
+					for (String id : licenseRuleLogicById.keySet()) {
+						licenseRuleLogicId = id;
+					}
+					
+					licenseRuleLogicIdByFilterRuleLogicId.put(LicenseRuleHelper.NO_RULE_LOGIC_ID, licenseRuleLogicId);			
+					validate(licenseFields,
+    									objById, 
+    									ruleById,
+    									objFieldsByName,
+    									filterRuleLogicById,
+    									licenseRuleLogicById,
+    									licenseRuleLogicIdByFilterRuleLogicId,
+    									stateRule,
+    									residentLicenseRule);
+				} else {
+					LicenseRuleHelper.logInfo('LicenseRuleChecker', 'checkLicenseRules', '[ERROR] - no filter rule logic found, state found, multiple license rule logics found');
+					String errorMessage = RuleValidator.errorMessageByType.get(RuleValidator.RuleError.MULTIPLE_LICENSE_FILTER_COMPARISON_RULES);
+					throw new LicenseRuleException(String.format(errorMessage, new String[]{LicenseRuleHelper.setToStringWithoutQuotes(licenseRuleLogicById.keySet())}));
+				}
+			}
+			
+		} else {
+			if (stateRule == null) {
+				LicenseRuleHelper.logInfo('LicenseRuleChecker', 'checkLicenseRules', '[ERROR] - filter rule logic found, no state found');
+				String errorMessage = RuleValidator.errorMessageByType.get(RuleValidator.RuleError.NO_LICENSE_STATE_RULE);
+				throw new LicenseRuleException(String.format(errorMessage, new String[]{LicenseRuleHelper.setToStringWithoutQuotes(filterRuleLogicById.keySet())}));
+			
+			} else {
+				LicenseRuleHelper.logInfo('LicenseRuleChecker', 'checkLicenseRules', 'filter rule logic, state' + (licenseRuleLogicById.isEmpty() ? ' found' : ', license rule logic found'));
+				validate(licenseFields,
+    								objById, 
+    								ruleById,
+    								objFieldsByName,
+    								filterRuleLogicById,
+    								licenseRuleLogicById,
+    								licenseRuleLogicIdByFilterRuleLogicId,
+    								stateRule,
+    								residentLicenseRule);
+			}
+		}   	
     }
 }

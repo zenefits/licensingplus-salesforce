@@ -5,19 +5,25 @@
         <apex:commandLink action="{!cancel}" value="Go back" rendered="{!!allowed}" />
         <apex:pageBlock mode="edit" title="License Edit" rendered="{!allowed}">
             <apex:pageBlockButtons >
-                <apex:commandButton rendered="{!OR(NOT(locked), isAdmin)}" action="{!save}" value="Save" />
-                <apex:commandButton rendered="{!AND(locked, NOT(isAdmin))}" action="{!save}" value="Save" />
+                <apex:commandButton rendered="{!OR(NOT(locked), isAdmin)}" action="{!saveAndUpload}" value="Save" />
+                <apex:commandButton rendered="{!AND(locked, NOT(isAdmin))}" action="{!upload}" value="Save" />
                 <apex:commandButton action="{!cancel}" value="Cancel" />
             </apex:pageBlockButtons>
             <apex:pageBlockSection title="Information" columns="1" >
                 <apex:outputField value="{!License__c.RecordTypeId}" />
                 <apex:inputField value="{!License__c.State__c}" required="true" rendered="{!ISBLANK(License__c.Id)}" />
                 <apex:outputField value="{!License__c.State__c}" rendered="{!NOT(ISBLANK(License__c.Id))}" />
-                <apex:inputField rendered="{!OR(isAdmin)}" value="{!License__c.Class__c}" />
+                <apex:inputField rendered="{!OR(NOT(locked), isAdmin)}" value="{!License__c.Class__c}" />
+                <apex:outputField rendered="{!AND(locked, NOT(isAdmin))}" value="{!License__c.Class__c}" />
                 <apex:inputField rendered="{!OR(NOT(locked), isAdmin)}" value="{!License__c.Number__c}" />
                 <apex:outputField rendered="{!AND(locked, NOT(isAdmin))}" value="{!License__c.Number__c}" />
-                <apex:inputField rendered="{!OR(NOT(locked), isAdmin)}" value="{!License__c.Confirmation_ID__c}" />
-                <apex:outputField rendered="{!AND(locked, NOT(isAdmin))}" value="{!License__c.Confirmation_ID__c}" />
+                <apex:pageBlockSectionItem >
+                    <apex:outputLabel value="Insurance License as PDF" for="file" />
+                    <apex:outputPanel >
+                        <apex:outputLink rendered="{!NOT(ISNULL(licensePDF.Id))}" value="{!URLFOR($Action.Attachment.Download, licensePDF.Id)}" target="_blank">{!licensePDF.Name}</apex:outputLink>            
+                        <apex:inputFile rendered="{!OR(NOT(locked), isAdmin)}" value="{!licensePDF.Body}" filename="{!licensePDF.name}" id="file" />
+                    </apex:outputPanel>
+                </apex:pageBlockSectionItem>
                 <apex:inputField value="{!License__c.NPN_Number__c}" rendered="{!AND(recordTypeName = 'Resident_State', OR(NOT(locked), isAdmin))}" />
                 <apex:outputField value="{!License__c.NPN_Number__c}" rendered="{!AND(recordTypeName="Resident_State", locked, NOT(isAdmin))}" />
                 <apex:inputField rendered="{!OR(NOT(locked), isAdmin)}" value="{!License__c.Effective_Date__c}" />
@@ -25,6 +31,12 @@
                 <apex:inputField rendered="{!OR(NOT(locked), isAdmin)}" value="{!License__c.Expiration_Date__c}" />
                 <apex:outputField rendered="{!AND(locked, NOT(isAdmin))}" value="{!License__c.Expiration_Date__c}" />
             </apex:pageBlockSection>
+            <apex:pageBlockSection title="Custom License Fields" columns="1" rendered="{!!customLicenseFieldsEmpty}">
+            	<apex:repeat value="{!$ObjectType.License__c.FieldSets.Custom_License_Fields}"  var="field">
+              		<apex:inputField value="{!License__c[field.fieldPath]}" />
+           		</apex:repeat>
+            </apex:pageBlockSection>
         </apex:pageBlock>
     </apex:form>
+   
 </apex:page>

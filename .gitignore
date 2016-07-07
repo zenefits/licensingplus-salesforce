@@ -11,6 +11,9 @@ apex-scripts/log
 
 # Eclipse specific 
 salesforce.schema
+UAT/
+ScottUAT/
+appUI/
 InsuranceLicensePackage/Referenced\ Packages/
 bin/
 tmp/
@@ -22,6 +25,15 @@ local.properties
 .loadpath
 .classpath
 *.cache
+
+.*env
+/.settings
+InsuranceLicensePackage/uis/admin-app/node_modules
+# resource bundles are built code and should be regenerated manually
+InsuranceLicensePackage/uis/admin-app/resource-bundles/
+#.resource is also compiled and generated file
+InsuranceLicensePackage/uis/admin-app/dist/
+coverage/
 
 # Mavensmate
 *.sublime-project

@@ -16,21 +16,26 @@
                 <apex:pageBlockSectionItem >
                     <apex:outputLabel value="Lines of Authority" />
                     <apex:outputPanel >
-                        <apex:outputText value="Casualty" rendered="{!License__c.Casualty__c > 0}" />
-                        <apex:outputText value=", Health" rendered="{!AND(License__c.Health__c > 0, License__c.Casualty__c > 0)}" />
-                        <apex:outputText value="Health" rendered="{!AND(License__c.Casualty__c = 0, License__c.Health__c > 0)}" />
-                        <apex:outputText value=", Life" rendered="{!AND(License__c.Life__c > 0, OR(License__c.Casualty__c > 0, License__c.Health__c > 0))}" />
-                        <apex:outputText value="Life" rendered="{!AND(License__c.Casualty__c = 0, License__c.Health__c = 0, License__c.Life__c > 0)}" />
-                        <apex:outputText value=", Property" rendered="{!AND(License__c.Property__c > 0, OR(License__c.Casualty__c > 0, License__c.Health__c > 0, License__c.Life__c > 0))}" />
-                        <apex:outputText value="Property" rendered="{!AND(License__c.Casualty__c = 0, License__c.Health__c = 0, License__c.Life__c = 0, License__c.Property__c > 0)}" />
+                        <apex:outputText value="{!loaTypes}"/>
                     </apex:outputPanel>
                 </apex:pageBlockSectionItem>
+                <apex:outputField value="{!License__c.Class__c}" />
                 <apex:outputField value="{!License__c.Number__c}" />
-                <apex:outputField value="{!License__c.Confirmation_ID__c}" />
+                <apex:pageBlockSectionItem >
+                    <apex:outputLabel value="Insurance License as PDF" />
+                    <apex:outputPanel >
+                        <apex:outputLink rendered="{!NOT(ISNULL(licensePDF.Id))}" value="{!URLFOR($Action.Attachment.Download, licensePDF.Id)}" target="_blank">{!licensePDF.Name}</apex:outputLink>            
+                    </apex:outputPanel>
+                </apex:pageBlockSectionItem>
                 <apex:outputField value="{!License__c.NPN_Number__c}" rendered="{!recordTypeName = 'Resident_State'}" />
                 <apex:outputField value="{!License__c.Effective_Date__c}" />
                 <apex:outputField value="{!License__c.Expiration_Date__c}" />
                 <apex:outputField value="{!License__c.Status__c}" />
+            </apex:pageBlockSection>
+            <apex:pageBlockSection title="Custom License Fields" columns="1" rendered="{!!customLicenseFieldsEmpty}">
+            	<apex:repeat value="{!$ObjectType.License__c.FieldSets.Custom_License_Fields}"  var="field">
+              		<apex:outputField value="{!License__c[field.fieldPath]}" />
+           		</apex:repeat>
             </apex:pageBlockSection>
         </apex:pageBlock>
     </apex:form>

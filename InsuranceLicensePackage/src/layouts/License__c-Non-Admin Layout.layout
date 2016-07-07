@@ -68,12 +68,24 @@
         <layoutColumns/>
         <style>CustomLinks</style>
     </layoutSections>
+    <layoutSections>
+        <customLabel>true</customLabel>
+        <detailHeading>false</detailHeading>
+        <editHeading>false</editHeading>
+        <label>License PDF</label>
+        <layoutColumns>
+            <layoutItems>
+                <height>50</height>
+                <page>LicensePDFEmbedded</page>
+                <showLabel>false</showLabel>
+                <showScrollbars>false</showScrollbars>
+                <width>100%</width>
+            </layoutItems>
+        </layoutColumns>
+        <style>OneColumn</style>
+    </layoutSections>
     <relatedLists>
         <fields>NAME</fields>
-        <fields>Life__c</fields>
-        <fields>Health__c</fields>
-        <fields>Property__c</fields>
-        <fields>Casualty__c</fields>
         <relatedList>Line_of_Authority__c.License__c</relatedList>
     </relatedLists>
     <showEmailCheckbox>false</showEmailCheckbox>
@@ -82,7 +94,7 @@
     <showRunAssignmentRulesCheckbox>false</showRunAssignmentRulesCheckbox>
     <showSubmitAndAttachButton>false</showSubmitAndAttachButton>
     <summaryLayout>
-        <masterLabel>00h1600000qYloM</masterLabel>
+        <masterLabel>00h36000001zCSZ</masterLabel>
         <sizeX>4</sizeX>
         <sizeY>0</sizeY>
         <summaryLayoutStyle>Default</summaryLayoutStyle>

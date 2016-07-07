@@ -1,4 +1,43 @@
-global class SObjectUtils {
+global with sharing class SObjectUtils {
+	
+	global enum FIELD_TYPE {
+		STRING_FIELD,
+		INTEGER_FIELD,
+		DOUBLE_FIELD,
+		DATETIME_FIELD,
+		DATE_FIELD,
+		BOOLEAN_FIELD,
+		ID_FIELD,
+		UNKNOWN_FIELD
+	}
+	
+	global static FIELD_TYPE getFieldType (Schema.DisplayType fieldType) {
+		if (isStringType(fieldType)) {
+			return FIELD_TYPE.STRING_FIELD;
+		} else if (isIntegerType(fieldType)) {
+			return FIELD_TYPE.INTEGER_FIELD;
+		} else if (isDoubleType(fieldType)) {
+			return FIELD_TYPE.DOUBLE_FIELD;
+		} else if (isDatetimeType(fieldType)) {
+			return FIELD_TYPE.DATETIME_FIELD;
+		} else if (isDateType(fieldType)) {
+			return FIELD_TYPE.DATE_FIELD;
+		} else if (isBooleanType(fieldType)) {
+			return FIELD_TYPE.BOOLEAN_FIELD;
+		} else if (isReferenceType(fieldType)) {
+			return FIELD_TYPE.ID_FIELD;
+		}
+		
+		return FIELD_TYPE.UNKNOWN_FIELD;
+	}
+	
+	private static final Set<String> excludedAppObjects = new Set<String>{
+		'license__c',
+		'line_of_authority__c',
+		'license_rule__c',
+		'license_rule_logic__c'
+	};
+	
     private static final Set<Schema.DisplayType> STRING_TYPES = new Set<Schema.DisplayType>{
         Schema.DisplayType.base64
         ,Schema.DisplayType.Email
@@ -87,8 +126,16 @@ global class SObjectUtils {
 		return DATETIME_TYPES.contains(fieldType);
 	}
 	
+	global static Boolean isIntegerType(Schema.DisplayType fieldType) {
+		return INTEGER_TYPES.contains(fieldType);
+	}
+	
+	global static Boolean isDoubleType(Schema.DisplayType fieldType) {
+		return DOUBLE_TYPES.contains(fieldType);
+	}
+	
 	global static Boolean isNumberType(Schema.DisplayType fieldType) {
-		return INTEGER_TYPES.contains(fieldType) || DOUBLE_TYPES.contains(fieldType);
+		return isIntegerType(fieldType) || isDoubleType(fieldType);
 	}
 	
 	global static Boolean isReferenceType(Schema.DisplayType fieldType) {
@@ -99,11 +146,37 @@ global class SObjectUtils {
 		return STRING_TYPES.contains(fieldType);
 	}
 	
-	global static Boolean isDateOrDatetimeOrNumberType(Schema.DisplayType fieldType) {
-		return isDateType(fieldType) || isDatetimeType(fieldType) || isNumberType(fieldType);
-	}
-	
 	global static Boolean isStringOrReferenceType(Schema.DisplayType fieldType) {
 		return isStringType(fieldType) || isReferenceType(fieldType);
+	}
+	
+	global static Set<String> getAllSObjectNames() {
+		Set<String> objNames = new Set<String>();
+		for (Schema.SObjectType o : Schema.getGlobalDescribe().values()) {
+    		Schema.DescribeSObjectResult objResult = o.getDescribe();
+			// exclude package objects itself, exclude custom settings, 
+			// exclude standard share objects, exclude custom share objects
+			// only keep objects createable, updateable and deleteable
+			if (!excludedAppObjects.contains(objResult.getName().toLowerCase()) && 
+				!objResult.isCustomSetting() &&
+				(objResult.isUpdateable() && objResult.isDeletable() && objResult.isCreateable())) {
+				
+				// make sure there is ownerid or ownerid__c field on this object
+				Map<String, Schema.SobjectField> objFields = objResult.fields.getMap();
+				if (objFields.get('OwnerId')!=null || objFields.get('OwnerId__c')!=null) {
+					if (!objResult.isCustom()) {
+						if (!objResult.getName().toLowerCase().endsWith('share')) {
+							objNames.add(objResult.getName());	
+						}
+					} else {
+						if (!objResult.getName().toLowerCase().endsWith('__share')) {
+							objNames.add(objResult.getName());
+						}					
+					}		
+				} 	
+			} 
+		}
+		
+		return objNames;
 	}
 }

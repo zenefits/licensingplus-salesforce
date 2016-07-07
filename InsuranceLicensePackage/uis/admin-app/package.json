@@ -1,0 +1,47 @@
+{
+  "name": "admin-app",
+  "description": "Frontend for License management admin app in Salesforce",
+  "main": "index.js",
+  "scripts": {
+    "build": "npm run clear-dist && webpack",
+    "build-prod": "webpack --config webpack.config.prod.js",
+    "clear-dist": "rm -Rf dist/",
+    "save-resource": "npm run build && cp dist/bundle.js ../../src/staticresources/license_admin_js.resource",
+    "save-resource-prod": "npm run build-prod && cp dist/prod-bundle.js ../../src/staticresources/license_admin_js.resource",
+    "start": "open 'http://localhost:3000/#/' && npm run clear-dist && node nodemon.js"
+  },
+  "dependencies": {
+    "ejs": "^2.4.2",
+    "express": "^4.13.4",
+    "nodemon": "^1.9.2"
+  },
+  "devDependencies": {
+    "babel-cli": "^6.9.0",
+    "babel-core": "^6.3.15",
+    "babel-loader": "^6.2.0",
+    "babel-preset-es2015": "^6.3.13",
+    "babel-preset-react": "^6.3.13",
+    "babel-register": "^6.3.13",
+    "chalk": "^1.1.3",
+    "css-loader": "^0.23.1",
+    "file-loader": "^0.8.5",
+    "imagemin-webpack-plugin": "^1.0.7",
+    "jsx-loader": "^0.13.2",
+    "lodash": "^4.13.1",
+    "moment": "^2.13.0",
+    "papaparse": "^4.1.2",
+    "react": "^15.0.2",
+    "react-bootstrap": "^0.29.5",
+    "react-datepicker": "^0.27.0",
+    "react-dom": "^15.0.2",
+    "react-redux": "^4.4.5",
+    "react-router": "^2.4.1",
+    "react-toggle": "^2.1.0",
+    "redux-thunk": "^2.1.0",
+    "sass-loader": "^3.2.0",
+    "style-loader": "^0.13.1",
+    "url-loader": "^0.5.7",
+    "webpack": "^1.13.0"
+  },
+  "license": "ISC"
+}
