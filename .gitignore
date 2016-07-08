@@ -14,6 +14,7 @@ salesforce.schema
 UAT/
 ScottUAT/
 appUI/
+ManagedPackage/
 InsuranceLicensePackage/Referenced\ Packages/
 bin/
 tmp/

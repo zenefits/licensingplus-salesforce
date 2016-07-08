@@ -19,11 +19,16 @@ public with sharing class LicenseRuleHelper {
         
         LicenseRuleHelper.enforceCRUDAndFLS('License__c', licenseFields, 'query', false);
         
+        Set<String> ownerIdsEscaped = new Set<String>();
+        for (String ownerId : ownerIds) {
+        	ownerIdsEscaped.add(String.escapeSingleQuotes(ownerId));
+        }
+    	
     	String licenseQueryTemplate = 'SELECT {0} FROM License__c WHERE status__c={1} AND ownerId IN ({2})';
 	    
-	    String licenseFieldsStr = LicenseRuleHelper.setToStringWithoutQuotes(licenseFields);
-	    String licenseQuery = String.format(licenseQueryTemplate, new String[]{licenseFieldsStr, '\'Active\'',
-	    									LicenseRuleHelper.setToStringWithQuotes(ownerIds)});
+	    String licenseFieldsStr = String.escapeSingleQuotes(LicenseRuleHelper.setToStringWithoutQuotes(licenseFields));
+	    String licenseQuery = String.format(licenseQueryTemplate, new String[]{String.escapeSingleQuotes(licenseFieldsStr), '\'Active\'',
+	    									LicenseRuleHelper.setToStringWithQuotes(ownerIdsEscaped)});
     	logInfo('LicenseRuleHelper', 'constructLicensesByOwnerId', 'LICENSE QUERY - ' + licenseQuery);
     	
     	List<License__c> licenses = null;
