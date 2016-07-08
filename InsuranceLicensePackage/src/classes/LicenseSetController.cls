@@ -51,7 +51,7 @@ public with sharing class LicenseSetController {
                                    'WHERE OwnerId = {1} ' + 
                                    'ORDER BY State__c, CreatedDate DESC';
 		
-		String queryStr = String.format(queryTemplate, new String[]{LicenseRuleHelper.setToStringWithoutQuotes(licenseFields), String.valueOf('\''+runAs()+'\'')});
+		String queryStr = String.format(queryTemplate, new String[]{String.escapeSingleQuotes(LicenseRuleHelper.setToStringWithoutQuotes(licenseFields)), '\''+String.escapeSingleQuotes(runAs())+'\''});
 		LicenseRuleHelper.logInfo('LicenseSetController', 'LicenseSetController', 'QUERY - ' + queryStr);
 		
         for (License__c license : Database.query(queryStr)) {

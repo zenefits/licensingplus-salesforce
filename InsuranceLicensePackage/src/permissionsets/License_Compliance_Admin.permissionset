@@ -224,6 +224,7 @@
         <field>License__c.Type__c</field>
         <readable>true</readable>
     </fieldPermissions>
+    <hasActivationRequired>false</hasActivationRequired>
     <label>License Compliance Admin</label>
     <objectPermissions>
         <allowCreate>true</allowCreate>
