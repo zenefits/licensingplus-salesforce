@@ -1,12 +1,12 @@
 @isTest
 private class LicenseRuleTest {
     static testMethod void testInsertUpdateInvalidSObject() {
-    	License_Rule__c rule = new License_Rule__c(
-	    		object__c=LicenseRuleTestDataSeeder.INVALID_OBJECT,
-	    		field__c='Name',
-	    		operator__c='equals',
-	    		value__c='1234',
-	    		isActive__c=true,
+    	licensingplus__License_Rule__c rule = new licensingplus__License_Rule__c(
+	    		licensingplus__object__c=LicenseRuleTestDataSeeder.INVALID_OBJECT,
+	    		licensingplus__field__c='Name',
+	    		licensingplus__operator__c='equals',
+	    		licensingplus__value__c='1234',
+	    		licensingplus__isActive__c=true,
 	    		recordtypeid=LicenseRuleHelper.regularFilterRuleRecordTypeId
     	);
     	
@@ -18,11 +18,11 @@ private class LicenseRuleTest {
     		system.assert(e.getMessage().contains('FIELD_CUSTOM_VALIDATION_EXCEPTION'));
     	}
     	
-    	rule.object__c = LicenseRuleTestDataSeeder.ACCOUNT_OBJ;
+    	rule.licensingplus__object__c = LicenseRuleTestDataSeeder.ACCOUNT_OBJ;
     	insert rule;
     	
     	try {
-    		rule.object__c=LicenseRuleTestDataSeeder.INVALID_OBJECT;
+    		rule.licensingplus__object__c=LicenseRuleTestDataSeeder.INVALID_OBJECT;
     		update rule;
     		throw new LicenseRuleException('An exception should have been thrown by the trigger but was not.');  	
     	
@@ -32,12 +32,12 @@ private class LicenseRuleTest {
     }
     
     static testMethod void testInsertUpdateInvalidLicenseField() {
-    	License_Rule__c rule = new License_Rule__c(
-	    		object__c=LicenseRuleTestDataSeeder.ACCOUNT_OBJ,
-	    		license_field__c=LicenseRuleTestDataSeeder.INVALID_REFERENCE_FIELD,
-	    		operator__c='equals',
-	    		value__c='1234',
-	    		isActive__c=true,
+    	licensingplus__License_Rule__c rule = new licensingplus__License_Rule__c(
+	    		licensingplus__object__c=LicenseRuleTestDataSeeder.ACCOUNT_OBJ,
+	    		licensingplus__license_field__c=LicenseRuleTestDataSeeder.INVALID_REFERENCE_FIELD,
+	    		licensingplus__operator__c='equals',
+	    		licensingplus__value__c='1234',
+	    		licensingplus__isActive__c=true,
 	    		recordtypeid=LicenseRuleHelper.licenseFilterRuleRecordTypeId
     	);
     	
@@ -49,11 +49,11 @@ private class LicenseRuleTest {
     		system.assert(e.getMessage().contains('FIELD_CUSTOM_VALIDATION_EXCEPTION'));
     	}
     	
-    	rule.license_field__c = 'Name';
+    	rule.licensingplus__license_field__c = 'Name';
     	insert rule;
     	
     	try {
-    		rule.license_field__c=LicenseRuleTestDataSeeder.INVALID_FIELD;
+    		rule.licensingplus__license_field__c=LicenseRuleTestDataSeeder.INVALID_FIELD;
     		update rule;
     		throw new LicenseRuleException('An exception should have been thrown by the trigger but was not.');  	
     	
@@ -63,12 +63,12 @@ private class LicenseRuleTest {
     }
     
     static testMethod void testInsertUpdateInvalidField() {
-    	License_Rule__c rule = new License_Rule__c(
-	    		object__c=LicenseRuleTestDataSeeder.ACCOUNT_OBJ,
-	    		field__c=LicenseRuleTestDataSeeder.INVALID_FIELD,
-	    		operator__c='equals',
-	    		value__c='1234',
-	    		isActive__c=true,
+    	licensingplus__License_Rule__c rule = new licensingplus__License_Rule__c(
+	    		licensingplus__object__c=LicenseRuleTestDataSeeder.ACCOUNT_OBJ,
+	    		licensingplus__field__c=LicenseRuleTestDataSeeder.INVALID_FIELD,
+	    		licensingplus__operator__c='equals',
+	    		licensingplus__value__c='1234',
+	    		licensingplus__isActive__c=true,
 	    		recordtypeid=LicenseRuleHelper.regularFilterRuleRecordTypeId
     	);
     	
@@ -80,11 +80,11 @@ private class LicenseRuleTest {
     		system.assert(e.getMessage().contains('FIELD_CUSTOM_VALIDATION_EXCEPTION'));
     	}
     	
-    	rule.field__c = 'Name';
+    	rule.licensingplus__field__c = 'Name';
     	insert rule;
     	
     	try {
-    		rule.field__c=LicenseRuleTestDataSeeder.INVALID_FIELD;
+    		rule.licensingplus__field__c=LicenseRuleTestDataSeeder.INVALID_FIELD;
     		update rule;
     		throw new LicenseRuleException('An exception should have been thrown by the trigger but was not.');  	
     	
@@ -94,12 +94,12 @@ private class LicenseRuleTest {
     }
     
     static testMethod void testInsertUpdateInvalidOperator() {
-    	License_Rule__c rule = new License_Rule__c(
-	    		object__c=LicenseRuleTestDataSeeder.ACCOUNT_OBJ,
-	    		field__c='LastModifiedDate',
-	    		operator__c='contains',
-	    		value__c='1234',
-	    		isActive__c=true,
+    	licensingplus__License_Rule__c rule = new licensingplus__License_Rule__c(
+	    		licensingplus__object__c=LicenseRuleTestDataSeeder.ACCOUNT_OBJ,
+	    		licensingplus__field__c='LastModifiedDate',
+	    		licensingplus__operator__c='contains',
+	    		licensingplus__value__c='1234',
+	    		licensingplus__isActive__c=true,
 	    		recordtypeid=LicenseRuleHelper.regularFilterRuleRecordTypeId
     	);
     	
@@ -111,11 +111,11 @@ private class LicenseRuleTest {
     		system.assert(e.getMessage().contains('FIELD_CUSTOM_VALIDATION_EXCEPTION'));
     	}
     	
-    	rule.field__c = 'Name';
+    	rule.licensingplus__field__c = 'Name';
     	insert rule;
     	
     	try {
-    		rule.field__c='LastModifiedDate';
+    		rule.licensingplus__field__c='LastModifiedDate';
     		update rule;
     		throw new LicenseRuleException('An exception should have been thrown by the trigger but was not.');  	
     	
@@ -125,12 +125,12 @@ private class LicenseRuleTest {
     }
     
     static testMethod void testInsertUpdateInvalidBooleanFieldValue() {
-    	License_Rule__c rule = new License_Rule__c(
-	    		object__c=LicenseRuleTestDataSeeder.ACCOUNT_OBJ,
-	    		field__c='IsDeleted',
-	    		operator__c='equals',
-	    		value__c='12345',
-	    		isActive__c=true,
+    	licensingplus__License_Rule__c rule = new licensingplus__License_Rule__c(
+	    		licensingplus__object__c=LicenseRuleTestDataSeeder.ACCOUNT_OBJ,
+	    		licensingplus__field__c='IsDeleted',
+	    		licensingplus__operator__c='equals',
+	    		licensingplus__value__c='12345',
+	    		licensingplus__isActive__c=true,
 	    		recordtypeid=LicenseRuleHelper.regularFilterRuleRecordTypeId
     	);
     	
@@ -142,11 +142,11 @@ private class LicenseRuleTest {
     		system.assert(e.getMessage().contains('FIELD_CUSTOM_VALIDATION_EXCEPTION'));
     	}
     	
-    	rule.value__c = 'true';
+    	rule.licensingplus__value__c = 'true';
     	insert rule;
     	
     	try {
-    		rule.value__c='12345';
+    		rule.licensingplus__value__c='12345';
     		update rule;
     		throw new LicenseRuleException('An exception should have been thrown by the trigger but was not.');  	
     	
@@ -156,12 +156,12 @@ private class LicenseRuleTest {
     }
     
     static testMethod void testInsertUpdateInvalidNumberFieldValue() {
-    	License_Rule__c rule = new License_Rule__c(
-	    		object__c=LicenseRuleTestDataSeeder.ACCOUNT_OBJ,
-	    		field__c='AnnualRevenue',
-	    		operator__c='less than',
-	    		value__c='thx',
-	    		isActive__c=true,
+    	licensingplus__License_Rule__c rule = new licensingplus__License_Rule__c(
+	    		licensingplus__object__c=LicenseRuleTestDataSeeder.ACCOUNT_OBJ,
+	    		licensingplus__field__c='AnnualRevenue',
+	    		licensingplus__operator__c='less than',
+	    		licensingplus__value__c='thx',
+	    		licensingplus__isActive__c=true,
 	    		recordtypeid=LicenseRuleHelper.regularFilterRuleRecordTypeId
     	);
     	
@@ -173,11 +173,11 @@ private class LicenseRuleTest {
     		system.assert(e.getMessage().contains('FIELD_CUSTOM_VALIDATION_EXCEPTION'));
     	}
     	
-    	rule.value__c = '12345';
+    	rule.licensingplus__value__c = '12345';
     	insert rule;
     	
     	try {
-    		rule.value__c='thx';
+    		rule.licensingplus__value__c='thx';
     		update rule;
     		throw new LicenseRuleException('An exception should have been thrown by the trigger but was not.');  	
     	
@@ -187,12 +187,12 @@ private class LicenseRuleTest {
     }
     
     static testMethod void testInsertUpdateInvalidDateFieldValue() {
-    	License_Rule__c rule = new License_Rule__c(
-	    		object__c=LicenseRuleTestDataSeeder.ACCOUNT_OBJ,
-	    		field__c='LastModifiedDate',
-	    		operator__c='greater than',
-	    		value__c='20101123',
-	    		isActive__c=true,
+    	licensingplus__License_Rule__c rule = new licensingplus__License_Rule__c(
+	    		licensingplus__object__c=LicenseRuleTestDataSeeder.ACCOUNT_OBJ,
+	    		licensingplus__field__c='LastModifiedDate',
+	    		licensingplus__operator__c='greater than',
+	    		licensingplus__value__c='20101123',
+	    		licensingplus__isActive__c=true,
 	    		recordtypeid=LicenseRuleHelper.regularFilterRuleRecordTypeId
     	);
     	
@@ -204,11 +204,11 @@ private class LicenseRuleTest {
     		system.assert(e.getMessage().contains('FIELD_CUSTOM_VALIDATION_EXCEPTION'));
     	}
     	
-    	rule.value__c = '2005-10-08 01:02:03';
+    	rule.licensingplus__value__c = '2005-10-08 01:02:03';
     	insert rule;
     	
     	try {
-    		rule.value__c='20101123';
+    		rule.licensingplus__value__c='20101123';
     		update rule;
     		throw new LicenseRuleException('An exception should have been thrown by the trigger but was not.');  	
     	
@@ -218,12 +218,12 @@ private class LicenseRuleTest {
     }
     
     static testMethod void testInsertUpdateInvalidDatetimeFieldValue() {
-    	License_Rule__c rule = new License_Rule__c(
-	    		object__c=LicenseRuleTestDataSeeder.ACCOUNT_OBJ,
-	    		field__c='LastActivityDate',
-	    		operator__c='greater or equal',
-	    		value__c='20101123',
-	    		isActive__c=true,
+    	licensingplus__License_Rule__c rule = new licensingplus__License_Rule__c(
+	    		licensingplus__object__c=LicenseRuleTestDataSeeder.ACCOUNT_OBJ,
+	    		licensingplus__field__c='LastActivityDate',
+	    		licensingplus__operator__c='greater or equal',
+	    		licensingplus__value__c='20101123',
+	    		licensingplus__isActive__c=true,
 	    		recordtypeid=LicenseRuleHelper.regularFilterRuleRecordTypeId
     	);
     	
@@ -235,11 +235,11 @@ private class LicenseRuleTest {
     		system.assert(e.getMessage().contains('FIELD_CUSTOM_VALIDATION_EXCEPTION'));
     	}
     	
-    	rule.value__c = '2005-10-08';
+    	rule.licensingplus__value__c = '2005-10-08';
     	insert rule;
     	
     	try {
-    		rule.value__c='20101123';
+    		rule.licensingplus__value__c='20101123';
     		update rule;
     		throw new LicenseRuleException('An exception should have been thrown by the trigger but was not.');  	
     	

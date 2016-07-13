@@ -1,7 +1,8 @@
 import TestData from './test-data'
 import _ from 'lodash'
 
-var ComplianceController = {
+var LicensingPlus = {};
+LicensingPlus.ComplianceController = {
   //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   // Sometimes this Controller is MockData, sometimes it is 
   // a real VisualForce Remoting API
@@ -10,7 +11,7 @@ var ComplianceController = {
   //params:
   // none
   //returns 
-  //  success - {checklist__c}, orgwide default checklist record 
+  //  success - {licensingplus__checklist__c}, orgwide default checklist record 
   //  failure - "error message"
   getChecklist: function (fn) {
     setTimeout(function () {
@@ -58,8 +59,8 @@ var ComplianceController = {
   },
 
   //params:
-  // 1 - [rules], array of rule objects to toggle isactive__c
-  // 2 - [ruleLogics], array of ruleLogic objects to toggle isactive__c
+  // 1 - [rules], array of rule objects to toggle licensingplus__isactive__c
+  // 2 - [ruleLogics], array of ruleLogic objects to toggle licensingplus__isactive__c
   //returns 
   //  success - null 
   //  failure - "error message"
@@ -88,7 +89,7 @@ var ComplianceController = {
   //  failure - "error message"
   getSobjectWithFields: function (objectName, fn) {
 
-    //sobject name can be "license__c" or "account" or "opportunity"
+    //sobject name can be "licensingplus__license__c" or "account" or "opportunity"
     //below is the specification we expects
     var sobject = TestData[objectName + 'sobject'] || {};
     setTimeout(function () {
@@ -117,8 +118,8 @@ var ComplianceController = {
       if (!(ruleSetResult.stateRule instanceof Object)) {
         return fn({}, {type:'exception',message:'State rule not defined'});
       }
-      if ((ruleSetResult.stateRule instanceof Object) && ruleSetResult.stateRule.object__c === '') {
-        return fn({}, {type:'exception',message:'State rule \'object__c\' not defined'});
+      if ((ruleSetResult.stateRule instanceof Object) && ruleSetResult.stateRule.licensingplus__object__c === '') {
+        return fn({}, {type:'exception',message:'State rule \'licensingplus__object__c\' not defined'});
       }
       // return fn({},{type:'exception',message:'Failed on purpose.'});
       return fn({}, {status: 200});
@@ -126,7 +127,7 @@ var ComplianceController = {
   },
 
   getLicenseRuleSetResult: function (objectName, fn) {
-    //sobject name can be "license__c" or "account" or "opportunity"
+    //sobject name can be "licensingplus__license__c" or "account" or "opportunity"
     //below is the specification we expects
     setTimeout(function () {
       var ruleSetResult = TestData.allRuleSetResults[objectName] || {};
@@ -173,7 +174,9 @@ var ComplianceController = {
 
 // this is the tricky / non-react way to ensure our mockdata
 // usese similar API to Salesforce VisualForce Remoting
-if (typeof Visualforce == 'undefined' && typeof VisualForce == 'undefined')
-  window.ComplianceController = ComplianceController;
+if (typeof Visualforce == 'undefined' && typeof VisualForce == 'undefined') {
+  window.LicensingPlus = {};
+  window.LicensingPlus.ComplianceController = LicensingPlus.ComplianceController;
+}
 
-module.exports = ComplianceController;
+module.exports = LicensingPlus.ComplianceController;

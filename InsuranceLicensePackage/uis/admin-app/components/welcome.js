@@ -17,7 +17,7 @@ class WelcomeScreen extends Component {
       <div className='license-form welcome'>
         <div className='row welcome-main-row'>
             <h1 className="welcome-main-heading">
-                Welcome to Compliance +
+                Welcome to Licensing +
             </h1>
             <p className="welcome-para">
                 License management and flexible controls that you can tailor to your business processes. We built this to ensure our own licensing compliance and thought others could benefit from it as well.    

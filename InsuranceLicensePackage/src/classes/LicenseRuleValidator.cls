@@ -16,7 +16,7 @@ public with sharing class LicenseRuleValidator extends RuleValidator{
     	super(ruleHelper);
     }
     
-    public void validate(License_Rule__c rule, Map<String, Map<String, Schema.SobjectField>> objFieldsByName) {
+    public void validate(licensingplus__License_Rule__c rule, Map<String, Map<String, Schema.SobjectField>> objFieldsByName) {
     	if (rule.recordTypeId == LicenseRuleHelper.regularFilterRuleRecordTypeId) {
     		validateRegularFilterRule(rule, objFieldsByName);
     	} else if (rule.recordTypeId == LicenseRuleHelper.licenseFilterRuleRecordTypeId) {
@@ -26,11 +26,11 @@ public with sharing class LicenseRuleValidator extends RuleValidator{
     	}	
     }
     
-    private void validateFilterRule(License_Rule__c rule, Map<String, Map<String, Schema.SobjectField>> objFieldsByName, Boolean isRegularFilterRule) {
-    	String objName = isRegularFilterRule ? rule.object__c : 'License__c';
-    	String operator = rule.operator__c;
-    	String fieldName = isRegularFilterRule ? rule.field__c : rule.license_field__c;
-    	String fieldValue = rule.value__c;
+    private void validateFilterRule(licensingplus__License_Rule__c rule, Map<String, Map<String, Schema.SobjectField>> objFieldsByName, Boolean isRegularFilterRule) {
+    	String objName = isRegularFilterRule ? rule.licensingplus__object__c : 'licensingplus__License__c';
+    	String operator = rule.licensingplus__operator__c;
+    	String fieldName = isRegularFilterRule ? rule.licensingplus__field__c : rule.licensingplus__license_field__c;
+    	String fieldValue = rule.licensingplus__value__c;
     	  			
 		// do not validate 'not blank' operator
 		if (operator == 'not blank') {
@@ -114,7 +114,7 @@ public with sharing class LicenseRuleValidator extends RuleValidator{
     }
     
     /**
-     operator__c field supported values:
+     licensingplus__operator__c field supported values:
      	equals 
      	greater than (only allow date and number display type)
      	greater or equal (only allow date and number display type)
@@ -141,25 +141,25 @@ public with sharing class LicenseRuleValidator extends RuleValidator{
      	return true;
      }
     
-    private void validateRegularFilterRule(License_Rule__c rule, Map<String, Map<String, Schema.SobjectField>> objFieldsByName) {
+    private void validateRegularFilterRule(licensingplus__License_Rule__c rule, Map<String, Map<String, Schema.SobjectField>> objFieldsByName) {
     	validateFilterRule(rule, objFieldsByName, true);
     }
     
-    private void validateLicenseFilterRule(License_Rule__c rule, Map<String, Map<String, Schema.SobjectField>> objFieldsByName) {
+    private void validateLicenseFilterRule(licensingplus__License_Rule__c rule, Map<String, Map<String, Schema.SobjectField>> objFieldsByName) {
     	validateFilterRule(rule, objFieldsByName, false);
     }
     
-    private void validateLicenseComparisonRule(License_Rule__c rule, Map<String, Map<String, Schema.SobjectField>> objFieldsByName) {
-    	String objName = rule.object__c;
-    	String operator = rule.operator__c;
-    	String fieldName = rule.field__c;
-    	String licenseFieldName = rule.license_field__c;
+    private void validateLicenseComparisonRule(licensingplus__License_Rule__c rule, Map<String, Map<String, Schema.SobjectField>> objFieldsByName) {
+    	String objName = rule.licensingplus__object__c;
+    	String operator = rule.licensingplus__operator__c;
+    	String fieldName = rule.licensingplus__field__c;
+    	String licenseFieldName = rule.licensingplus__license_field__c;
     	
     	//validate sobject and field is defined
     	Schema.SobjectField objField = ruleHelper.validateAndGetSObjectField(objName, null, fieldName, objFieldsByName);		
 		Schema.DescribeFieldResult objF = objField.getDescribe();
 		
-		Schema.SobjectField licenseField = ruleHelper.validateAndGetSObjectField('License__c', null, licenseFieldName, objFieldsByName);		
+		Schema.SobjectField licenseField = ruleHelper.validateAndGetSObjectField('licensingplus__License__c', null, licenseFieldName, objFieldsByName);		
 		Schema.DescribeFieldResult licenseF = licenseField.getDescribe();
 		
 		SObjectUtils.FIELD_TYPE licenseFtype = SObjectUtils.getFieldType(licenseF.getType());

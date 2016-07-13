@@ -36,6 +36,11 @@
         <name>CustomTab</name>
     </types>
     <types>
+        <members>Licensing_Plus</members>
+        <members>Licensing_Plus/Logo.png</members>
+        <name>Document</name>
+    </types>
+    <types>
         <members>License_Templates</members>
         <members>License_Templates/Insurance_License_Approval_Approved</members>
         <members>License_Templates/Insurance_License_Approval_Rejected</members>

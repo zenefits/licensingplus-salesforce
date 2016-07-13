@@ -3,15 +3,14 @@ import { hashHistory } from 'react-router';
 
 export function getChecklist(pathname) {
   return (dispatch) => {
-    return ComplianceController.getChecklist((checklist) => {
-      
-      var checklistComplete = checklist.download_spreadsheet__c
-        && checklist.watch_configuration_video__c
-        && checklist.send_spreadsheet__c
-        && checklist.filled_spreadsheet__c
-        && checklist.watch_video__c
-        && checklist.set_approvals__c
-        && checklist.watch_compliance_video__c;
+    return LicensingPlus.ComplianceController.getChecklist((checklist) => {
+      var checklistComplete = checklist.licensingplus__download_spreadsheet__c
+        && checklist.licensingplus__watch_configuration_video__c
+        && checklist.licensingplus__send_spreadsheet__c
+        && checklist.licensingplus__filled_spreadsheet__c
+        && checklist.licensingplus__watch_video__c
+        && checklist.licensingplus__set_approvals__c
+        && checklist.licensingplus__watch_compliance_video__c;
 
       dispatch({
         type: types.CHECKLIST_RECEIVED,

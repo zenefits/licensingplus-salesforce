@@ -83,7 +83,7 @@ class RuleSets extends Component {
     var back = (
       <h4>
         <Link to={`/checklist`}>
-          &lt; Back to Checklist
+          &lt; Back to checklist
         </Link>
       </h4>
     )
@@ -117,7 +117,7 @@ class RuleSets extends Component {
           <div className='col-sm-9 inside-container'>
             <div>
               {this.renderAddRuleSet()}
-              <h4>Compliance Rules</h4>
+              <h4>Compliance rules</h4>
             </div>
             <table className='table table-hover table-fixed custom-table'>
               <thead>

@@ -17,7 +17,7 @@ export function cancelPreview() {
 
 export function insertLinesOfAuth(previewRows) {
   return function (dispatch) {
-    return ComplianceController.insertLinesOfAuth(previewRows, (sfdcRows) => {
+    return LicensingPlus.ComplianceController.insertLinesOfAuth(previewRows, (sfdcRows) => {
       dispatch({
         type: types.LINES_OF_AUTH_INSERTED,
         sfdcRows: sfdcRows
@@ -28,7 +28,7 @@ export function insertLinesOfAuth(previewRows) {
 
 export function deleteLineOfAuth(row) {
   return function (dispatch) {
-    return ComplianceController.deleteLineOfAuth(row, () => {
+    return LicensingPlus.ComplianceController.deleteLineOfAuth(row, () => {
       dispatch({
         type: types.LINE_OF_AUTH_DELETED,
         row: row
@@ -39,7 +39,7 @@ export function deleteLineOfAuth(row) {
 
 export function getLinesOfAuth() {
   return function (dispatch) {
-    return ComplianceController.getLinesOfAuth((sfdcRows) => {
+    return LicensingPlus.ComplianceController.getLinesOfAuth((sfdcRows) => {
       dispatch({
         type: types.LINES_OF_AUTH_RECEIVED,
         sfdcRows: sfdcRows

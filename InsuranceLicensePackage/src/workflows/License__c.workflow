@@ -1,48 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Workflow xmlns="http://soap.sforce.com/2006/04/metadata">
     <alerts>
-        <fullName>Insurance_Licenses_Approval_received</fullName>
-        <description>Insurance Licenses - Approval received</description>
-        <protected>false</protected>
-        <recipients>
-            <field>Manager_Email__c</field>
-            <type>email</type>
-        </recipients>
-        <recipients>
-            <type>owner</type>
-        </recipients>
-        <senderType>CurrentUser</senderType>
-        <template>License_Templates/Insurance_License_Approval_Request_Received</template>
-    </alerts>
-    <alerts>
-        <fullName>Insurance_Licenses_Approved</fullName>
-        <description>Insurance Licenses - Approved</description>
-        <protected>false</protected>
-        <recipients>
-            <field>Manager_Email__c</field>
-            <type>email</type>
-        </recipients>
-        <recipients>
-            <type>owner</type>
-        </recipients>
-        <senderType>CurrentUser</senderType>
-        <template>License_Templates/Insurance_License_Approval_Approved</template>
-    </alerts>
-    <alerts>
-        <fullName>Insurance_Licenses_Rejected</fullName>
-        <description>Insurance Licenses - Rejected</description>
-        <protected>false</protected>
-        <recipients>
-            <field>Manager_Email__c</field>
-            <type>email</type>
-        </recipients>
-        <recipients>
-            <type>owner</type>
-        </recipients>
-        <senderType>CurrentUser</senderType>
-        <template>License_Templates/Insurance_License_Approval_Rejected</template>
-    </alerts>
-    <alerts>
         <fullName>License_Expiring_in_N_days</fullName>
         <description>License Expiring in N days</description>
         <protected>false</protected>
@@ -80,40 +38,12 @@
         <protected>false</protected>
     </fieldUpdates>
     <fieldUpdates>
-        <fullName>Insurance_License_Approved_True</fullName>
-        <field>Approved__c</field>
-        <literalValue>1</literalValue>
-        <name>Insurance License - Approved - True</name>
-        <notifyAssignee>false</notifyAssignee>
-        <operation>Literal</operation>
-        <protected>false</protected>
-        <reevaluateOnChange>true</reevaluateOnChange>
-    </fieldUpdates>
-    <fieldUpdates>
         <fullName>Populate_Manager_Email</fullName>
         <field>Manager_Email__c</field>
         <formula>Owner:User.Manager.Email</formula>
         <name>Populate Manager Email</name>
         <notifyAssignee>false</notifyAssignee>
         <operation>Formula</operation>
-        <protected>false</protected>
-    </fieldUpdates>
-    <fieldUpdates>
-        <fullName>Set_Pending_Approval</fullName>
-        <field>Pending_Approval__c</field>
-        <literalValue>1</literalValue>
-        <name>Set Pending Approval</name>
-        <notifyAssignee>false</notifyAssignee>
-        <operation>Literal</operation>
-        <protected>false</protected>
-    </fieldUpdates>
-    <fieldUpdates>
-        <fullName>Unset_Pending_Approval</fullName>
-        <field>Pending_Approval__c</field>
-        <literalValue>0</literalValue>
-        <name>Unset Pending Approval</name>
-        <notifyAssignee>false</notifyAssignee>
-        <operation>Literal</operation>
         <protected>false</protected>
     </fieldUpdates>
     <rules>
@@ -128,57 +58,16 @@
     </rules>
     <rules>
         <fullName>License Expiring Soon - N days</fullName>
-        <active>true</active>
+        <active>false</active>
         <formula>AND(   Status__c = &apos;Active&apos;,   NOT(ISBLANK(Expiration_Date__c)),   Owner:User.IsActive )</formula>
         <triggerType>onCreateOrTriggeringUpdate</triggerType>
-        <workflowTimeTriggers>
-            <actions>
-                <name>License_Expiring_in_N_days</name>
-                <type>Alert</type>
-            </actions>
-            <offsetFromField>License__c.Expiration_Date__c</offsetFromField>
-            <timeLength>-14</timeLength>
-            <workflowTimeTriggerUnit>Days</workflowTimeTriggerUnit>
-        </workflowTimeTriggers>
-        <workflowTimeTriggers>
-            <actions>
-                <name>License_Expiring_in_N_days</name>
-                <type>Alert</type>
-            </actions>
-            <offsetFromField>License__c.Expiration_Date__c</offsetFromField>
-            <timeLength>-30</timeLength>
-            <workflowTimeTriggerUnit>Days</workflowTimeTriggerUnit>
-        </workflowTimeTriggers>
-        <workflowTimeTriggers>
-            <actions>
-                <name>License_Expiring_in_N_days</name>
-                <type>Alert</type>
-            </actions>
-            <offsetFromField>License__c.Expiration_Date__c</offsetFromField>
-            <timeLength>-3</timeLength>
-            <workflowTimeTriggerUnit>Days</workflowTimeTriggerUnit>
-        </workflowTimeTriggers>
-        <workflowTimeTriggers>
-            <actions>
-                <name>License_Expiring_in_N_days</name>
-                <type>Alert</type>
-            </actions>
-            <offsetFromField>License__c.Expiration_Date__c</offsetFromField>
-            <timeLength>-7</timeLength>
-            <workflowTimeTriggerUnit>Days</workflowTimeTriggerUnit>
-        </workflowTimeTriggers>
-        <workflowTimeTriggers>
-            <actions>
-                <name>License_Expiring_in_N_days</name>
-                <type>Alert</type>
-            </actions>
-            <offsetFromField>License__c.Expiration_Date__c</offsetFromField>
-            <timeLength>-60</timeLength>
-            <workflowTimeTriggerUnit>Days</workflowTimeTriggerUnit>
-        </workflowTimeTriggers>
     </rules>
     <rules>
         <fullName>Populate Manager Email</fullName>
+        <actions>
+            <name>Populate_Manager_Email</name>
+            <type>FieldUpdate</type>
+        </actions>
         <active>true</active>
         <formula>true</formula>
         <triggerType>onAllChanges</triggerType>

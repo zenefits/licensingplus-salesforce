@@ -5,6 +5,7 @@
     <fields>
         <fullName>download_spreadsheet__c</fullName>
         <defaultValue>false</defaultValue>
+        <deprecated>false</deprecated>
         <externalId>false</externalId>
         <label>Download Spreadsheet</label>
         <trackTrending>false</trackTrending>
@@ -13,6 +14,7 @@
     <fields>
         <fullName>filled_spreadsheet__c</fullName>
         <defaultValue>false</defaultValue>
+        <deprecated>false</deprecated>
         <externalId>false</externalId>
         <label>filled spreadsheet</label>
         <trackTrending>false</trackTrending>
@@ -21,6 +23,7 @@
     <fields>
         <fullName>send_spreadsheet__c</fullName>
         <defaultValue>false</defaultValue>
+        <deprecated>false</deprecated>
         <externalId>false</externalId>
         <label>send spreadsheet</label>
         <trackTrending>false</trackTrending>
@@ -29,6 +32,7 @@
     <fields>
         <fullName>set_approvals__c</fullName>
         <defaultValue>false</defaultValue>
+        <deprecated>false</deprecated>
         <externalId>false</externalId>
         <label>set approvals</label>
         <trackTrending>false</trackTrending>
@@ -37,6 +41,7 @@
     <fields>
         <fullName>watch_compliance_video__c</fullName>
         <defaultValue>false</defaultValue>
+        <deprecated>false</deprecated>
         <externalId>false</externalId>
         <label>watch compliance video</label>
         <trackTrending>false</trackTrending>
@@ -45,6 +50,7 @@
     <fields>
         <fullName>watch_configuration_video__c</fullName>
         <defaultValue>false</defaultValue>
+        <deprecated>false</deprecated>
         <externalId>false</externalId>
         <label>watch configuration video</label>
         <trackTrending>false</trackTrending>
@@ -53,6 +59,7 @@
     <fields>
         <fullName>watch_video__c</fullName>
         <defaultValue>false</defaultValue>
+        <deprecated>false</deprecated>
         <externalId>false</externalId>
         <label>watch video</label>
         <trackTrending>false</trackTrending>

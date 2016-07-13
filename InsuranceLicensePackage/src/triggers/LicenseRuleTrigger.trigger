@@ -1,4 +1,4 @@
-trigger LicenseRuleTrigger on License_Rule__c (before insert, before update, after insert, after update) {
+trigger LicenseRuleTrigger on licensingplus__License_Rule__c (before insert, before update, after insert, after update) {
     if (trigger.isAfter) {
         if (trigger.isInsert || trigger.isUpdate) {
             LicenseRuleTriggerHandler.validate(trigger.new);

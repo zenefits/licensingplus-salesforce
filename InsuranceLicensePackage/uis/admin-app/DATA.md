@@ -18,11 +18,11 @@
 //Regular Filter Rule
 {
 	"id" : "a0836000005XiRT",
-	"object__c" : "account",
-	"field__c" : "industry",
-	"oeprator__c" : "equals",
-	"value__c" : "Banking",
-	"isactive__c" : false,
+	"licensingplus__object__c" : "account",
+	"licensingplus__field__c" : "industry",
+	"licensingplus__operator__c" : "equals",
+	"licensingplus__value__c" : "Banking",
+	"licensingplus__isactive__c" : false,
 	"recordtypeid" : "01236000000mZjG", //Regular Filter Rule
 }
 ```
@@ -31,11 +31,11 @@
 //License State Rule
 {
 	"id" : "a0836000006MsMj",
-	"object__c" : "account",
-	"field__c" : "BillingState1",
-	"license_field__c" : "State__c",
-	"oeprator__c" : "equals",
-	"isactive__c" : false,
+	"licensingplus__object__c" : "account",
+	"licensingplus__field__c" : "BillingState1",
+	"licensingplus__license_field__c" : "LicensingPlus__State__c",
+	"licensingplus__operator__c" : "equals",
+	"licensingplus__isactive__c" : false,
 	"recordtypeid" : "01236000000md5e", //Regular State Rule
 }
 ```
@@ -45,11 +45,11 @@
 {
 	"id" : "a0836000006MskS",
 	"name" : "License Effective Date Rule",
-	"object__c" : "account",
-	"value__c" : "2016-01-01",
-	"license_field__c" : "Effective_Date__c",
-	"oeprator__c" : "greater than",
-	"isactive__c" : false,
+	"licensingplus__object__c" : "account",
+	"licensingplus__value__c" : "2016-01-01",
+	"licensingplus__license_field__c" : "Effective_Date__c",
+	"licensingplus__operator__c" : "greater than",
+	"licensingplus__isactive__c" : false,
 	"recordtypeid" : "01236000000md6m", //License Filter Rule
 }
 ```
@@ -58,11 +58,11 @@
 //License Comparison Rule
 {
 	"id" : "a0836000006MZfe",
-	"object__c" : "account",
-	"field__c" : "Type",
-	"license_field__c" : "Type__c",
-	"oeprator__c" : "equals",
-	"isactive__c" : false,
+	"licensingplus__object__c" : "account",
+	"licensingplus__field__c" : "Type",
+	"licensingplus__license_field__c" : "licensingplus__type__c",
+	"licensingplus__operator__c" : "equals",
+	"licensingplus__isactive__c" : false,
 	"recordtypeid" : "01236000000mZih", //License Comparison Rule
 }
 ```
@@ -72,11 +72,11 @@
 {
 	"id" : "a0836000006MskN",
 	"name" : "Account Resident License Rule",
-	"object__c" : "account",
-	"value__c" : "Resident State",
-	"license_field__c" : "RecordType.Name",
-	"oeprator__c" : "equals",
-	"isactive__c" : false,
+	"licensingplus__object__c" : "account",
+	"licensingplus__value__c" : "Resident State",
+	"licensingplus__license_field__c" : "RecordType.Name",
+	"licensingplus__operator__c" : "equals",
+	"licensingplus__isactive__c" : false,
 	"recordtypeid" : "01236000000md5o", //Resident License Rule
 }
 ```
@@ -88,10 +88,10 @@
 {
 	"id" : "a0936000001bAHS",
 	"name" : "accountRuleLogic1",
-	"object__c" : "account",
-	"logic__c" : "a0836000005XiRTAA0 & a0836000006MZfUAAW", //rules of type: "Regular Filter Rule"
-	"filter_rule__c" : null, //parent
-	"isactive__c" : false,
+	"licensingplus__object__c" : "account",
+	"licensingplus__logic__c" : "a0836000005XiRTAA0 & a0836000006MZfUAAW", //rules of type: "Regular Filter Rule"
+	"licensingplus__filter_rule__c" : null, //parent
+	"licensingplus__isactive__c" : false,
 	"recordtypeid" : "01236000000mbCr", //Filter Rule
 }
 ```
@@ -101,15 +101,15 @@
 {
 	"id" : "a0936000001bI8G",
 	"name" : "accountRuleLogic2",
-	"object__c" : "account",
-	"logic__c" : "a0836000006MZfe", //rule of type: "License Comparison Rule"
-	"filter_rule__c" : "a0936000001bAHS", //child
-	"isactive__c" : false,
+	"licensingplus__object__c" : "account",
+	"licensingplus__logic__c" : "a0836000006MZfe", //rule of type: "License Comparison Rule"
+	"licensingplus__filter_rule__c" : "a0936000001bAHS", //child
+	"licensingplus__isactive__c" : false,
 	"recordtypeid" : "01236000000mbCw", //License Rule
 }
 ```
 
-## @Remoting Methods for ComplianceController
+## @Remoting Methods for LicensingPlus.ComplianceController
 
 ```
 Get all rules @Remoting Apex method (SFDC)
@@ -124,26 +124,26 @@ Remove old advanced filters (SFDC)
 ```
 
 ```
-var ComplianceController = {
+var LicensingPlus.ComplianceController = {
   //Sometimes this Controller is MockData, sometimes it is 
   // a real VisualForce Remoting API
   
   //params:
   // none
   //returns 
-  //  success - {checklist__c}, orgwide default checklist record 
+  //  success - {licensingplus__checklist__c}, orgwide default checklist record 
   //  failure - "error message"
   getChecklist: function (fn) {
     setTimeout(function(){
       return fn({
         Id: 'a0736000005GIG1AAO',
-        download_spreadsheet__c: true,
-        watch_configuration_video__c: false,
-        send_spreadsheet__c: false,
-        filled_spreadsheet__c: false,
-        watch_video__c: false,
-        set_approvals__c: false,
-        watch_compliance_video__c: false
+        licensingplus__download_spreadsheet__c: true,
+        licensingplus__watch_configuration_video__c: false,
+        licensingplus__send_spreadsheet__c: false,
+        licensingplus__filled_spreadsheet__c: false,
+        licensingplus__watch_video__c: false,
+        licensingplus__set_approvals__c: false,
+        licensingplus__watch_compliance_video__c: false
       })
     }, 300);
   },
@@ -188,8 +188,8 @@ var ComplianceController = {
   },
 
   //params:
-  // 1 - [rules], array of rule objects to toggle isactive__c
-  // 2 - [ruleLogics], array of ruleLogic objects to toggle isactive__c
+  // 1 - [rules], array of rule objects to toggle licensingplus__isactive__c
+  // 2 - [ruleLogics], array of ruleLogic objects to toggle licensingplus__isactive__c
   //returns 
   //  success - null 
   //  failure - "error message"
@@ -215,11 +215,11 @@ var ComplianceController = {
   //  success - {objectName: { fieldname: fieldtype } } 
   //  failure - "error message"
   getSobjectFields: function(objectName, fn) {
-    //sobject name can be "license__c" or "account" or "opportunity"
+    //sobject name can be "licensingplus__license__c" or "account" or "opportunity"
     //below is the specification we expects
     setTimeout(function(){
       var data = {
-        "type__c" : "string",
+        "licensingplus__type__c" : "string",
         "status__c" : "string",
         "date_made__c" : "date"
       };
