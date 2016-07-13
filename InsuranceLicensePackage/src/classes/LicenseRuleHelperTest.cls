@@ -68,30 +68,30 @@ private class LicenseRuleHelperTest {
         insert opportunity;
 
         // insert license
-        License__c license = new License__c(
-            State__c = 'California',
-            RecordTypeId = Schema.SObjectType.License__c.getRecordTypeInfosByName().get('Resident State').getRecordTypeId(),
-            NPN_Number__c = '123',
-            Number__c = '123',
-            Effective_Date__c = Date.today().addDays(-1),
-            Expiration_Date__c = Date.today(),
-            Approved__c = false
+        licensingplus__License__c license = new licensingplus__License__c(
+            licensingplus__State__c = 'California',
+            RecordTypeId = Schema.SObjectType.licensingplus__License__c.getRecordTypeInfosByName().get('Resident State').getRecordTypeId(),
+            licensingplus__NPN_Number__c = '123',
+            licensingplus__Number__c = '123',
+            licensingplus__Effective_Date__c = Date.today().addDays(-1),
+            licensingplus__Expiration_Date__c = Date.today(),
+            licensingplus__Approved__c = false
         );
         insert license;
         Test.setCreatedDate(license.id, createdDate);     
-        license = [select id, approved__c, expiration_date__c, NPN_Number__c, class__c, createdDate from license__c where id =: license.id];     
+        license = [select id, licensingplus__approved__c, licensingplus__expiration_date__c, licensingplus__NPN_Number__c, licensingplus__class__c, createdDate from licensingplus__license__c where id =: license.id];     
 
         // create and insert rules
-        License_Rule__c booleanRule = new License_Rule__c(Object__c = 'Account', field__c = 'isDeleted', license_Field__c = 'approved__c', operator__c = 'equals', isActive__c = true, recordTypeId = Schema.SObjectType.License_Rule__c.getRecordTypeInfosByName().get('License Comparison Rule').getRecordTypeId());
-        //License_Rule__c integerRule = new License_Rule__c(Object__c = 'Account', field__c = 'NumberOfEmployees', license_Field__c = 'approved__c', operator__c = 'equals', isActive__c = true, recordTypeId = Schema.SObjectType.License_Rule__c.getRecordTypeInfosByName().get('License Comparison Rule').getRecordTypeId());        
-        //License_Rule__c doubleRule = new License_Rule__c(Object__c = 'Account', field__c = 'isDeleted', license_Field__c = 'approved__c', operator__c = 'equals', isActive__c = true, recordTypeId = Schema.SObjectType.License_Rule__c.getRecordTypeInfosByName().get('License Comparison Rule').getRecordTypeId());
-        License_Rule__c dateRule = new License_Rule__c(Object__c = 'Opportunity', field__c = 'closeDate', license_Field__c = 'Expiration_Date__c', operator__c = 'equals', isActive__c = true, recordTypeId = Schema.SObjectType.License_Rule__c.getRecordTypeInfosByName().get('License Comparison Rule').getRecordTypeId());
-        License_Rule__c dateTimeRule = new License_Rule__c(Object__c = 'Account', field__c = 'createdDate', license_Field__c = 'createdDate', operator__c = 'equals', isActive__c = true, recordTypeId = Schema.SObjectType.License_Rule__c.getRecordTypeInfosByName().get('License Comparison Rule').getRecordTypeId());
-        License_Rule__c textRule = new License_Rule__c(Object__c = 'Account', field__c = 'description', license_Field__c = 'NPN_Number__c', operator__c = 'equals', isActive__c = true, recordTypeId = Schema.SObjectType.License_Rule__c.getRecordTypeInfosByName().get('License Comparison Rule').getRecordTypeId());
-        License_Rule__c textRule_blankFields = new License_Rule__c(Object__c = 'Account', field__c = 'description', license_Field__c = 'Class__c', operator__c = 'equals', isActive__c = true, recordTypeId = Schema.SObjectType.License_Rule__c.getRecordTypeInfosByName().get('License Comparison Rule').getRecordTypeId());        
-        License_Rule__c textRule_notEqual = new License_Rule__c(Object__c = 'Account', field__c = 'name', license_Field__c = 'NPN_Number__c', operator__c = 'not equal to', isActive__c = true, recordTypeId = Schema.SObjectType.License_Rule__c.getRecordTypeInfosByName().get('License Comparison Rule').getRecordTypeId());        
-        License_Rule__c textRule_notEqual_oneBlankField = new License_Rule__c(Object__c = 'Account', field__c = 'description', license_Field__c = 'NPN_Number__c', operator__c = 'not equal to', isActive__c = true, recordTypeId = Schema.SObjectType.License_Rule__c.getRecordTypeInfosByName().get('License Comparison Rule').getRecordTypeId());                
-        insert new List<License_Rule__c>{booleanRule, dateRule, dateTimeRule, textRule, textRule_blankFields, textRule_notEqual};
+        licensingplus__License_Rule__c booleanRule = new licensingplus__License_Rule__c(licensingplus__Object__c = 'Account', licensingplus__field__c = 'isDeleted', licensingplus__license_Field__c = 'licensingplus__approved__c', licensingplus__operator__c = 'equals', licensingplus__isActive__c = true, recordTypeId = Schema.SObjectType.licensingplus__License_Rule__c.getRecordTypeInfosByName().get('License Comparison Rule').getRecordTypeId());
+        //licensingplus__License_Rule__c integerRule = new licensingplus__License_Rule__c(licensingplus__Object__c = 'Account', licensingplus__field__c = 'NumberOfEmployees', licensingplus__license_Field__c = 'licensingplus__approved__c', licensingplus__operator__c = 'equals', licensingplus__isActive__c = true, recordTypeId = Schema.SObjectType.licensingplus__License_Rule__c.getRecordTypeInfosByName().get('License Comparison Rule').getRecordTypeId());        
+        //licensingplus__License_Rule__c doubleRule = new licensingplus__License_Rule__c(licensingplus__Object__c = 'Account', licensingplus__field__c = 'isDeleted', licensingplus__license_Field__c = 'licensingplus__approved__c', licensingplus__perator__c = 'equals', licensingplus__isActive__c = true, recordTypeId = Schema.SObjectType.licensingplus__License_Rule__c.getRecordTypeInfosByName().get('License Comparison Rule').getRecordTypeId());
+        licensingplus__License_Rule__c dateRule = new licensingplus__License_Rule__c(licensingplus__Object__c = 'Opportunity', licensingplus__field__c = 'closeDate', licensingplus__license_Field__c = 'licensingplus__Expiration_Date__c', licensingplus__operator__c = 'equals', licensingplus__isActive__c = true, recordTypeId = Schema.SObjectType.licensingplus__License_Rule__c.getRecordTypeInfosByName().get('License Comparison Rule').getRecordTypeId());
+        licensingplus__License_Rule__c dateTimeRule = new licensingplus__License_Rule__c(licensingplus__Object__c = 'Account', licensingplus__field__c = 'createdDate', licensingplus__license_Field__c = 'createdDate', licensingplus__operator__c = 'equals', licensingplus__isActive__c = true, recordTypeId = Schema.SObjectType.licensingplus__License_Rule__c.getRecordTypeInfosByName().get('License Comparison Rule').getRecordTypeId());
+        licensingplus__License_Rule__c textRule = new licensingplus__License_Rule__c(licensingplus__Object__c = 'Account', licensingplus__field__c = 'description', licensingplus__license_Field__c = 'licensingplus__NPN_Number__c', licensingplus__operator__c = 'equals', licensingplus__isActive__c = true, recordTypeId = Schema.SObjectType.licensingplus__License_Rule__c.getRecordTypeInfosByName().get('License Comparison Rule').getRecordTypeId());
+        licensingplus__License_Rule__c textRule_blankFields = new licensingplus__License_Rule__c(licensingplus__Object__c = 'Account', licensingplus__field__c = 'description', licensingplus__license_Field__c = 'licensingplus__Class__c', licensingplus__operator__c = 'equals', licensingplus__isActive__c = true, recordTypeId = Schema.SObjectType.licensingplus__License_Rule__c.getRecordTypeInfosByName().get('License Comparison Rule').getRecordTypeId());        
+        licensingplus__License_Rule__c textRule_notEqual = new licensingplus__License_Rule__c(licensingplus__Object__c = 'Account', licensingplus__field__c = 'name', licensingplus__license_Field__c = 'licensingplus__NPN_Number__c', licensingplus__operator__c = 'not equal to', licensingplus__isActive__c = true, recordTypeId = Schema.SObjectType.licensingplus__License_Rule__c.getRecordTypeInfosByName().get('License Comparison Rule').getRecordTypeId());        
+        licensingplus__License_Rule__c textRule_notEqual_oneBlankField = new licensingplus__License_Rule__c(licensingplus__Object__c = 'Account', licensingplus__field__c = 'description', licensingplus__license_Field__c = 'licensingplus__NPN_Number__c', licensingplus__operator__c = 'not equal to', licensingplus__isActive__c = true, recordTypeId = Schema.SObjectType.licensingplus__License_Rule__c.getRecordTypeInfosByName().get('License Comparison Rule').getRecordTypeId());                
+        insert new List<licensingplus__License_Rule__c>{booleanRule, dateRule, dateTimeRule, textRule, textRule_blankFields, textRule_notEqual};
 
         test.startTest();
         LicenseRuleHelper helper = new LicenseRuleHelper();
@@ -135,29 +135,29 @@ private class LicenseRuleHelperTest {
         insert opportunity;
 
         // insert license
-        License__c license = new License__c(
-            State__c = 'California',
-            RecordTypeId = Schema.SObjectType.License__c.getRecordTypeInfosByName().get('Resident State').getRecordTypeId(),
-            NPN_Number__c = '123',
-            Number__c = '123',
-            Effective_Date__c = Date.today().addDays(-1),
-            Expiration_Date__c = Date.today(),
-            Approved__c = false
+        licensingplus__License__c license = new licensingplus__License__c(
+            licensingplus__State__c = 'California',
+            RecordTypeId = Schema.SObjectType.licensingplus__License__c.getRecordTypeInfosByName().get('Resident State').getRecordTypeId(),
+            licensingplus__NPN_Number__c = '123',
+            licensingplus__Number__c = '123',
+            licensingplus__Effective_Date__c = Date.today().addDays(-1),
+            licensingplus__Expiration_Date__c = Date.today(),
+            licensingplus__Approved__c = false
         );
         insert license;    
         Test.setCreatedDate(license.id, createdDate);     
-        license = [select id, name, expiration_date__c, createdDate from license__c where id =: license.id];                  
+        license = [select id, name, licensingplus__expiration_date__c, createdDate from licensingplus__license__c where id =: license.id];                  
 
         // create and insert rules
-        //License_Rule__c integerRule = new License_Rule__c(Object__c = 'Account', field__c = 'NumberOfEmployees', license_Field__c = 'approved__c', operator__c = 'equals', isActive__c = true, recordTypeId = Schema.SObjectType.License_Rule__c.getRecordTypeInfosByName().get('License Comparison Rule').getRecordTypeId());        
-        //License_Rule__c doubleRule = new License_Rule__c(Object__c = 'Account', field__c = 'isDeleted', license_Field__c = 'approved__c', operator__c = 'equals', isActive__c = true, recordTypeId = Schema.SObjectType.License_Rule__c.getRecordTypeInfosByName().get('License Comparison Rule').getRecordTypeId());
-        License_Rule__c dateRule = new License_Rule__c(Object__c = 'Opportunity', field__c = 'closeDate', license_Field__c = 'Expiration_Date__c', operator__c = 'greater than', isActive__c = true, recordTypeId = Schema.SObjectType.License_Rule__c.getRecordTypeInfosByName().get('License Comparison Rule').getRecordTypeId());
-        License_Rule__c dateRule_orEqual = new License_Rule__c(Object__c = 'Opportunity', field__c = 'closeDate', license_Field__c = 'Expiration_Date__c', operator__c = 'greater or equal', isActive__c = true, recordTypeId = Schema.SObjectType.License_Rule__c.getRecordTypeInfosByName().get('License Comparison Rule').getRecordTypeId());        
-        License_Rule__c dateTimeRule = new License_Rule__c(Object__c = 'Account', field__c = 'createdDate', license_Field__c = 'createdDate', operator__c = 'greater than', isActive__c = true, recordTypeId = Schema.SObjectType.License_Rule__c.getRecordTypeInfosByName().get('License Comparison Rule').getRecordTypeId());
-        License_Rule__c dateTimeRule_orEqual = new License_Rule__c(Object__c = 'Account', field__c = 'createdDate', license_Field__c = 'createdDate', operator__c = 'greater or equal', isActive__c = true, recordTypeId = Schema.SObjectType.License_Rule__c.getRecordTypeInfosByName().get('License Comparison Rule').getRecordTypeId());        
-        License_Rule__c textRule = new License_Rule__c(Object__c = 'Account', field__c = 'name', license_Field__c = 'name', operator__c = 'greater than', isActive__c = true, recordTypeId = Schema.SObjectType.License_Rule__c.getRecordTypeInfosByName().get('License Comparison Rule').getRecordTypeId());
-        License_Rule__c textRule_orEqual = new License_Rule__c(Object__c = 'Account', field__c = 'name', license_Field__c = 'name', operator__c = 'greater or equal', isActive__c = true, recordTypeId = Schema.SObjectType.License_Rule__c.getRecordTypeInfosByName().get('License Comparison Rule').getRecordTypeId());        
-        insert new List<License_Rule__c>{dateRule, dateRule_orEqual, dateTimeRule, dateTimeRule_orEqual, textRule, textRule_orEqual}; 
+        //licensingplus__License_Rule__c integerRule = new licensingplus__License_Rule__c(licensingplus__Object__c = 'Account', licensingplus__field__c = 'NumberOfEmployees', licensingplus__license_Field__c = 'licensingplus__approved__c', licensingplus__operator__c = 'equals', licensingplus__isActive__c = true, recordTypeId = Schema.SObjectType.licensingplus__License_Rule__c.getRecordTypeInfosByName().get('License Comparison Rule').getRecordTypeId());        
+        //licensingplus__License_Rule__c doubleRule = new licensingplus__License_Rule__c(licensingplus__Object__c = 'Account', licensingplus__field__c = 'isDeleted', licensingplus__license_Field__c = 'licensingplus__approved__c', licensingplus__operator__c = 'equals', licensingplus__isActive__c = true, recordTypeId = Schema.SObjectType.licensingplus__License_Rule__c.getRecordTypeInfosByName().get('License Comparison Rule').getRecordTypeId());
+        licensingplus__License_Rule__c dateRule = new licensingplus__License_Rule__c(licensingplus__Object__c = 'Opportunity', licensingplus__field__c = 'closeDate', licensingplus__license_Field__c = 'licensingplus__Expiration_Date__c', licensingplus__operator__c = 'greater than', licensingplus__isActive__c = true, recordTypeId = Schema.SObjectType.licensingplus__License_Rule__c.getRecordTypeInfosByName().get('License Comparison Rule').getRecordTypeId());
+        licensingplus__License_Rule__c dateRule_orEqual = new licensingplus__License_Rule__c(licensingplus__Object__c = 'Opportunity', licensingplus__field__c = 'closeDate', licensingplus__license_Field__c = 'licensingplus__Expiration_Date__c', licensingplus__operator__c = 'greater or equal', licensingplus__isActive__c = true, recordTypeId = Schema.SObjectType.licensingplus__License_Rule__c.getRecordTypeInfosByName().get('License Comparison Rule').getRecordTypeId());        
+        licensingplus__License_Rule__c dateTimeRule = new licensingplus__License_Rule__c(licensingplus__Object__c = 'Account', licensingplus__field__c = 'createdDate', licensingplus__license_Field__c = 'createdDate', licensingplus__operator__c = 'greater than', licensingplus__isActive__c = true, recordTypeId = Schema.SObjectType.licensingplus__License_Rule__c.getRecordTypeInfosByName().get('License Comparison Rule').getRecordTypeId());
+        licensingplus__License_Rule__c dateTimeRule_orEqual = new licensingplus__License_Rule__c(licensingplus__Object__c = 'Account', licensingplus__field__c = 'createdDate', licensingplus__license_Field__c = 'createdDate', licensingplus__operator__c = 'greater or equal', licensingplus__isActive__c = true, recordTypeId = Schema.SObjectType.licensingplus__License_Rule__c.getRecordTypeInfosByName().get('License Comparison Rule').getRecordTypeId());        
+        licensingplus__License_Rule__c textRule = new licensingplus__License_Rule__c(licensingplus__Object__c = 'Account', licensingplus__field__c = 'name', licensingplus__license_Field__c = 'name', licensingplus__operator__c = 'greater than', licensingplus__isActive__c = true, recordTypeId = Schema.SObjectType.licensingplus__License_Rule__c.getRecordTypeInfosByName().get('License Comparison Rule').getRecordTypeId());
+        licensingplus__License_Rule__c textRule_orEqual = new licensingplus__License_Rule__c(licensingplus__Object__c = 'Account', licensingplus__field__c = 'name', licensingplus__license_Field__c = 'name', licensingplus__operator__c = 'greater or equal', licensingplus__isActive__c = true, recordTypeId = Schema.SObjectType.licensingplus__License_Rule__c.getRecordTypeInfosByName().get('License Comparison Rule').getRecordTypeId());        
+        insert new List<licensingplus__License_Rule__c>{dateRule, dateRule_orEqual, dateTimeRule, dateTimeRule_orEqual, textRule, textRule_orEqual}; 
 
         test.startTest();
         LicenseRuleHelper helper = new LicenseRuleHelper();
@@ -199,29 +199,29 @@ private class LicenseRuleHelperTest {
         insert opportunity;
 
         // insert license
-        License__c license = new License__c(
-            State__c = 'California',
-            RecordTypeId = Schema.SObjectType.License__c.getRecordTypeInfosByName().get('Resident State').getRecordTypeId(),
-            NPN_Number__c = '123',
-            Number__c = '123',
-            Effective_Date__c = Date.today().addDays(-1),
-            Expiration_Date__c = Date.today(),
-            Approved__c = false
+        licensingplus__License__c license = new licensingplus__License__c(
+            licensingplus__State__c = 'California',
+            RecordTypeId = Schema.SObjectType.licensingplus__License__c.getRecordTypeInfosByName().get('Resident State').getRecordTypeId(),
+            licensingplus__NPN_Number__c = '123',
+            licensingplus__Number__c = '123',
+            licensingplus__Effective_Date__c = Date.today().addDays(-1),
+            licensingplus__Expiration_Date__c = Date.today(),
+            licensingplus__Approved__c = false
         );
         insert license;    
         Test.setCreatedDate(license.id, createdDate);     
-        license = [select id, name, expiration_date__c, createdDate from license__c where id =: license.id];                  
+        license = [select id, name, licensingplus__expiration_date__c, createdDate from licensingplus__license__c where id =: license.id];                  
 
         // create and insert rules
-        //License_Rule__c integerRule = new License_Rule__c(Object__c = 'Account', field__c = 'NumberOfEmployees', license_Field__c = 'approved__c', operator__c = 'equals', isActive__c = true, recordTypeId = Schema.SObjectType.License_Rule__c.getRecordTypeInfosByName().get('License Comparison Rule').getRecordTypeId());        
-        //License_Rule__c doubleRule = new License_Rule__c(Object__c = 'Account', field__c = 'isDeleted', license_Field__c = 'approved__c', operator__c = 'equals', isActive__c = true, recordTypeId = Schema.SObjectType.License_Rule__c.getRecordTypeInfosByName().get('License Comparison Rule').getRecordTypeId());
-        License_Rule__c dateRule = new License_Rule__c(Object__c = 'Opportunity', field__c = 'closeDate', license_Field__c = 'Expiration_Date__c', operator__c = 'less than', isActive__c = true, recordTypeId = Schema.SObjectType.License_Rule__c.getRecordTypeInfosByName().get('License Comparison Rule').getRecordTypeId());
-        License_Rule__c dateRule_orEqual = new License_Rule__c(Object__c = 'Opportunity', field__c = 'closeDate', license_Field__c = 'Expiration_Date__c', operator__c = 'less or equal', isActive__c = true, recordTypeId = Schema.SObjectType.License_Rule__c.getRecordTypeInfosByName().get('License Comparison Rule').getRecordTypeId());                
-        License_Rule__c dateTimeRule = new License_Rule__c(Object__c = 'Account', field__c = 'createdDate', license_Field__c = 'createdDate', operator__c = 'less than', isActive__c = true, recordTypeId = Schema.SObjectType.License_Rule__c.getRecordTypeInfosByName().get('License Comparison Rule').getRecordTypeId());
-        License_Rule__c dateTimeRule_orEqual = new License_Rule__c(Object__c = 'Account', field__c = 'createdDate', license_Field__c = 'createdDate', operator__c = 'less or equal', isActive__c = true, recordTypeId = Schema.SObjectType.License_Rule__c.getRecordTypeInfosByName().get('License Comparison Rule').getRecordTypeId());                
-        License_Rule__c textRule = new License_Rule__c(Object__c = 'Account', field__c = 'name', license_Field__c = 'name', operator__c = 'less than', isActive__c = true, recordTypeId = Schema.SObjectType.License_Rule__c.getRecordTypeInfosByName().get('License Comparison Rule').getRecordTypeId());
-        License_Rule__c textRule_orEqual = new License_Rule__c(Object__c = 'Account', field__c = 'name', license_Field__c = 'name', operator__c = 'less or equal', isActive__c = true, recordTypeId = Schema.SObjectType.License_Rule__c.getRecordTypeInfosByName().get('License Comparison Rule').getRecordTypeId());                
-        insert new List<License_Rule__c>{dateRule, dateRule_orEqual, dateTimeRule, dateTimeRule_orEqual, textRule, textRule_orEqual}; 
+        //licensingplus__License_Rule__c integerRule = new licensingplus__License_Rule__c(licensingplus__Object__c = 'Account', licensingplus__field__c = 'NumberOfEmployees', licensingplus__license_Field__c = 'licensingplus__approved__c', licensingplus__operator__c = 'equals', licensingplus__isActive__c = true, recordTypeId = Schema.SObjectType.licensingplus__License_Rule__c.getRecordTypeInfosByName().get('License Comparison Rule').getRecordTypeId());        
+        //licensingplus__License_Rule__c doubleRule = new licensingplus__License_Rule__c(licensingplus__Object__c = 'Account', licensingplus__field__c = 'isDeleted', licensingplus__license_Field__c = 'licensingplus__approved__c', licensingplus__operator__c = 'equals', licensingplus__isActive__c = true, recordTypeId = Schema.SObjectType.licensingplus__License_Rule__c.getRecordTypeInfosByName().get('License Comparison Rule').getRecordTypeId());
+        licensingplus__License_Rule__c dateRule = new licensingplus__License_Rule__c(licensingplus__Object__c = 'Opportunity', licensingplus__field__c = 'closeDate', licensingplus__license_Field__c = 'licensingplus__Expiration_Date__c', licensingplus__operator__c = 'less than', licensingplus__isActive__c = true, recordTypeId = Schema.SObjectType.licensingplus__License_Rule__c.getRecordTypeInfosByName().get('License Comparison Rule').getRecordTypeId());
+        licensingplus__License_Rule__c dateRule_orEqual = new licensingplus__License_Rule__c(licensingplus__Object__c = 'Opportunity', licensingplus__field__c = 'closeDate', licensingplus__license_Field__c = 'licensingplus__Expiration_Date__c', licensingplus__operator__c = 'less or equal', licensingplus__isActive__c = true, recordTypeId = Schema.SObjectType.licensingplus__License_Rule__c.getRecordTypeInfosByName().get('License Comparison Rule').getRecordTypeId());                
+        licensingplus__License_Rule__c dateTimeRule = new licensingplus__License_Rule__c(licensingplus__Object__c = 'Account', licensingplus__field__c = 'createdDate', licensingplus__license_Field__c = 'createdDate', licensingplus__operator__c = 'less than', licensingplus__isActive__c = true, recordTypeId = Schema.SObjectType.licensingplus__License_Rule__c.getRecordTypeInfosByName().get('License Comparison Rule').getRecordTypeId());
+        licensingplus__License_Rule__c dateTimeRule_orEqual = new licensingplus__License_Rule__c(licensingplus__Object__c = 'Account', licensingplus__field__c = 'createdDate', licensingplus__license_Field__c = 'createdDate', licensingplus__operator__c = 'less or equal', licensingplus__isActive__c = true, recordTypeId = Schema.SObjectType.licensingplus__License_Rule__c.getRecordTypeInfosByName().get('License Comparison Rule').getRecordTypeId());                
+        licensingplus__License_Rule__c textRule = new licensingplus__License_Rule__c(licensingplus__Object__c = 'Account', licensingplus__field__c = 'name', licensingplus__license_Field__c = 'name', licensingplus__operator__c = 'less than', licensingplus__isActive__c = true, recordTypeId = Schema.SObjectType.licensingplus__License_Rule__c.getRecordTypeInfosByName().get('License Comparison Rule').getRecordTypeId());
+        licensingplus__License_Rule__c textRule_orEqual = new licensingplus__License_Rule__c(licensingplus__Object__c = 'Account', licensingplus__field__c = 'name', licensingplus__license_Field__c = 'name', licensingplus__operator__c = 'less or equal', licensingplus__isActive__c = true, recordTypeId = Schema.SObjectType.licensingplus__License_Rule__c.getRecordTypeInfosByName().get('License Comparison Rule').getRecordTypeId());                
+        insert new List<licensingplus__License_Rule__c>{dateRule, dateRule_orEqual, dateTimeRule, dateTimeRule_orEqual, textRule, textRule_orEqual}; 
 
         test.startTest();
         LicenseRuleHelper helper = new LicenseRuleHelper();
@@ -263,18 +263,18 @@ private class LicenseRuleHelperTest {
         insert opportunity;
 
         // insert license
-        License__c license = new License__c(
-            State__c = 'California',
-            RecordTypeId = Schema.SObjectType.License__c.getRecordTypeInfosByName().get('Resident State').getRecordTypeId(),
-            NPN_Number__c = '123',
-            Number__c = '123',
-            Effective_Date__c = Date.today().addDays(-1),
-            Expiration_Date__c = Date.today(),
-            Approved__c = false
+        licensingplus__License__c license = new licensingplus__License__c(
+            licensingplus__State__c = 'California',
+            RecordTypeId = Schema.SObjectType.licensingplus__License__c.getRecordTypeInfosByName().get('Resident State').getRecordTypeId(),
+            licensingplus__NPN_Number__c = '123',
+            licensingplus__Number__c = '123',
+            licensingplus__Effective_Date__c = Date.today().addDays(-1),
+            licensingplus__Expiration_Date__c = Date.today(),
+            licensingplus__Approved__c = false
         );
         insert license;    
         Test.setCreatedDate(license.id, createdDate);     
-        license = [select id, name, expiration_date__c, createdDate from license__c where id =: license.id]; 
+        license = [select id, name, licensingplus__expiration_date__c, createdDate from licensingplus__license__c where id =: license.id]; 
 
         // define helper
         LicenseRuleHelper helper = new LicenseRuleHelper();
@@ -321,7 +321,7 @@ private class LicenseRuleHelperTest {
         Exception licenseRuleException5;
         try {
             // don't insert record - this avoids pre-validation
-            License_Rule__c invalidOperatorRule_comparison = new License_Rule__c(Object__c = 'Account', field__c = 'name', license_Field__c = 'name', operator__c = 'invalid', isActive__c = true, recordTypeId = Schema.SObjectType.License_Rule__c.getRecordTypeInfosByName().get('License Comparison Rule').getRecordTypeId());                                                            
+            licensingplus__License_Rule__c invalidOperatorRule_comparison = new licensingplus__License_Rule__c(licensingplus__Object__c = 'Account', licensingplus__field__c = 'name', licensingplus__license_Field__c = 'name', licensingplus__operator__c = 'invalid', licensingplus__isActive__c = true, recordTypeId = Schema.SObjectType.licensingplus__License_Rule__c.getRecordTypeInfosByName().get('License Comparison Rule').getRecordTypeId());                                                            
             helper.evaluateLicenseComparisonRule((sObject)account, invalidOperatorRule_comparison, license, objFieldsByName);
         } catch (LicenseRuleException e) {
             licenseRuleException5 = e;
@@ -332,7 +332,7 @@ private class LicenseRuleHelperTest {
         // handleStartsWith Tests ---------------------------------------------------------------
         Exception licenseRuleException6;
         try {
-            License_Rule__c startsWithRule = new License_Rule__c(Object__c = 'Account', field__c = 'NumberOfEmployees', value__c = 'test', operator__c = 'starts with', isActive__c = true, recordTypeId = Schema.SObjectType.License_Rule__c.getRecordTypeInfosByName().get('Regular Filter Rule').getRecordTypeId());                                                            
+            licensingplus__License_Rule__c startsWithRule = new licensingplus__License_Rule__c(licensingplus__Object__c = 'Account', licensingplus__field__c = 'NumberOfEmployees', licensingplus__value__c = 'test', licensingplus__operator__c = 'starts with', licensingplus__isActive__c = true, recordTypeId = Schema.SObjectType.licensingplus__License_Rule__c.getRecordTypeInfosByName().get('Regular Filter Rule').getRecordTypeId());                                                            
             helper.evaluateRegularFilterRule((sObject)account, startsWithRule, objFieldsByName);    
         } catch (LicenseRuleException e) {
             licenseRuleException6 = e;
@@ -343,7 +343,7 @@ private class LicenseRuleHelperTest {
         // handleContains Tests ---------------------------------------------------------------
         Exception licenseRuleException7;
         try {
-            License_Rule__c containsRule = new License_Rule__c(Object__c = 'Account', field__c = 'NumberOfEmployees', value__c = 'test', operator__c = 'contains', isActive__c = true, recordTypeId = Schema.SObjectType.License_Rule__c.getRecordTypeInfosByName().get('Regular Filter Rule').getRecordTypeId());                                                
+            licensingplus__License_Rule__c containsRule = new licensingplus__License_Rule__c(licensingplus__Object__c = 'Account', licensingplus__field__c = 'NumberOfEmployees', licensingplus__value__c = 'test', licensingplus__operator__c = 'contains', licensingplus__isActive__c = true, recordTypeId = Schema.SObjectType.licensingplus__License_Rule__c.getRecordTypeInfosByName().get('Regular Filter Rule').getRecordTypeId());                                                
             helper.evaluateRegularFilterRule((sObject)account, containsRule, objFieldsByName);    
         } catch (LicenseRuleException e) {
             licenseRuleException7 = e;
@@ -354,7 +354,7 @@ private class LicenseRuleHelperTest {
         // handleIn Tests ---------------------------------------------------------------
         Exception licenseRuleException8;
         try {
-            License_Rule__c inRule = new License_Rule__c(Object__c = 'Account', field__c = 'createdDate', value__c = 'test account, new account', operator__c = 'in', isActive__c = true, recordTypeId = Schema.SObjectType.License_Rule__c.getRecordTypeInfosByName().get('Regular Filter Rule').getRecordTypeId());                                                
+            licensingplus__License_Rule__c inRule = new licensingplus__License_Rule__c(licensingplus__Object__c = 'Account', licensingplus__field__c = 'createdDate', licensingplus__value__c = 'test account, new account', licensingplus__operator__c = 'in', licensingplus__isActive__c = true, recordTypeId = Schema.SObjectType.licensingplus__License_Rule__c.getRecordTypeInfosByName().get('Regular Filter Rule').getRecordTypeId());                                                
             helper.evaluateRegularFilterRule((sObject)account, inRule, objFieldsByName);    
         } catch (LicenseRuleException e) {
             licenseRuleException8 = e;
@@ -366,7 +366,7 @@ private class LicenseRuleHelperTest {
         Exception licenseRuleException9;
         try {
             // don't insert record - this avoids pre-validation
-            License_Rule__c invalidOperatorRule_filter = new License_Rule__c(Object__c = 'Account', field__c = 'NumberOfEmployees', value__c = '100', operator__c = 'invalid', isActive__c = true, recordTypeId = Schema.SObjectType.License_Rule__c.getRecordTypeInfosByName().get('Regular Filter Rule').getRecordTypeId());                
+            licensingplus__License_Rule__c invalidOperatorRule_filter = new licensingplus__License_Rule__c(licensingplus__Object__c = 'Account', licensingplus__field__c = 'NumberOfEmployees', licensingplus__value__c = '100', licensingplus__operator__c = 'invalid', licensingplus__isActive__c = true, recordTypeId = Schema.SObjectType.licensingplus__License_Rule__c.getRecordTypeInfosByName().get('Regular Filter Rule').getRecordTypeId());                
             helper.evaluateRegularFilterRule((sObject)account, invalidOperatorRule_filter, objFieldsByName);
         } catch (LicenseRuleException e) {
             licenseRuleException9 = e;
@@ -394,19 +394,19 @@ private class LicenseRuleHelperTest {
         insert new List<Opportunity>{opp1, opp2};           
 
         // create and insert rules
-        License_Rule__c equalsRule = new License_Rule__c(Object__c = 'Account', field__c = 'NumberOfEmployees', value__c = '100', operator__c = 'equals', isActive__c = true, recordTypeId = Schema.SObjectType.License_Rule__c.getRecordTypeInfosByName().get('Regular Filter Rule').getRecordTypeId());                
-        License_Rule__c greaterThanRule = new License_Rule__c(Object__c = 'Opportunity', field__c = 'closeDate', value__c = String.valueOf(Date.today()), operator__c = 'greater than', isActive__c = true, recordTypeId = Schema.SObjectType.License_Rule__c.getRecordTypeInfosByName().get('Regular Filter Rule').getRecordTypeId());                        
-        License_Rule__c greaterOrEqualRule = new License_Rule__c(Object__c = 'Opportunity', field__c = 'closeDate', value__c = String.valueOf(Date.today()), operator__c = 'greater or equal', isActive__c = true, recordTypeId = Schema.SObjectType.License_Rule__c.getRecordTypeInfosByName().get('Regular Filter Rule').getRecordTypeId());                                
-        License_Rule__c lessThanRule = new License_Rule__c(Object__c = 'Opportunity', field__c = 'closeDate', value__c = String.valueOf(Date.today()), operator__c = 'less than', isActive__c = true, recordTypeId = Schema.SObjectType.License_Rule__c.getRecordTypeInfosByName().get('Regular Filter Rule').getRecordTypeId());                        
-        License_Rule__c lessOrEqualRule = new License_Rule__c(Object__c = 'Opportunity', field__c = 'closeDate', value__c = String.valueOf(Date.today()), operator__c = 'less or equal', isActive__c = true, recordTypeId = Schema.SObjectType.License_Rule__c.getRecordTypeInfosByName().get('Regular Filter Rule').getRecordTypeId());                                        
-        License_Rule__c notEqualRule = new License_Rule__c(Object__c = 'Opportunity', field__c = 'closeDate', value__c = String.valueOf(Date.today()), operator__c = 'not equal to', isActive__c = true, recordTypeId = Schema.SObjectType.License_Rule__c.getRecordTypeInfosByName().get('Regular Filter Rule').getRecordTypeId());                                                
-        License_Rule__c startsWithRule = new License_Rule__c(Object__c = 'Account', field__c = 'name', value__c = 'test', operator__c = 'starts with', isActive__c = true, recordTypeId = Schema.SObjectType.License_Rule__c.getRecordTypeInfosByName().get('Regular Filter Rule').getRecordTypeId());                                                
-        License_Rule__c containsRule = new License_Rule__c(Object__c = 'Account', field__c = 'name', value__c = 'test', operator__c = 'contains', isActive__c = true, recordTypeId = Schema.SObjectType.License_Rule__c.getRecordTypeInfosByName().get('Regular Filter Rule').getRecordTypeId());                                                
-        License_Rule__c doesNotContainRule = new License_Rule__c(Object__c = 'Account', field__c = 'name', value__c = 'abc', operator__c = 'does not contain', isActive__c = true, recordTypeId = Schema.SObjectType.License_Rule__c.getRecordTypeInfosByName().get('Regular Filter Rule').getRecordTypeId());                                                
-        License_Rule__c inRule = new License_Rule__c(Object__c = 'Account', field__c = 'name', value__c = 'test account, new account', operator__c = 'in', isActive__c = true, recordTypeId = Schema.SObjectType.License_Rule__c.getRecordTypeInfosByName().get('Regular Filter Rule').getRecordTypeId());                                                
-        License_Rule__c notInRule = new License_Rule__c(Object__c = 'Account', field__c = 'name', value__c = 'real account, old account', operator__c = 'not in', isActive__c = true, recordTypeId = Schema.SObjectType.License_Rule__c.getRecordTypeInfosByName().get('Regular Filter Rule').getRecordTypeId());                                                                                                
-        License_Rule__c notBlankRule = new License_Rule__c(Object__c = 'Account', field__c = 'name', operator__c = 'not blank', isActive__c = true, recordTypeId = Schema.SObjectType.License_Rule__c.getRecordTypeInfosByName().get('Regular Filter Rule').getRecordTypeId());                                                                                                        
-        insert new List<License_Rule__c>{
+        licensingplus__License_Rule__c equalsRule = new licensingplus__License_Rule__c(licensingplus__Object__c = 'Account', licensingplus__field__c = 'NumberOfEmployees', licensingplus__value__c = '100', licensingplus__operator__c = 'equals', licensingplus__isActive__c = true, recordTypeId = Schema.SObjectType.licensingplus__License_Rule__c.getRecordTypeInfosByName().get('Regular Filter Rule').getRecordTypeId());                
+        licensingplus__License_Rule__c greaterThanRule = new licensingplus__License_Rule__c(licensingplus__Object__c = 'Opportunity', licensingplus__field__c = 'closeDate', licensingplus__value__c = String.valueOf(Date.today()), licensingplus__operator__c = 'greater than', licensingplus__isActive__c = true, recordTypeId = Schema.SObjectType.licensingplus__License_Rule__c.getRecordTypeInfosByName().get('Regular Filter Rule').getRecordTypeId());                        
+        licensingplus__License_Rule__c greaterOrEqualRule = new licensingplus__License_Rule__c(licensingplus__Object__c = 'Opportunity', licensingplus__field__c = 'closeDate', licensingplus__value__c = String.valueOf(Date.today()), licensingplus__operator__c = 'greater or equal', licensingplus__isActive__c = true, recordTypeId = Schema.SObjectType.licensingplus__License_Rule__c.getRecordTypeInfosByName().get('Regular Filter Rule').getRecordTypeId());                                
+        licensingplus__License_Rule__c lessThanRule = new licensingplus__License_Rule__c(licensingplus__Object__c = 'Opportunity', licensingplus__field__c = 'closeDate', licensingplus__value__c = String.valueOf(Date.today()), licensingplus__operator__c = 'less than', licensingplus__isActive__c = true, recordTypeId = Schema.SObjectType.licensingplus__License_Rule__c.getRecordTypeInfosByName().get('Regular Filter Rule').getRecordTypeId());                        
+        licensingplus__License_Rule__c lessOrEqualRule = new licensingplus__License_Rule__c(licensingplus__Object__c = 'Opportunity', licensingplus__field__c = 'closeDate', licensingplus__value__c = String.valueOf(Date.today()), licensingplus__operator__c = 'less or equal', licensingplus__isActive__c = true, recordTypeId = Schema.SObjectType.licensingplus__License_Rule__c.getRecordTypeInfosByName().get('Regular Filter Rule').getRecordTypeId());                                        
+        licensingplus__License_Rule__c notEqualRule = new licensingplus__License_Rule__c(licensingplus__Object__c = 'Opportunity', licensingplus__field__c = 'closeDate', licensingplus__value__c = String.valueOf(Date.today()), licensingplus__operator__c = 'not equal to', licensingplus__isActive__c = true, recordTypeId = Schema.SObjectType.licensingplus__License_Rule__c.getRecordTypeInfosByName().get('Regular Filter Rule').getRecordTypeId());                                                
+        licensingplus__License_Rule__c startsWithRule = new licensingplus__License_Rule__c(licensingplus__Object__c = 'Account', licensingplus__field__c = 'name', licensingplus__value__c = 'test', licensingplus__operator__c = 'starts with', licensingplus__isActive__c = true, recordTypeId = Schema.SObjectType.licensingplus__License_Rule__c.getRecordTypeInfosByName().get('Regular Filter Rule').getRecordTypeId());                                                
+        licensingplus__License_Rule__c containsRule = new licensingplus__License_Rule__c(licensingplus__Object__c = 'Account', licensingplus__field__c = 'name', licensingplus__value__c = 'test', licensingplus__operator__c = 'contains', licensingplus__isActive__c = true, recordTypeId = Schema.SObjectType.licensingplus__License_Rule__c.getRecordTypeInfosByName().get('Regular Filter Rule').getRecordTypeId());                                                
+        licensingplus__License_Rule__c doesNotContainRule = new licensingplus__License_Rule__c(licensingplus__Object__c = 'Account', licensingplus__field__c = 'name', licensingplus__value__c = 'abc', licensingplus__operator__c = 'does not contain', licensingplus__isActive__c = true, recordTypeId = Schema.SObjectType.licensingplus__License_Rule__c.getRecordTypeInfosByName().get('Regular Filter Rule').getRecordTypeId());                                                
+        licensingplus__License_Rule__c inRule = new licensingplus__License_Rule__c(licensingplus__Object__c = 'Account', licensingplus__field__c = 'name', licensingplus__value__c = 'test account, new account', licensingplus__operator__c = 'in', licensingplus__isActive__c = true, recordTypeId = Schema.SObjectType.licensingplus__License_Rule__c.getRecordTypeInfosByName().get('Regular Filter Rule').getRecordTypeId());                                                
+        licensingplus__License_Rule__c notInRule = new licensingplus__License_Rule__c(licensingplus__Object__c = 'Account', licensingplus__field__c = 'name', licensingplus__value__c = 'real account, old account', licensingplus__operator__c = 'not in', licensingplus__isActive__c = true, recordTypeId = Schema.SObjectType.licensingplus__License_Rule__c.getRecordTypeInfosByName().get('Regular Filter Rule').getRecordTypeId());                                                                                                
+        licensingplus__License_Rule__c notBlankRule = new licensingplus__License_Rule__c(licensingplus__Object__c = 'Account', licensingplus__field__c = 'name', licensingplus__operator__c = 'not blank', licensingplus__isActive__c = true, recordTypeId = Schema.SObjectType.licensingplus__License_Rule__c.getRecordTypeInfosByName().get('Regular Filter Rule').getRecordTypeId());                                                                                                        
+        insert new List<licensingplus__License_Rule__c>{
             equalsRule, 
             greaterThanRule, 
             greaterOrEqualRule, 

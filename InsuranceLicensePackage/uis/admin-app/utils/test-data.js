@@ -8,16 +8,16 @@ var TestData = {
   "allRuleSetResults": {
     "account": {
       "stateRule": {
-        "license_field__c": "State__c",
-        "object__c": "account",
-        "operator__c": "equals",
-        "field__c": "BillingState",
-        "isActive__c": true
+        "licensingplus__license_field__c": "LicensingPlus__State__c",
+        "licensingplus__object__c": "account",
+        "licensingplus__operator__c": "equals",
+        "licensingplus__field__c": "BillingState",
+        "licensingplus__isactive__c": true
       },
       "residentLicenseRule": {
-        "object__c": "account",
-        "operator__c": "equals",
-        "value__c": "Resident Rule"
+        "licensingplus__object__c": "account",
+        "licensingplus__operator__c": "equals",
+        "licensingplus__value__c": "Resident Rule"
       },
       "ruleSets": [
         {
@@ -28,57 +28,57 @@ var TestData = {
           "filterRuleLogic": {
             "id": "a0936000001bI8G",
             "name": "accountRuleLogic2",
-            "object__c": "account",
-            "logic__c": "a0836000005XiRT &amp; a0836000005XiRR", //rule from DB
-            "filter_rule__c": "a0936000001bAHS", //child
-            "isactive__c": false,
+            "licensingplus__object__c": "account",
+            "licensingplus__logic__c": "a0836000005XiRT &amp; a0836000005XiRR", //rule from DB
+            "licensingplus__filter_rule__c": "a0936000001bAHS", //child
+            "licensingplus__isactive__c": false,
             "recordtypeid": "01236000000mbCw", //License Rule
           },
           "licenseRuleLogic": {
             "id": "a0936000001bAHS",
             "name": "accountRuleLogic1",
-            "object__c": "account",
-            "logic__c": "a0836000005XiRTAA0 &amp; a0836000006MZfUAAW", //logic from db
-            "filter_rule__c": null, //parent
-            "isactive__c": false
+            "licensingplus__object__c": "account",
+            "licensingplus__logic__c": "a0836000005XiRTAA0 &amp; a0836000006MZfUAAW", //logic from db
+            "licensingplus__filter_rule__c": null, //parent
+            "licensingplus__isactive__c": false
           },
           "licenseRules": [
             {
               "id": "a0836000005XiRTAA0",
-              "object__c": "account",
-              "license_field__c": "Cost__c",
-              "operator__c": "equals",
-              "field__c": "Revenue",
-              "isactive__c": false,
+              "licensingplus__object__c": "account",
+              "licensingplus__license_field__c": "Cost__c",
+              "licensingplus__operator__c": "equals",
+              "licensingplus__field__c": "Revenue",
+              "licensingplus__isactive__c": false,
               "recordtypeid": "01236000000mZjG",
             },
             {
               "id": "a0836000006MZfUAAW",
-              "object__c": "account",
-              "license_field__c": "State__c",
-              "operator__c": "equals",
-              "field__c": "BillingState",
-              "isactive__c": false,
+              "licensingplus__object__c": "account",
+              "licensingplus__license_field__c": "LicensingPlus__State__c",
+              "licensingplus__operator__c": "equals",
+              "licensingplus__field__c": "BillingState",
+              "licensingplus__isactive__c": false,
               "recordtypeid": "01236000000mZjR",
             }
           ],
           "regularFilterRules": [
             {
               "id": "a0836000005XiRT",
-              "object__c": "account",
-              "field__c": "BillingState",
-              "operator__c": "equals",
-              "value__c": "Banking",
-              "isactive__c": false,
+              "licensingplus__object__c": "account",
+              "licensingplus__field__c": "BillingState",
+              "licensingplus__operator__c": "equals",
+              "licensingplus__value__c": "Banking",
+              "licensingplus__isactive__c": false,
               "recordtypeid": "01236000000mZjG",
             },
             {
               "id": "a0836000005XiRR",
-              "object__c": "account",
-              "field__c": "CreatedDate",
-              "operator__c": "greater than",
-              "value__c": "2016-06-27 08:08:08",
-              "isactive__c": false,
+              "licensingplus__object__c": "account",
+              "licensingplus__field__c": "CreatedDate",
+              "licensingplus__operator__c": "greater than",
+              "licensingplus__value__c": "2016-06-27 08:08:08",
+              "licensingplus__isactive__c": false,
               "recordtypeid": "01236000000mZjR",
             },
           ]
@@ -87,11 +87,11 @@ var TestData = {
     },
     "opportunity": {
       "stateRule": {
-        "license_field__c": "State__c",
-        "object__c": "opportunity",
-        "operator__c": "equals",
-        "isactive__c": false,
-        "field__c": "BillingState"
+        "licensingplus__license_field__c": "LicensingPlus__State__c",
+        "licensingplus__object__c": "opportunity",
+        "licensingplus__operator__c": "equals",
+        "licensingplus__isactive__c": false,
+        "licensingplus__field__c": "BillingState"
       },
       "residentLicenseRule": null,
       "ruleSets": [
@@ -103,21 +103,21 @@ var TestData = {
           "filterRuleLogic": {
             "id": "a0936000001bAHS",
             "name": "accountRuleLogic1",
-            "object__c": "opportunity",
-            "Logic__c": "a0836000005XiRTAA0", //logic from db
-            "filter_rule__c": null, //parent
-            "isactive__c": false
+            "licensingplus__object__c": "opportunity",
+            "licensingplus__logic__c": "a0836000005XiRTAA0", //logic from db
+            "licensingplus__filter_rule__c": null, //parent
+            "licensingplus__isactive__c": false
           },
           "licenseRuleLogic": {},
           "licenseRules": [],
           "regularFilterRules": [
             {
               "id": "a0836000005XiRTAA0",
-              "object__c": "opportunity",
-              "field__c": "State__c",
-              "operator__c": "equal",
-              "value__c": "&lt;script type=&quot;text/javascript&quot;&gt;body.onload = function() {alert(1)};&lt;/script&gt;",
-              "isactive__c": false,
+              "licensingplus__object__c": "opportunity",
+              "licensingplus__field__c": "LicensingPlus__State__c",
+              "licensingplus__operator__c": "equal",
+              "licensingplus__value__c": "&lt;script type=&quot;text/javascript&quot;&gt;body.onload = function() {alert(1)};&lt;/script&gt;",
+              "licensingplus__isactive__c": false,
               "recordtypeid": "01236000000mZjG",
             }
           ]
@@ -129,8 +129,8 @@ var TestData = {
     {
       "Id": "a0836000005Xi2342342",
       "Name": "My Medical &amp; Life",
-      "LOA_Name__c": "My Medical &amp; Life",
-      "Type__c": "Medical"
+      "licensingplus__loa_name__c": "My Medical &amp; Life",
+      "licensingplus__type__c": "Medical"
     }
   ],
   "accountsobject": {
@@ -157,15 +157,15 @@ var TestData = {
       "Type": "STRING_FIELD"
     }
   },
-  "license__csobject": {
+  "licensingplus__license__csobject": {
     "label": 'License',
     "fields": {
-      "State__c": "STRING_FIELD",
-      "Cost__c": "DOUBLE_FIELD",
-      "Is_Active__c": "BOOLEAN_FIELD",
+      "LicensingPlus__State__c": "STRING_FIELD",
+      "LicensingPlus__Cost__c": "DOUBLE_FIELD",
+      "LicensingPlus__Is_Active__c": "BOOLEAN_FIELD",
       "CreatedDate": "DATETIME_FIELD",
       "LastModifiedDate": "DATE_FIELD",
-      "Type__c": "STRING_FIELD"
+      "LicensingPlus__Type__c": "STRING_FIELD"
     }
   },
   "opportunitysobject": {
@@ -194,14 +194,14 @@ var TestData = {
     }
   },
   "checklist": {
-    Id: 'a0736000005GIG1AAO',
-    download_spreadsheet__c: false,
-    watch_configuration_video__c: true,
-    send_spreadsheet__c: true,
-    filled_spreadsheet__c: true,
-    watch_video__c: true,
-    set_approvals__c: true,
-    watch_compliance_video__c: true
+    "Id": 'a0736000005GIG1AAO',
+    "licensingplus__download_spreadsheet__c": false,
+    "licensingplus__watch_configuration_video__c": true,
+    "licensingplus__send_spreadsheet__c": true,
+    "licensingplus__filled_spreadsheet__c": true,
+    "licensingplus__watch_video__c": true,
+    "licensingplus__set_approvals__c": true,
+    "licensingplus__watch_compliance_video__c": true
   }
 }
 

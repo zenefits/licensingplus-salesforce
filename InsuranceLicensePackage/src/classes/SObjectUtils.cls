@@ -32,10 +32,10 @@ global with sharing class SObjectUtils {
 	}
 	
 	private static final Set<String> excludedAppObjects = new Set<String>{
-		'license__c',
-		'line_of_authority__c',
-		'license_rule__c',
-		'license_rule_logic__c'
+		'licensingplus__license__c',
+		'licensingplus__line_of_authority__c',
+		'licensingplus__license_rule__c',
+		'licensingplus__license_rule_logic__c'
 	};
 	
     private static final Set<Schema.DisplayType> STRING_TYPES = new Set<Schema.DisplayType>{

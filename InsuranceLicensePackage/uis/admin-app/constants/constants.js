@@ -53,16 +53,16 @@ export const FIELD_OPERATORS = {
 };
 export const BLANK_LISCENSE_RULE_SET_RESULT = {
   "stateRule": {
-    "license_field__c": "State__c",
-    "object__c": "",
-    "operator__c": "equals",
-    "field__c": "",
-    "isactive__c": false
+    "licensingplus__license_field__c": "LicensingPlus__State__c",
+    "licensingplus__object__c": "",
+    "licensingplus__operator__c": "equals",
+    "licensingplus__field__c": "",
+    "licensingplus__isactive__c": false
   },
   "residentLicenseRule": {
-    "object__c": "",
-    "operator__c": "equals",
-    "value__c": null
+    "licensingplus__object__c": "",
+    "licensingplus__operator__c": "equals",
+    "licensingplus__value__c": null
   },
   "ruleSets": [
     {

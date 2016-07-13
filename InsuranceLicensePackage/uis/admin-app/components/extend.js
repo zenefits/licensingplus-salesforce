@@ -28,7 +28,7 @@ class Extend extends Component {
       <div className='license-form welcome'>
         <div className='row welcome-main-row'>
           <h1 className="welcome-main-heading">
-            Recommended Next Steps
+            Recommended next steps
           </h1>
           <div className="welcome-vid-container">
             <div className="col-md-3"></div>
@@ -42,7 +42,7 @@ class Extend extends Component {
         </div>
         <div className='row welcome-main-row'>
           <h1 className="welcome-main-heading2">
-            Extend Application To your Custom Objects
+            Extend application to your custom objects
           </h1>
           <div className="welcome-vid-container">
             <div className="col-md-3">
@@ -55,7 +55,7 @@ class Extend extends Component {
           <div className='row welcome-main-row'>
             <div className="col-md-12">
               <div className="welcom-btn-box">
-                <Link to='/checklist' className="welcome-get-started-btn">Go Back To Checklist</Link>
+                <Link to='/checklist' className="welcome-get-started-btn">Go Back to Checklist</Link>
               </div>
             </div>
           </div>

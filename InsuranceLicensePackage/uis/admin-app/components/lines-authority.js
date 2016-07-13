@@ -50,12 +50,12 @@ class LinesAuthority extends Component {
             var uniqueName = row['loa name'] + this.props.sfdcRows.length + index;
             return {
               name: uniqueName,
-              loa_name__c: row['loa name'],
-              type__c: row.type
+              licensingplus__loa_name__c: row['loa name'],
+              licensingplus__type__c: row.type
             }
           })
           .filter( ( obj ) => {
-            return (obj.loa_name__c && obj.type__c) ? true : false;
+            return (obj.licensingplus__loa_name__c && obj.licensingplus__type__c) ? true : false;
           });
 
         this.props.openCsv(previewRows, file.name);
@@ -83,17 +83,17 @@ class LinesAuthority extends Component {
       if(this.isPreviewMode()){
         row = (
           <tr key={index}>
-            <td>{loaRow.loa_name__c}</td>
-            <td>{loaRow.type__c}</td>
+            <td>{loaRow.licensingplus__loa_name__c}</td>
+            <td>{loaRow.licensingplus__type__c}</td>
           </tr>
         );
       }
       else {
         row = (
           <tr key={index}>
-            <td>{_.unescape(loaRow.loa_name__c)}</td>
+            <td>{_.unescape(loaRow.licensingplus__loa_name__c)}</td>
             <td>
-              {_.unescape(loaRow.type__c)}
+              {_.unescape(loaRow.licensingplus__type__c)}
             </td>
             <td>
               <button type='button' className='add-btn' onClick={this.deleteLineOfAuth.bind(null, loaRow) }>-</button>
@@ -133,7 +133,7 @@ class LinesAuthority extends Component {
       );
     }
     else if (this.props.sfdcRows && this.props.sfdcRows.length > 0) {
-      preview = (<div className='heading-table'><h3>Lines Of Authority</h3><small>These are your saved items.</small></div>);
+      preview = (<div className='heading-table'><h3>Lines of authority</h3><small>These are your saved items.</small></div>);
       dataTable = (
         <table className='table'>
           <thead>
@@ -174,7 +174,7 @@ class LinesAuthority extends Component {
     var back = (
       <h4>
         <Link to={`/checklist`}>
-          &lt; Back to Checklist
+          &lt; Back to checklist
         </Link>
       </h4>
     )
@@ -184,6 +184,7 @@ class LinesAuthority extends Component {
         {back}
         <h1>Configure lines of authority</h1>
         <p>Make sure your compliance team has filled out the spreadsheet and classified your lines of authority into master groups.</p>
+        <p><b>The Lines of Authority mapping sample is the result of research we conducted in Q1 2016. This is a sample only and does not replace legal or other professional advice.  It is your continued responsibility to understand and comply with applicable laws and regulations that affect your business.</b></p>
         {links}
       </div>
     );

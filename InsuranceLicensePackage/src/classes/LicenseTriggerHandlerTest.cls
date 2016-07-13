@@ -1,21 +1,21 @@
 @isTest
 private class LicenseTriggerHandlerTest {
 	
-	static String residentRTId = Schema.SObjectType.License__c.getRecordTypeInfosByName().get('Resident State').getRecordTypeId();
-	static String nonResidentRTId = Schema.SObjectType.License__c.getRecordTypeInfosByName().get('Non-Resident State').getRecordTypeId();
+	static String residentRTId = Schema.SObjectType.licensingplus__License__c.getRecordTypeInfosByName().get('Resident State').getRecordTypeId();
+	static String nonResidentRTId = Schema.SObjectType.licensingplus__License__c.getRecordTypeInfosByName().get('Non-Resident State').getRecordTypeId();
 	
 	static testMethod void testCreateExistingResidentLicense(){
 		User testUser = testSetupUser();
         insert testUser;
 
-        License__c residentLicense = new License__c(Name = 'CA License', RecordtypeId = residentRTId, OwnerId = testUser.Id, Number__c = '123', NPN_Number__c  = '123',  State__c = 'California', Effective_Date__c = Date.today().addDays(-1), Expiration_Date__c = Date.today().addDays(1));
+        licensingplus__License__c residentLicense = new licensingplus__License__c(Name = 'CA License', RecordtypeId = residentRTId, OwnerId = testUser.Id, licensingplus__Number__c = '123', licensingplus__NPN_Number__c  = '123',  licensingplus__State__c = 'California', licensingplus__Effective_Date__c = Date.today().addDays(-1), licensingplus__Expiration_Date__c = Date.today().addDays(1));
 		
 		Test.startTest();
 		system.runAs(testUser){
 			insert residentLicense;
 
 			//Active resident state license must exists before creating a non-resident state license
-            License__c nonResidentLicense = new License__c(Name = 'AZ License', RecordtypeId = nonResidentRTId, OwnerId = testUser.Id, Number__c = '123', NPN_Number__c  = '123',  State__c = 'Arizona', Effective_Date__c = Date.today().addDays(-1), Expiration_Date__c = Date.today().addDays(1), Approved__c = true);
+            licensingplus__License__c nonResidentLicense = new licensingplus__License__c(Name = 'AZ License', RecordtypeId = nonResidentRTId, OwnerId = testUser.Id, licensingplus__Number__c = '123', licensingplus__NPN_Number__c  = '123',  licensingplus__State__c = 'Arizona', licensingplus__Effective_Date__c = Date.today().addDays(-1), licensingplus__Expiration_Date__c = Date.today().addDays(1), licensingplus__Approved__c = true);
 			try{
 				insert nonResidentLicense;
 			}catch(DMLException e){
@@ -23,7 +23,7 @@ private class LicenseTriggerHandlerTest {
 			}
 			
 			//Exiting California license already exists, need to update that one first before inserting new ones
-	        License__c residentLicense2 = new License__c(Name = 'CA License', RecordtypeId = residentRTId, OwnerId = testUser.Id, Number__c = '123', NPN_Number__c  = '123',  State__c = 'California', Effective_Date__c = Date.today().addDays(-1), Expiration_Date__c = Date.today().addDays(1));
+	        licensingplus__License__c residentLicense2 = new licensingplus__License__c(Name = 'CA License', RecordtypeId = residentRTId, OwnerId = testUser.Id, licensingplus__Number__c = '123', licensingplus__NPN_Number__c  = '123',  licensingplus__State__c = 'California', licensingplus__Effective_Date__c = Date.today().addDays(-1), licensingplus__Expiration_Date__c = Date.today().addDays(1));
 			try{
 				insert residentLicense2;
 			}catch(DMLException e){
@@ -40,11 +40,11 @@ private class LicenseTriggerHandlerTest {
         insert testUser;
 		Test.startTest();
 		
-        License__c residentLicense = new License__c(Name = 'CA License', RecordtypeId = residentRTId, OwnerId = testUser.Id, Number__c = '123', NPN_Number__c  = '123',  State__c = 'California', Effective_Date__c = Date.today().addDays(-1), Expiration_Date__c = Date.today().addDays(1), Approved__c = true);
+        licensingplus__License__c residentLicense = new licensingplus__License__c(Name = 'CA License', RecordtypeId = residentRTId, OwnerId = testUser.Id, licensingplus__Number__c = '123', licensingplus__NPN_Number__c  = '123',  licensingplus__State__c = 'California', licensingplus__Effective_Date__c = Date.today().addDays(-1), licensingplus__Expiration_Date__c = Date.today().addDays(1), licensingplus__Approved__c = true);
         insert residentLicense;
 
         system.runAs(testUser){
-        	residentLicense.Number__c = '456';
+        	residentLicense.licensingplus__Number__c = '456';
         	//You can not edit an approved license 
         	try{
         		update residentLicense;
@@ -67,10 +67,10 @@ private class LicenseTriggerHandlerTest {
 		User testUser = testSetupUser();
         insert testUser;
  
-	    License__c residentLicense = new License__c(Name = 'CA License', RecordtypeId = residentRTId, OwnerId = testUser.Id, Number__c = '123', NPN_Number__c  = '123',  State__c = 'California', Effective_Date__c = Date.today().addDays(-1), Expiration_Date__c = Date.today().addDays(1), Approved__c = true);
-	    License__c nonResidentLicense = new License__c(Name = 'AZ License', RecordtypeId = nonResidentRTId, OwnerId = testUser.Id, Number__c = '123', NPN_Number__c  = '123',  State__c = 'Arizona', Effective_Date__c = Date.today().addDays(-1), Expiration_Date__c = Date.today().addDays(1), Approved__c = true);
-	    License__c nonResidentLicense2 = new License__c(Name = 'AZ License', RecordtypeId = nonResidentRTId, OwnerId = testUser.Id, Number__c = '123', NPN_Number__c  = '123',  State__c = 'Arizona', Effective_Date__c = Date.today().addDays(-1), Expiration_Date__c = Date.today().addDays(1), Approved__c = true);
-	    License__c residentLicense2 = new License__c(Name = 'CA License', RecordtypeId = residentRTId, OwnerId = testUser.Id, Number__c = '123', NPN_Number__c  = '123',  State__c = 'California', Effective_Date__c = Date.today().addDays(-1), Expiration_Date__c = Date.today().addDays(1), Approved__c = true);
+	    licensingplus__License__c residentLicense = new licensingplus__License__c(Name = 'CA License', RecordtypeId = residentRTId, OwnerId = testUser.Id, licensingplus__Number__c = '123', licensingplus__NPN_Number__c  = '123',  licensingplus__State__c = 'California', licensingplus__Effective_Date__c = Date.today().addDays(-1), licensingplus__Expiration_Date__c = Date.today().addDays(1), licensingplus__Approved__c = true);
+	    licensingplus__License__c nonResidentLicense = new licensingplus__License__c(Name = 'AZ License', RecordtypeId = nonResidentRTId, OwnerId = testUser.Id, licensingplus__Number__c = '123', licensingplus__NPN_Number__c  = '123',  licensingplus__State__c = 'Arizona', licensingplus__Effective_Date__c = Date.today().addDays(-1), licensingplus__Expiration_Date__c = Date.today().addDays(1), licensingplus__Approved__c = true);
+	    licensingplus__License__c nonResidentLicense2 = new licensingplus__License__c(Name = 'AZ License', RecordtypeId = nonResidentRTId, OwnerId = testUser.Id, licensingplus__Number__c = '123', licensingplus__NPN_Number__c  = '123',  licensingplus__State__c = 'Arizona', licensingplus__Effective_Date__c = Date.today().addDays(-1), licensingplus__Expiration_Date__c = Date.today().addDays(1), licensingplus__Approved__c = true);
+	    licensingplus__License__c residentLicense2 = new licensingplus__License__c(Name = 'CA License', RecordtypeId = residentRTId, OwnerId = testUser.Id, licensingplus__Number__c = '123', licensingplus__NPN_Number__c  = '123',  licensingplus__State__c = 'California', licensingplus__Effective_Date__c = Date.today().addDays(-1), licensingplus__Expiration_Date__c = Date.today().addDays(1), licensingplus__Approved__c = true);
 			        
 		Test.startTest();
 		system.runAs(testUser){
@@ -79,20 +79,20 @@ private class LicenseTriggerHandlerTest {
 			insert nonResidentLicense2; 
 	
 			//Residence license lookup should be set for the non-resident licenses
-	        nonResidentLicense = [SELECT Id, Resident_License__c FROM License__c WHERE Id =: nonResidentLicense.Id limit 1];
-	        system.assertEquals(residentLicense.Id, nonResidentLicense.Resident_License__c);        
-	        nonResidentLicense2 = [SELECT Id, Resident_License__c FROM License__c WHERE Id =: nonResidentLicense2.Id limit 1];
-	        system.assertEquals(residentLicense.Id, nonResidentLicense2.Resident_License__c);         
+	        nonResidentLicense = [SELECT Id, licensingplus__Resident_License__c FROM licensingplus__License__c WHERE Id =: nonResidentLicense.Id limit 1];
+	        system.assertEquals(residentLicense.Id, nonResidentLicense.licensingplus__Resident_License__c);        
+	        nonResidentLicense2 = [SELECT Id, licensingplus__Resident_License__c FROM licensingplus__License__c WHERE Id =: nonResidentLicense2.Id limit 1];
+	        system.assertEquals(residentLicense.Id, nonResidentLicense2.licensingplus__Resident_License__c);         
 	
 	        insert residentLicense2;
 		}
         Test.stopTest();
         
 		//On insert/update of resident license, the resident license lookup field should be updated for the non-resident licenses
-        nonResidentLicense = [SELECT Id, Resident_License__c FROM License__c WHERE Id =: nonResidentLicense.Id limit 1];
-        system.assertEquals(residentLicense2.Id, nonResidentLicense.Resident_License__c);        
-        nonResidentLicense2 = [SELECT Id, Resident_License__c FROM License__c WHERE Id =: nonResidentLicense2.Id limit 1];
-        system.assertEquals(residentLicense2.Id, nonResidentLicense2.Resident_License__c);  
+        nonResidentLicense = [SELECT Id, licensingplus__Resident_License__c FROM licensingplus__License__c WHERE Id =: nonResidentLicense.Id limit 1];
+        system.assertEquals(residentLicense2.Id, nonResidentLicense.licensingplus__Resident_License__c);        
+        nonResidentLicense2 = [SELECT Id, licensingplus__Resident_License__c FROM licensingplus__License__c WHERE Id =: nonResidentLicense2.Id limit 1];
+        system.assertEquals(residentLicense2.Id, nonResidentLicense2.licensingplus__Resident_License__c);  
         
 	}
 
@@ -101,21 +101,21 @@ private class LicenseTriggerHandlerTest {
 		User testUser = testSetupUser();
         insert testUser;
  
-	    License__c residentLicense = new License__c(Name = 'CA License', RecordtypeId = residentRTId, OwnerId = testUser.Id, Number__c = '123', NPN_Number__c  = '123',  State__c = 'California', Effective_Date__c = Date.today().addDays(-1), Expiration_Date__c = Date.today().addDays(1), Approved__c = true);
+	    licensingplus__License__c residentLicense = new licensingplus__License__c(Name = 'CA License', RecordtypeId = residentRTId, OwnerId = testUser.Id, licensingplus__Number__c = '123', licensingplus__NPN_Number__c  = '123',  licensingplus__State__c = 'California', licensingplus__Effective_Date__c = Date.today().addDays(-1), licensingplus__Expiration_Date__c = Date.today().addDays(1), licensingplus__Approved__c = true);
 	    
 	    //Generate a list of 500 licenses for insert
-	    List<License__c> licList = new List<License__c>();
+	    List<licensingplus__License__c> licList = new List<licensingplus__License__c>();
 	    for(Integer i=0; i<500; i++){
-	    	License__c nonResidentLicense = new License__c();
+	    	licensingplus__License__c nonResidentLicense = new licensingplus__License__c();
 	    	nonResidentLicense.Name = 'AZ License';
 	    	nonResidentLicense.RecordTypeId = nonResidentRTId;
 	    	nonResidentLicense.OwnerId = testUser.Id;
-	    	nonResidentLicense.Number__c = '123';
-	    	nonResidentLicense.NPN_Number__c = '123';
-	    	nonResidentLicense.State__c = 'Arizona';
-	    	nonResidentLicense.Effective_Date__c = Date.today().addDays(-1);
-	    	nonResidentLicense.Expiration_Date__c = Date.today().addDays(1);
-	    	nonResidentLicense.Approved__c = true;
+	    	nonResidentLicense.licensingplus__Number__c = '123';
+	    	nonResidentLicense.licensingplus__NPN_Number__c = '123';
+	    	nonResidentLicense.licensingplus__State__c = 'Arizona';
+	    	nonResidentLicense.licensingplus__Effective_Date__c = Date.today().addDays(-1);
+	    	nonResidentLicense.licensingplus__Expiration_Date__c = Date.today().addDays(1);
+	    	nonResidentLicense.licensingplus__Approved__c = true;
 	    	licList.add(nonResidentLicense);
 	    
 	    }
@@ -129,10 +129,10 @@ private class LicenseTriggerHandlerTest {
 	        insert licList;
 	        
 	        //update list of 500 non-resident license
-	        for(License__c nonResidentLic: licList){
-	        	nonResidentLic.Number__c = '123';
-	        	nonResidentLic.Expiration_Date__c = Date.today().addDays(10);
-	        	nonResidentLic.Approved__c = false;
+	        for(licensingplus__License__c nonResidentLic: licList){
+	        	nonResidentLic.licensingplus__Number__c = '123';
+	        	nonResidentLic.licensingplus__Expiration_Date__c = Date.today().addDays(10);
+	        	nonResidentLic.licensingplus__Approved__c = false;
 	        }
 	        update licList;
 	
@@ -140,9 +140,9 @@ private class LicenseTriggerHandlerTest {
         Test.stopTest();
         
         //Verify Resident License lookup is set for the 500 non-resident licenses	        
-	    licList = [SELECT Id, Resident_License__c, Type__c FROM License__c WHERE ID =: licList];
-	    for(License__c nonResidentLic: licList){
-	        system.assertEquals(residentLicense.Id, nonResidentLic.Resident_License__c); 	
+	    licList = [SELECT Id, licensingplus__Resident_License__c, licensingplus__Type__c FROM licensingplus__License__c WHERE ID =: licList];
+	    for(licensingplus__License__c nonResidentLic: licList){
+	        system.assertEquals(residentLicense.Id, nonResidentLic.licensingplus__Resident_License__c); 	
 	    }
 	}	
 	

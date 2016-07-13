@@ -2,7 +2,7 @@ import * as types from './action-types';
 
 export function toggleLicenseRuleSet(name, index, isactive) {
   return function (dispatch) {
-    return ComplianceController.toggleLicenseRuleSet(name, isactive, () => {
+    return LicensingPlus.ComplianceController.toggleLicenseRuleSet(name, isactive, () => {
       dispatch({
         type: types.RULE_SET_TOGGLED,
         name: name,
@@ -15,7 +15,7 @@ export function toggleLicenseRuleSet(name, index, isactive) {
 
 export function getAllLicenseRuleSetResults() {
   return function (dispatch) {
-    return ComplianceController.getAllLicenseRuleSetResults((allRuleSetResults) => {
+    return LicensingPlus.ComplianceController.getAllLicenseRuleSetResults((allRuleSetResults) => {
       dispatch({
         type: types.ALL_RULES_RECEIVED,
         allRuleSetResults: allRuleSetResults
@@ -26,7 +26,7 @@ export function getAllLicenseRuleSetResults() {
 
 export function getSobjectNames() {
   return function (dispatch) {
-    return ComplianceController.getSobjectNames((allSobjectNames) => {
+    return LicensingPlus.ComplianceController.getSobjectNames((allSobjectNames) => {
       dispatch({
         type: types.ALL_SOBJECT_NAMES_RECEIVED,
         allSobjectNames: allSobjectNames
