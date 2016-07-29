@@ -72,7 +72,7 @@ public with sharing class BooleanExpressionEvaluator {
 				nextChar();
 				return iResult;
 			} else {
-			    LicenseRuleHelper.logInfo('BooleanExpressionEvaluator', 'matchOperand', '[WARNING] - Expected )');
+			    LogUtils.logInfo('BooleanExpressionEvaluator', 'matchOperand', '[WARNING] - Expected )');
 			}
 		}
 

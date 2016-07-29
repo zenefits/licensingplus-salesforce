@@ -2,17 +2,17 @@
 private class LicenseRuleValidatorTest {
     
     static testmethod void testValidateLicenseRule() {
-    	licensingplus__License_Rule__c comparisonRuleTypeNotSame = new licensingplus__License_Rule__c
-    		(licensingplus__Object__c = 'Opportunity', licensingplus__field__c = 'closeDate', licensingplus__license_Field__c = 'name', licensingplus__operator__c = 'greater than', licensingplus__isActive__c = true, recordTypeId = LicenseRuleHelper.licenseComparisonRuleRecordTypeId);
+    	License_Rule__c comparisonRuleTypeNotSame = new License_Rule__c
+    		(Object__c = 'Opportunity', field__c = 'closeDate', license_Field__c = 'name', operator__c = 'greater than', isActive__c = true, recordTypeId = LicenseRuleHelper.licenseComparisonRuleRecordTypeId);
     	
-    	 licensingplus__License_Rule__c startsWithRuleShouldNotBeBoolean = new licensingplus__License_Rule__c(licensingplus__Object__c = 'Account', licensingplus__field__c = 'isDeleted', licensingplus__value__c = 'test', licensingplus__operator__c = 'starts with', licensingplus__isActive__c = true, recordTypeId = LicenseRuleHelper.regularFilterRuleRecordTypeId);                      
+    	 License_Rule__c startsWithRuleShouldNotBeBoolean = new License_Rule__c(Object__c = 'Account', field__c = 'isDeleted', value__c = 'test', operator__c = 'starts with', isActive__c = true, recordTypeId = LicenseRuleHelper.regularFilterRuleRecordTypeId);                      
     	 
-    	 licensingplus__License_Rule__c inRuleShouldNotBeBoolean = new licensingplus__License_Rule__c(licensingplus__Object__c = 'Account', licensingplus__field__c = 'isDeleted', licensingplus__value__c = 'test', licensingplus__operator__c = 'in', licensingplus__isActive__c = true, recordTypeId = LicenseRuleHelper.regularFilterRuleRecordTypeId);                      
+    	 License_Rule__c inRuleShouldNotBeBoolean = new License_Rule__c(Object__c = 'Account', field__c = 'isDeleted', value__c = 'test', operator__c = 'in', isActive__c = true, recordTypeId = LicenseRuleHelper.regularFilterRuleRecordTypeId);                      
     	 
-    	 licensingplus__License_Rule__c invalidBooleanRule = new licensingplus__License_Rule__c(licensingplus__Object__c = 'Account', licensingplus__field__c = 'isDeleted', licensingplus__value__c = 'test', licensingplus__operator__c = 'equals', licensingplus__isActive__c = true, recordTypeId = LicenseRuleHelper.regularFilterRuleRecordTypeId);                      
-    	 licensingplus__License_Rule__c invalidDateRule = new licensingplus__License_Rule__c(licensingplus__Object__c = 'Opportunity', licensingplus__field__c = 'closedate', licensingplus__value__c = 'test', licensingplus__operator__c = 'greater than', licensingplus__isActive__c = true, recordTypeId = LicenseRuleHelper.regularFilterRuleRecordTypeId);                      
-    	 licensingplus__License_Rule__c invalidDatetimeRule = new licensingplus__License_Rule__c(licensingplus__Object__c = 'Account', licensingplus__field__c = 'lastmodifieddate', licensingplus__value__c = 'test', licensingplus__operator__c = 'greater than', licensingplus__isActive__c = true, recordTypeId = LicenseRuleHelper.regularFilterRuleRecordTypeId);                      
-    	 licensingplus__License_Rule__c invalidNumberRule = new licensingplus__License_Rule__c(licensingplus__Object__c = 'Account', licensingplus__field__c = 'numberOfEmployees', licensingplus__value__c = 'test', licensingplus__operator__c = 'greater than', licensingplus__isActive__c = true, recordTypeId = LicenseRuleHelper.regularFilterRuleRecordTypeId);                      
+    	 License_Rule__c invalidBooleanRule = new License_Rule__c(Object__c = 'Account', field__c = 'isDeleted', value__c = 'test', operator__c = 'equals', isActive__c = true, recordTypeId = LicenseRuleHelper.regularFilterRuleRecordTypeId);                      
+    	 License_Rule__c invalidDateRule = new License_Rule__c(Object__c = 'Opportunity', field__c = 'closedate', value__c = 'test', operator__c = 'greater than', isActive__c = true, recordTypeId = LicenseRuleHelper.regularFilterRuleRecordTypeId);                      
+    	 License_Rule__c invalidDatetimeRule = new License_Rule__c(Object__c = 'Account', field__c = 'lastmodifieddate', value__c = 'test', operator__c = 'greater than', isActive__c = true, recordTypeId = LicenseRuleHelper.regularFilterRuleRecordTypeId);                      
+    	 License_Rule__c invalidNumberRule = new License_Rule__c(Object__c = 'Account', field__c = 'numberOfEmployees', value__c = 'test', operator__c = 'greater than', isActive__c = true, recordTypeId = LicenseRuleHelper.regularFilterRuleRecordTypeId);                      
     	
     	try {
     		insert comparisonRuleTypeNotSame;

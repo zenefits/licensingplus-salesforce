@@ -15,17 +15,17 @@ public with sharing class LicenseSetController {
 
         // custom fields from field set to add to FLS check and License query
         Set<String> customLicenseFields = new Set<String>();
-        for (Schema.FieldSetMember field : SObjectType.licensingplus__License__c.FieldSets.Custom_License_Fields.getFields()) {
+        for (Schema.FieldSetMember field : SObjectType.License__c.FieldSets.Custom_License_Fields.getFields()) {
             customLicenseFields.add(field.getFieldPath());
         }        
 
         // Field Level Security checks
         Boolean noAccess = false;
-        Set<String> licenseFieldsToCheck = new Set<String>{'Id', 'licensingplus__State__c', 'RecordTypeId', 'licensingplus__Status__c', 'OwnerId'};
+        Set<String> licenseFieldsToCheck = new Set<String>{'Id', AppConfig.getAppNamespacedName('State__c'), 'RecordTypeId', AppConfig.getAppNamespacedName('Status__c'), 'OwnerId'};
         licenseFieldsToCheck.addAll(customLicenseFields);              
         Set<String> loaFieldsToCheck = new Set<String>{'Name'};    
-        if (!LicenseRuleHelper.enforceCRUDAndFLSInController('licensingplus__License__c', licenseFieldsToCheck, 'query')) {noAccess = true;}  
-        if (!LicenseRuleHelper.enforceCRUDAndFLSInController('licensingplus__Line_of_Authority__c', loaFieldsToCheck, 'query')) {noAccess = true;}        
+        if (!LicenseRuleHelper.enforceCRUDAndFLSInController(AppConfig.getAppNamespacedName('License__c'), licenseFieldsToCheck, 'query')) {noAccess = true;}  
+        if (!LicenseRuleHelper.enforceCRUDAndFLSInController(AppConfig.getAppNamespacedName('Line_of_Authority__c'), loaFieldsToCheck, 'query')) {noAccess = true;}        
         if (noAccess) {
             hasPageErrors = true;
             return;
@@ -36,25 +36,32 @@ public with sharing class LicenseSetController {
             Lines_of_Authority__c loaSetting = Lines_of_Authority__c.getInstance(loaSettingName);
             String loaName = loaSetting.loa_name__c.toLowerCase();
             Set<String> loaTypes = loaTypesByName.get(loaName) != null ? loaTypesByName.get(loaName) : new Set<String>();
-            loaTypes.add(loaSetting.licensingplus__type__c);
+            loaTypes.add(loaSetting.type__c);
             loaTypesByName.put(loaName, loaTypes);
         }
 		
 		     
     	Set<String> licenseFields = new Set<String>{
-    		'Id','licensingplus__State__c','RecordType.Name','licensingplus__Status__c'
+    		'Id',AppConfig.getAppNamespacedName('State__c'),'RecordType.Name',AppConfig.getAppNamespacedName('Status__c')
     	};
 		licenseFields.addAll(customLicenseFields);
 		String queryTemplate = 'SELECT {0},' +
-                       			'(SELECT Name from Lines_Of_Authority__r) ' +
-                                   'FROM licensingplus__License__c ' +
-                                   'WHERE OwnerId = {1} ' + 
-                                   'ORDER BY licensingplus__State__c, CreatedDate DESC';
+                       			'(SELECT Name from {1}) ' +
+                                   'FROM {2} ' +
+                                   'WHERE OwnerId = {3} ' + 
+                                   'ORDER BY {4}, CreatedDate DESC';
 		
-		String queryStr = String.format(queryTemplate, new String[]{String.escapeSingleQuotes(LicenseRuleHelper.setToStringWithoutQuotes(licenseFields)), '\''+String.escapeSingleQuotes(runAs())+'\''});
-		LicenseRuleHelper.logInfo('LicenseSetController', 'LicenseSetController', 'QUERY - ' + queryStr);
+		String queryStr = String.format(queryTemplate, 
+										new String[]{
+											String.escapeSingleQuotes(LicenseRuleHelper.setToStringWithoutQuotes(licenseFields)), 
+											AppConfig.getAppNamespacedName('Lines_Of_Authority__r'),
+											AppConfig.getAppNamespacedName('License__c'),
+											'\''+String.escapeSingleQuotes(runAs())+'\'',
+											AppConfig.getAppNamespacedName('State__c')
+											});
+		LogUtils.logInfo('LicenseSetController', 'LicenseSetController', 'QUERY - ' + queryStr);
 		
-        for (licensingplus__License__c license : Database.query(queryStr)) {
+        for (License__c license : Database.query(queryStr)) {
             insuranceLicenses.add(new License(license, loaTypesByName));                           
         }      
     }
@@ -65,10 +72,10 @@ public with sharing class LicenseSetController {
     }
     
     private class license {
-        public licensingplus__License__c license {get; set;}
+        public License__c license {get; set;}
         public String loaTypes {get; set;}
         
-        public license(licensingplus__License__c license, Map<String, Set<String>> loaTypesByName) {
+        public license(License__c license, Map<String, Set<String>> loaTypesByName) {
             this.license = license;
             this.loaTypes = getLoaTypes(loaTypesByName);
         }
@@ -76,7 +83,7 @@ public with sharing class LicenseSetController {
         private String getLoaTypes(Map<String, Set<String>> loaTypesByName) {
             Set<String> allTypes = new Set<String>();
             
-            for (licensingplus__Line_Of_Authority__c loa : license.lines_of_authority__r) {
+            for (Line_Of_Authority__c loa : license.lines_of_authority__r) {
                 String loaName = loa.name.toLowerCase();
                 if (loaTypesByName.get(loaName) != null) {
 	                allTypes.addAll(loaTypesByName.get(loaName));                    

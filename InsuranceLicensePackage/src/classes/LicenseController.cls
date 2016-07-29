@@ -14,7 +14,7 @@ public with sharing class LicenseController {
         set;
     }
 
-    private final licensingplus__License__c license;
+    private final License__c license;
     private ApexPages.StandardController controller;
     
     public String getRecordTypeName() {
@@ -40,15 +40,15 @@ public with sharing class LicenseController {
         
         Set<String> licenseFields = new Set<String>{
             'OwnerId',
-            'licensingplus__Approved__c',
-            'licensingplus__Class__c',
-            'licensingplus__NPN_Number__c',
-            'licensingplus__Number__c',
-            'licensingplus__Effective_Date__c',
-            'licensingplus__Status__c',
-            'licensingplus__Expiration_Date__c'};
+            AppConfig.getAppNamespacedName('Approved__c'),
+	        AppConfig.getAppNamespacedName('Class__c'),
+	        AppConfig.getAppNamespacedName('NPN_Number__c'),
+	        AppConfig.getAppNamespacedName('Number__c'),
+	        AppConfig.getAppNamespacedName('Effective_Date__c'),
+	        AppConfig.getAppNamespacedName('Expiration_Date__c')
+	    };
         Set<String> customLicenseFields = new Set<String>();
-        for (Schema.FieldSetMember field : SObjectType.licensingplus__License__c.FieldSets.Custom_License_Fields.getFields()) {
+        for (Schema.FieldSetMember field : SObjectType.License__c.FieldSets.Custom_License_Fields.getFields()) {
             customLicenseFields.add(field.getFieldPath());
         }
         licenseFields.addAll(customLicenseFields);      
@@ -57,16 +57,16 @@ public with sharing class LicenseController {
             controller.addFields(new List<String>(licenseFields));
         }
 
-        this.license = (licensingplus__License__c) controller.getRecord();        
+        this.license = (License__c) controller.getRecord();        
 
         // if user doesn't have access to some license fields, lock record and display errors
-        if(!LicenseRuleHelper.enforceCRUDAndFLSInController('licensingplus__License__c', licenseFields, 'query')) {
+        if(!LicenseRuleHelper.enforceCRUDAndFLSInController(AppConfig.getAppNamespacedName('License__c'), licenseFields, 'query')) {
             locked = true;
             hasPageErrors = true;
             return;
         }                   
         
-        if (this.license.licensingplus__Approved__c || this.license.licensingplus__Status__c == 'Expired' || this.license.licensingplus__Status__c == 'Active') {
+        if (this.license.Approved__c || this.license.Status__c == 'Expired' || this.license.Status__c == 'Active') {
             locked = true;
         }
 
@@ -75,9 +75,9 @@ public with sharing class LicenseController {
         if ('Non_Resident_State' == getRecordTypeName()) {       
 
             // If user does not have access to License fields, stop operation and display error
-            if (LicenseRuleHelper.enforceCRUDAndFLSInController('licensingplus__License__c', new Set<String>{'licensingplus__NPN_Number__c', 'RecordTypeId', 'licensingplus__Number__c', 'OwnerId'}, 'query')) {
-                List<licensingplus__License__c> residentLicenses = [SELECT licensingplus__NPN_Number__c
-                              FROM licensingplus__License__c
+            if (LicenseRuleHelper.enforceCRUDAndFLSInController(AppConfig.getAppNamespacedName('License__c'), new Set<String>{AppConfig.getAppNamespacedName('NPN_Number__c'), 'RecordTypeId', AppConfig.getAppNamespacedName('Number__c'), 'OwnerId'}, 'query')) {
+                List<License__c> residentLicenses = [SELECT NPN_Number__c
+                              FROM License__c
                                   WHERE RecordType.DeveloperName = 'Resident_State'
                                       AND Number__c != ''
                                       AND OwnerId = :UserInfo.getUserId()];
@@ -88,7 +88,7 @@ public with sharing class LicenseController {
                     allowed = false;
                 } else {
                     if (controller.getId() == null)
-                        this.license.licensingplus__NPN_Number__c = residentLicenses[0].licensingplus__NPN_Number__c;
+                        this.license.NPN_Number__c = residentLicenses[0].NPN_Number__c;
                 }
             } else {
             	hasPageErrors = true;
@@ -128,7 +128,7 @@ public with sharing class LicenseController {
 		            } else {
 		            	hasPageErrors = true;
 		            }                   
-                } else if (this.license.licensingplus__Status__c != 'Active' && this.license.licensingplus__Status__c != 'Expired') {
+                } else if (this.license.Status__c != 'Active' && this.license.Status__c != 'Expired') {
                     if (LicenseRuleHelper.enforceCRUDAndFLSInController('ProcessInstance', new Set<String>{'Id', 'TargetObjectId', 'Status', 'CreatedDate'}, 'query')) { 
                         List<ProcessInstance> rejectedProcesses = [SELECT Id FROM ProcessInstance WHERE TargetObjectId = :controller.getId() AND Status = 'Rejected' ORDER BY CreatedDate DESC];
                         
@@ -144,7 +144,7 @@ public with sharing class LicenseController {
             					hasPageErrors = true;
             				}  
 
-                        } else if (this.license.licensingplus__Status__c == 'Ready to Submit' ) {
+                        } else if (this.license.Status__c == 'Ready to Submit' ) {
                             ApexPages.addmessage(new ApexPages.message(ApexPages.severity.INFO, 'Your license is ready to submit for approval.'));
                         }
                     } else {
@@ -170,9 +170,9 @@ public with sharing class LicenseController {
 
         // Field Level Security checks -- include all fields from VF page, and all that were added in constructor
         Set<String> licenseFieldsToCheck = new Set<String>{
-            'Name','RecordTypeId','licensingplus__State__c','OwnerId','licensingplus__Approved__c','licensingplus__Class__c','licensingplus__NPN_Number__c','licensingplus__Number__c','licensingplus__Effective_Date__c','licensingplus__Expiration_Date__c'
+            'Name','RecordTypeId',AppConfig.getAppNamespacedName('State__c'),'OwnerId',AppConfig.getAppNamespacedName('Approved__c'),AppConfig.getAppNamespacedName('Class__c'),AppConfig.getAppNamespacedName('NPN_Number__c'),AppConfig.getAppNamespacedName('Number__c'),AppConfig.getAppNamespacedName('Effective_Date__c'),AppConfig.getAppNamespacedName('Expiration_Date__c')
         };
-        for (Schema.FieldSetMember field : SObjectType.licensingplus__License__c.FieldSets.Custom_License_Fields.getFields()) {
+        for (Schema.FieldSetMember field : SObjectType.License__c.FieldSets.Custom_License_Fields.getFields()) {
             licenseFieldsToCheck.add(field.getFieldPath());
         }
         Set<String> attachmentFieldsToCheck = new Set<String>{'Body', 'OwnerId', 'IsPrivate'};
@@ -181,7 +181,7 @@ public with sharing class LicenseController {
         }
 
         Boolean noAccess = false;
-        if (!LicenseRuleHelper.enforceCRUDAndFLSInController('licensingplus__License__c', licenseFieldsToCheck, 'upsert')) {noAccess = true;}           
+        if (!LicenseRuleHelper.enforceCRUDAndFLSInController(AppConfig.getAppNamespacedName('License__c'), licenseFieldsToCheck, 'upsert')) {noAccess = true;}           
         if (!LicenseRuleHelper.enforceCRUDAndFLSInController('Attachment', attachmentFieldsToCheck, (licensePDF.Id==null ? 'insert' : 'update'))) {noAccess = true;}   
         if (noAccess) {
             return null;
@@ -248,7 +248,7 @@ public with sharing class LicenseController {
     }
 
     public PageReference viewList() {
-        PageReference pageRef = new PageReference(System.URL.getSalesforceBaseURL().toExternalForm() + '/' +  licensingplus__License__c.SObjectType.getDescribe().getKeyPrefix());
+        PageReference pageRef = new PageReference(System.URL.getSalesforceBaseURL().toExternalForm() + '/' +  License__c.SObjectType.getDescribe().getKeyPrefix());
         
         pageRef.setRedirect(true);
         
@@ -265,23 +265,22 @@ public with sharing class LicenseController {
     
     private String loaTypes() {
         // If user does not have access to LOA fields, display error
-        if (!licensingplus__Line_of_Authority__c.sObjectType.getDescribe().isAccessible()) {
-            ApexPages.addMessage(new ApexPages.message(ApexPages.severity.ERROR, 'You do not have access to the Line of Authority object.'));            
-            return null;
+        if (!LicenseRuleHelper.enforceCRUDAndFLSInController(AppConfig.getAppNamespacedName('Line_of_Authority__c'), new Set<String>(), 'query')) {
+			return null;
         }   
 
         if (license != null) {
             Map<String, Set<String>> loaTypesByName = new Map<String, Set<String>>();
-            for (String loaSettingName : licensingplus__Lines_of_Authority__c.getAll().keyset()) {       
-                licensingplus__Lines_of_Authority__c loaSetting = licensingplus__Lines_of_Authority__c.getInstance(loaSettingName);
-                String loaName = loaSetting.licensingplus__loa_name__c.toLowerCase();
+            for (String loaSettingName : Lines_of_Authority__c.getAll().keyset()) {       
+                Lines_of_Authority__c loaSetting = Lines_of_Authority__c.getInstance(loaSettingName);
+                String loaName = loaSetting.loa_name__c.toLowerCase();
                 Set<String> loaTypes = loaTypesByName.get(loaName) != null ? loaTypesByName.get(loaName) : new Set<String>();
-                loaTypes.add(loaSetting.licensingplus__type__c);
+                loaTypes.add(loaSetting.type__c);
                 loaTypesByName.put(loaName, loaTypes);
             }       
             
             Set<String> allTypes = new Set<String>();            
-            for (licensingplus__Line_of_Authority__c loa : [select name from licensingplus__line_of_authority__c where licensingplus__License__c =: license.id]) {                
+            for (Line_of_Authority__c loa : [select name from line_of_authority__c where License__c =: license.id]) {                
                 String loaName = loa.name.toLowerCase();
                 if (loaTypesByName.get(loaName) != null) {
                     allTypes.addAll(loaTypesByName.get(loaName));                    
@@ -295,6 +294,6 @@ public with sharing class LicenseController {
     }
     
     public Boolean getCustomLicenseFieldsEmpty() {
-    	return SObjectType.licensingplus__License__c.FieldSets.Custom_License_Fields.getFields().isEmpty();
+    	return SObjectType.License__c.FieldSets.Custom_License_Fields.getFields().isEmpty();
     } 
 }

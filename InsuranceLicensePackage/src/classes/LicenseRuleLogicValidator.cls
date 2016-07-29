@@ -4,9 +4,9 @@ public with sharing class LicenseRuleLogicValidator extends RuleValidator{
     	super(ruleHelper);
     }
     
-    public void validate(licensingplus__License_Rule_Logic__c ruleLogic, Map<String, Set<String>> ruleIdsByObjName, Map<String, Set<String>> filterRuleLogicIdsByObjName) {    	
-    	String logic = ruleLogic.licensingplus__logic__c;
-    	String objName = ruleLogic.licensingplus__object__c;
+    public void validate(License_Rule_Logic__c ruleLogic, Map<String, Set<String>> ruleIdsByObjName, Map<String, Set<String>> filterRuleLogicIdsByObjName) {    	
+    	String logic = ruleLogic.logic__c;
+    	String objName = ruleLogic.object__c;
     	
     	Set<String> ruleIdArray = ruleHelper.getRuleIdArray(logic);
     	Set<String> ruleIds = ruleIdsByObjName.get(objName);
@@ -26,7 +26,7 @@ public with sharing class LicenseRuleLogicValidator extends RuleValidator{
     	Set<String> filterRuleLogicIds = filterRuleLogicIdsByObjName.get(objName);
     	//verify license rule logic points to filter rule logic only if filter rule logic exists
     	if (ruleLogic.recordTypeId == LicenseRuleHelper.licenseRuleLogicRecordTypeId) {
-    		if ((filterRuleLogicIds == null || filterRuleLogicIds.isEmpty()) && ruleLogic.licensingplus__filter_rule__c!=null) {
+    		if ((filterRuleLogicIds == null || filterRuleLogicIds.isEmpty()) && ruleLogic.filter_rule__c!=null) {
     			String errorMessage = RuleValidator.errorMessageByType.get(RuleValidator.RuleError.ONLY_LICENSE_FILTER_COMPARISON_RULE);
 				throw new LicenseRuleException(String.format(errorMessage, new String[]{ruleLogic.id}));
     		}

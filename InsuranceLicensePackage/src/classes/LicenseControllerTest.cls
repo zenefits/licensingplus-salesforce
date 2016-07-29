@@ -3,11 +3,11 @@ public class LicenseControllerTest {
     @testSetup
     public static void setup() {
         // setup LOA custom setting data
-        licensingplus__Lines_of_Authority__c health = new licensingplus__Lines_of_Authority__c(name = 'Health', licensingplus__loa_name__c = 'Health', licensingplus__type__c = 'Health');
-        licensingplus__Lines_of_Authority__c life = new licensingplus__Lines_of_Authority__c(name = 'Life', licensingplus__loa_name__c = 'Life', licensingplus__type__c = 'Life');
-        licensingplus__Lines_of_Authority__c property = new licensingplus__Lines_of_Authority__c(name = 'P&C1', licensingplus__loa_name__c = 'Property & Casualty', licensingplus__type__c = 'Property'); 
-        licensingplus__Lines_of_Authority__c casualty = new licensingplus__Lines_of_Authority__c(name = 'P&C2', licensingplus__loa_name__c = 'Property & Casualty', licensingplus__type__c = 'Casualty');            
-        insert new List<licensingplus__Lines_of_Authority__c>{health, life, property, casualty};           
+        Lines_of_Authority__c health = new Lines_of_Authority__c(name = 'Health', loa_name__c = 'Health', type__c = 'Health');
+        Lines_of_Authority__c life = new Lines_of_Authority__c(name = 'Life', loa_name__c = 'Life', type__c = 'Life');
+        Lines_of_Authority__c property = new Lines_of_Authority__c(name = 'P&C1', loa_name__c = 'Property & Casualty', type__c = 'Property'); 
+        Lines_of_Authority__c casualty = new Lines_of_Authority__c(name = 'P&C2', loa_name__c = 'Property & Casualty', type__c = 'Casualty');            
+        insert new List<Lines_of_Authority__c>{health, life, property, casualty};           
     }
 
     public static testMethod void testGetIsAdmin() {        
@@ -15,19 +15,21 @@ public class LicenseControllerTest {
         
         Test.setCurrentPage(Page.License_Edit);
         
-        licensingplus__License__c license = new licensingplus__License__c(
-            RecordTypeId = Schema.SObjectType.licensingplus__License__c.getRecordTypeInfosByName().get('Resident State').getRecordTypeId());
+        License__c license = new License__c(
+            RecordTypeId = Schema.SObjectType.License__c.getRecordTypeInfosByName().get('Resident State').getRecordTypeId());
         
         ApexPages.StandardController sc = new ApexPages.StandardController(license);
         LicenseController lc = new LicenseController(sc);
         
         system.assertEquals(false, lc.getIsAdmin());
         
-        Group licenseApprovers = [select id from group where DeveloperName = 'License_Approvers'];
-        GroupMember member = new GroupMember(groupId = licenseApprovers.id, UserOrGroupId = UserInfo.getUserId());
-        insert member;        
-        
-        system.assertEquals(true, lc.getIsAdmin());
+        List<Group> licenseApprovers = [select id from group where DeveloperName = 'License_Approvers'];
+        if (!licenseApprovers.isEmpty()) {
+        	GroupMember member = new GroupMember(groupId = licenseApprovers.get(0).id, UserOrGroupId = UserInfo.getUserId());
+	        insert member;        
+	        
+	        system.assertEquals(true, lc.getIsAdmin());	
+        }
 
 		Test.stopTest();        
     }
@@ -37,13 +39,13 @@ public class LicenseControllerTest {
         
         Test.setCurrentPage(Page.License_View);
         
-        licensingplus__License__c license = new licensingplus__License__c(
-            licensingplus__State__c = 'California',
-            RecordTypeId = Schema.SObjectType.licensingplus__License__c.getRecordTypeInfosByName().get('Resident State').getRecordTypeId(),
-            licensingplus__NPN_Number__c = '123',
-            licensingplus__Number__c = '123',
-            licensingplus__Effective_Date__c = Date.today().addDays(-1),
-            licensingplus__Expiration_Date__c = Date.today());
+        License__c license = new License__c(
+            State__c = 'California',
+            RecordTypeId = Schema.SObjectType.License__c.getRecordTypeInfosByName().get('Resident State').getRecordTypeId(),
+            NPN_Number__c = '123',
+            Number__c = '123',
+            Effective_Date__c = Date.today().addDays(-1),
+            Expiration_Date__c = Date.today());
         insert license;                     
         
         ApexPages.StandardController sc = new ApexPages.StandardController(license);
@@ -59,19 +61,19 @@ public class LicenseControllerTest {
         
         Test.setCurrentPage(Page.License_View);
         
-        licensingplus__License__c license = new licensingplus__License__c(
-            licensingplus__State__c = 'California',
-            RecordTypeId = Schema.SObjectType.licensingplus__License__c.getRecordTypeInfosByName().get('Resident State').getRecordTypeId(),
-            licensingplus__NPN_Number__c = '123',
-            licensingplus__Number__c = '123',
-            licensingplus__Effective_Date__c = Date.today().addDays(-1),
-            licensingplus__Expiration_Date__c = Date.today());
+        License__c license = new License__c(
+            State__c = 'California',
+            RecordTypeId = Schema.SObjectType.License__c.getRecordTypeInfosByName().get('Resident State').getRecordTypeId(),
+            NPN_Number__c = '123',
+            Number__c = '123',
+            Effective_Date__c = Date.today().addDays(-1),
+            Expiration_Date__c = Date.today());
         insert license;
 
-        licensingplus__Line_of_Authority__c health = new licensingplus__Line_of_Authority__c(licensingplus__license__c = license.id, name = 'health');
-        licensingplus__Line_of_Authority__c life = new licensingplus__Line_of_Authority__c(licensingplus__license__c = license.id, name = 'life');
-        licensingplus__Line_of_Authority__c property = new licensingplus__Line_of_Authority__c(licensingplus__license__c = license.id, name = 'property & casualty');
-        insert new List<licensingplus__Line_of_Authority__c>{health, life, property};                      
+        Line_of_Authority__c health = new Line_of_Authority__c(license__c = license.id, name = 'health');
+        Line_of_Authority__c life = new Line_of_Authority__c(license__c = license.id, name = 'life');
+        Line_of_Authority__c property = new Line_of_Authority__c(license__c = license.id, name = 'property & casualty');
+        insert new List<Line_of_Authority__c>{health, life, property};                      
         
         ApexPages.StandardController sc = new ApexPages.StandardController(license);
         LicenseController lc = new LicenseController(sc);
@@ -85,22 +87,22 @@ public class LicenseControllerTest {
     }
     
     public static testMethod void testLDupeLicense() {
-        licensingplus__License__c residentlicense = new licensingplus__License__c(
-            licensingplus__State__c = 'California',
-            RecordTypeId = Schema.SObjectType.licensingplus__License__c.getRecordTypeInfosByName().get('Resident State').getRecordTypeId(),
-            licensingplus__NPN_Number__c = '123',
-            licensingplus__Number__c = '123',
-            licensingplus__Effective_Date__c = Date.today().addDays(-1),
-            licensingplus__Expiration_Date__c = Date.today());
+        License__c residentlicense = new License__c(
+            State__c = 'California',
+            RecordTypeId = Schema.SObjectType.License__c.getRecordTypeInfosByName().get('Resident State').getRecordTypeId(),
+            NPN_Number__c = '123',
+            Number__c = '123',
+            Effective_Date__c = Date.today().addDays(-1),
+            Expiration_Date__c = Date.today());
         insert residentlicense;
         try {
-            licensingplus__License__c residentlicense2 = new licensingplus__License__c(
-                licensingplus__State__c = 'California',
-                RecordTypeId = Schema.SObjectType.licensingplus__License__c.getRecordTypeInfosByName().get('Resident State').getRecordTypeId(),
-                licensingplus__NPN_Number__c = '123',
-                licensingplus__Number__c = '123',
-                licensingplus__Effective_Date__c = Date.today().addDays(-1),
-                licensingplus__Expiration_Date__c = Date.today());
+            License__c residentlicense2 = new License__c(
+                State__c = 'California',
+                RecordTypeId = Schema.SObjectType.License__c.getRecordTypeInfosByName().get('Resident State').getRecordTypeId(),
+                NPN_Number__c = '123',
+                Number__c = '123',
+                Effective_Date__c = Date.today().addDays(-1),
+                Expiration_Date__c = Date.today());
             insert residentlicense2;
             System.assert(false, 'Shouldn\'t get here.');
         } catch(Exception e) {
@@ -109,34 +111,34 @@ public class LicenseControllerTest {
     }
 
     public static testMethod void testLicenseControllerSet() {
-        licensingplus__License__c residentlicense = new licensingplus__License__c(
-            licensingplus__State__c = 'California',
-            RecordTypeId = Schema.SObjectType.licensingplus__License__c.getRecordTypeInfosByName().get('Resident State').getRecordTypeId(),
-            licensingplus__NPN_Number__c = '123',
-            licensingplus__Number__c = '123',
-            licensingplus__Approved__c = true,
-            licensingplus__Effective_Date__c = Date.today().addDays(-1),
-            licensingplus__Expiration_Date__c = Date.today());
+        License__c residentlicense = new License__c(
+            State__c = 'California',
+            RecordTypeId = Schema.SObjectType.License__c.getRecordTypeInfosByName().get('Resident State').getRecordTypeId(),
+            NPN_Number__c = '123',
+            Number__c = '123',
+            Approved__c = true,
+            Effective_Date__c = Date.today().addDays(-1),
+            Expiration_Date__c = Date.today());
         insert residentlicense;
         
-        licensingplus__Line_of_Authority__c health = new licensingplus__Line_of_Authority__c(licensingplus__license__c = residentlicense.id, name = 'health');
-        licensingplus__Line_of_Authority__c life = new licensingplus__Line_of_Authority__c(licensingplus__license__c = residentlicense.id, name = 'life');
-        licensingplus__Line_of_Authority__c property = new licensingplus__Line_of_Authority__c(licensingplus__license__c = residentlicense.id, name = 'property & casualty');
+        Line_of_Authority__c health = new Line_of_Authority__c(license__c = residentlicense.id, name = 'health');
+        Line_of_Authority__c life = new Line_of_Authority__c(license__c = residentlicense.id, name = 'life');
+        Line_of_Authority__c property = new Line_of_Authority__c(license__c = residentlicense.id, name = 'property & casualty');
         insert new List<Line_of_Authority__c>{health, life, property};    
             
-        licensingplus__License__c nonResidentlicense = new licensingplus__License__c(
-            licensingplus__State__c = 'Nebraska',
-            RecordTypeId = Schema.SObjectType.licensingplus__License__c.getRecordTypeInfosByName().get('Non-Resident State').getRecordTypeId(),
-            licensingplus__NPN_Number__c = '123',
-            licensingplus__Number__c = '123',
-            licensingplus__Approved__c = true,
-            licensingplus__Effective_Date__c = Date.today().addDays(-1),
-            licensingplus__Expiration_Date__c = Date.today());
+        License__c nonResidentlicense = new License__c(
+            State__c = 'Nebraska',
+            RecordTypeId = Schema.SObjectType.License__c.getRecordTypeInfosByName().get('Non-Resident State').getRecordTypeId(),
+            NPN_Number__c = '123',
+            Number__c = '123',
+            Approved__c = true,
+            Effective_Date__c = Date.today().addDays(-1),
+            Expiration_Date__c = Date.today());
         insert nonResidentlicense;
 
         Test.setCurrentPage(Page.License_List);
         
-        List<licensingplus__License__c> licenses = new List<licensingplus__License__c>();
+        List<License__c> licenses = new List<License__c>();
         ApexPages.StandardSetController ssc = new ApexPages.StandardSetController(licenses);
         LicenseSetController lsc = new LicenseSetController(ssc);
 
@@ -151,7 +153,7 @@ public class LicenseControllerTest {
         system.runAs(readOnlyUser) {
             Test.setCurrentPage(Page.License_List);
             
-            List<licensingplus__License__c> licenses = new List<licensingplus__License__c>();
+            List<License__c> licenses = new List<License__c>();
             ApexPages.StandardSetController ssc = new ApexPages.StandardSetController(licenses);
             LicenseSetController lsc = new LicenseSetController(ssc);       
 
@@ -169,8 +171,8 @@ public class LicenseControllerTest {
         
         Test.setCurrentPage(Page.License_Edit);
         
-        licensingplus__License__c license = new licensingplus__License__c(
-            RecordTypeId = Schema.SObjectType.licensingplus__License__c.getRecordTypeInfosByName().get('Resident State').getRecordTypeId());
+        License__c license = new License__c(
+            RecordTypeId = Schema.SObjectType.License__c.getRecordTypeInfosByName().get('Resident State').getRecordTypeId());
         
         ApexPages.StandardController sc = new ApexPages.StandardController(license);
         LicenseController lc = new LicenseController(sc);
@@ -189,16 +191,16 @@ public class LicenseControllerTest {
     }
     
     public static testMethod void testNewNonResidentWithoutResident() {
-        licensingplus__License__c residentlicense = new licensingplus__License__c(
-            RecordTypeId = Schema.SObjectType.licensingplus__License__c.getRecordTypeInfosByName().get('Resident State').getRecordTypeId());
+        License__c residentlicense = new License__c(
+            RecordTypeId = Schema.SObjectType.License__c.getRecordTypeInfosByName().get('Resident State').getRecordTypeId());
         insert residentlicense;
         
         Test.startTest();
         
         Test.setCurrentPage(Page.License_Edit);
         
-        licensingplus__License__c license = new licensingplus__License__c(
-            RecordTypeId = Schema.SObjectType.licensingplus__License__c.getRecordTypeInfosByName().get('Non-Resident State').getRecordTypeId());
+        License__c license = new License__c(
+            RecordTypeId = Schema.SObjectType.License__c.getRecordTypeInfosByName().get('Non-Resident State').getRecordTypeId());
         
         ApexPages.StandardController sc = new ApexPages.StandardController(license);
         LicenseController lc = new LicenseController(sc);
@@ -209,22 +211,22 @@ public class LicenseControllerTest {
     }
     
     public static testMethod void testNewNonResidentWithResident() {
-        licensingplus__License__c residentlicense = new licensingplus__License__c(
-            licensingplus__State__c = 'California',
-            RecordTypeId = Schema.SObjectType.licensingplus__License__c.getRecordTypeInfosByName().get('Resident State').getRecordTypeId(),
-            licensingplus__NPN_Number__c = '123',
-            licensingplus__Number__c = '123',
-            licensingplus__Approved__c = true,
-            licensingplus__Effective_Date__c = Date.today().addDays(-1),
-            licensingplus__Expiration_Date__c = Date.today());
+        License__c residentlicense = new License__c(
+            State__c = 'California',
+            RecordTypeId = Schema.SObjectType.License__c.getRecordTypeInfosByName().get('Resident State').getRecordTypeId(),
+            NPN_Number__c = '123',
+            Number__c = '123',
+            Approved__c = true,
+            Effective_Date__c = Date.today().addDays(-1),
+            Expiration_Date__c = Date.today());
         insert residentlicense;
         
         Test.startTest();
         
         Test.setCurrentPage(Page.License_Edit);
         
-        licensingplus__License__c license = new licensingplus__License__c(
-            RecordTypeId = Schema.SObjectType.licensingplus__License__c.getRecordTypeInfosByName().get('Non-Resident State').getRecordTypeId());
+        License__c license = new License__c(
+            RecordTypeId = Schema.SObjectType.License__c.getRecordTypeInfosByName().get('Non-Resident State').getRecordTypeId());
         
         ApexPages.StandardController sc = new ApexPages.StandardController(license);
         LicenseController lc = new LicenseController(sc);
@@ -233,7 +235,7 @@ public class LicenseControllerTest {
         
         System.assertEquals(lc.allowed, true, 'Resident State is complete, so should not fail');
         
-        license.licensingplus__State__c = 'Nebraska';
+        license.State__c = 'Nebraska';
         
         System.assertNotEquals(lc.saveAndUpload(), null, ApexPages.getMessages());
         
