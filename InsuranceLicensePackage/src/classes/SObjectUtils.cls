@@ -32,14 +32,14 @@ global with sharing class SObjectUtils {
 	}
 	
 	private static final Set<String> excludedAppObjects = new Set<String>{
-		'licensingplus__license__c',
-		'licensingplus__line_of_authority__c',
-		'licensingplus__license_rule__c',
-		'licensingplus__license_rule_logic__c'
+		AppConfig.getAppNamespacedName('license__c'),
+		AppConfig.getAppNamespacedName('line_of_authority__c'),
+		AppConfig.getAppNamespacedName('license_rule__c'),
+		AppConfig.getAppNamespacedName('license_rule_logic__c')
 	};
 	
     private static final Set<Schema.DisplayType> STRING_TYPES = new Set<Schema.DisplayType>{
-        Schema.DisplayType.base64
+         Schema.DisplayType.base64
         ,Schema.DisplayType.Email
         ,Schema.DisplayType.MultiPicklist
         ,Schema.DisplayType.Phone

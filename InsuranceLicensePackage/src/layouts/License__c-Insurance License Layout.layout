@@ -37,6 +37,10 @@
                 <behavior>Edit</behavior>
                 <field>Expiration_Date__c</field>
             </layoutItems>
+            <layoutItems>
+                <behavior>Edit</behavior>
+                <field>NIPR_Manual_Override__c</field>
+            </layoutItems>
         </layoutColumns>
         <layoutColumns>
             <layoutItems>

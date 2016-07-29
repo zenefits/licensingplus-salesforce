@@ -18,6 +18,10 @@
         <name>ApexTrigger</name>
     </types>
     <types>
+        <members>*</members>
+        <name>ConnectedApp</name>
+    </types>
+    <types>
         <members>License_Compliance</members>
         <name>CustomApplication</name>
     </types>
@@ -38,14 +42,11 @@
     <types>
         <members>Licensing_Plus</members>
         <members>Licensing_Plus/Logo.png</members>
+        <members>Licensing_Plus/NIPR_Sync_Logo.png</members>
         <name>Document</name>
     </types>
     <types>
         <members>License_Templates</members>
-        <members>License_Templates/Insurance_License_Approval_Approved</members>
-        <members>License_Templates/Insurance_License_Approval_Rejected</members>
-        <members>License_Templates/Insurance_License_Approval_Request</members>
-        <members>License_Templates/Insurance_License_Approval_Request_Received</members>
         <members>License_Templates/License_Expires_in_N_days</members>
         <members>License_Templates/Populate_License</members>
         <name>EmailTemplate</name>

@@ -10,33 +10,33 @@ public with sharing class ComplianceController {
     private static final LicenseRuleHelper ruleHelper = new LicenseRuleHelper();
     
     @RemoteAction
-    public static List<licensingplus__Lines_of_Authority__c> getLinesOfAuth( ) {
-    	return [SELECT name, licensingplus__loa_name__c, licensingplus__type__c FROM licensingplus__Lines_of_Authority__c];
+    public static List<Lines_of_Authority__c> getLinesOfAuth( ) {
+    	return [SELECT name, loa_name__c, type__c FROM Lines_of_Authority__c];
     }
 
     @RemoteAction
-    public static void deleteLineOfAuth( licensingplus__Lines_of_Authority__c lineOfAuth) {
+    public static void deleteLineOfAuth( Lines_of_Authority__c lineOfAuth) {
     	delete lineOfAuth;
     }
 
     @RemoteAction
-    public static List<licensingplus__Lines_of_Authority__c> insertLinesOfAuth( List<licensingplus__Lines_of_Authority__c> linesOfAuth ) {
+    public static List<Lines_of_Authority__c> insertLinesOfAuth( List<Lines_of_Authority__c> linesOfAuth ) {
 		  insert linesOfAuth;
       return getLinesOfAuth();
     }
 
     @RemoteAction
-    public static licensingplus__Checklist__c getChecklist() {
-    	licensingplus__Checklist__c defaultChecklist = licensingplus__Checklist__c.getOrgDefaults();
+    public static Checklist__c getChecklist() {
+    	Checklist__c defaultChecklist = Checklist__c.getOrgDefaults();
     	if (defaultChecklist.id == null) {
     		insert defaultChecklist;
     	}
     	
-		return licensingplus__Checklist__c.getOrgDefaults();
+		return Checklist__c.getOrgDefaults();
     }
 
     @RemoteAction
-    public static void toggleChecklist(licensingplus__Checklist__c checklist) {
+    public static void toggleChecklist(Checklist__c checklist) {
     	try {
         	update checklist;
 

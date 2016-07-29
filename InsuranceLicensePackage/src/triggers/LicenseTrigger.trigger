@@ -1,4 +1,4 @@
-trigger LicenseTrigger on licensingplus__License__c (before insert, before update, after insert, after update, before delete) {
+trigger LicenseTrigger on License__c (before insert, before update, after insert, after update, before delete) {
     
     if (trigger.isBefore) {
         if (trigger.isInsert) {

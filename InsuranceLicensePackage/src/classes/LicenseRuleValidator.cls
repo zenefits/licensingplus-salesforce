@@ -16,7 +16,7 @@ public with sharing class LicenseRuleValidator extends RuleValidator{
     	super(ruleHelper);
     }
     
-    public void validate(licensingplus__License_Rule__c rule, Map<String, Map<String, Schema.SobjectField>> objFieldsByName) {
+    public void validate(License_Rule__c rule, Map<String, Map<String, Schema.SobjectField>> objFieldsByName) {
     	if (rule.recordTypeId == LicenseRuleHelper.regularFilterRuleRecordTypeId) {
     		validateRegularFilterRule(rule, objFieldsByName);
     	} else if (rule.recordTypeId == LicenseRuleHelper.licenseFilterRuleRecordTypeId) {
@@ -26,11 +26,11 @@ public with sharing class LicenseRuleValidator extends RuleValidator{
     	}	
     }
     
-    private void validateFilterRule(licensingplus__License_Rule__c rule, Map<String, Map<String, Schema.SobjectField>> objFieldsByName, Boolean isRegularFilterRule) {
-    	String objName = isRegularFilterRule ? rule.licensingplus__object__c : 'licensingplus__License__c';
-    	String operator = rule.licensingplus__operator__c;
-    	String fieldName = isRegularFilterRule ? rule.licensingplus__field__c : rule.licensingplus__license_field__c;
-    	String fieldValue = rule.licensingplus__value__c;
+    private void validateFilterRule(License_Rule__c rule, Map<String, Map<String, Schema.SobjectField>> objFieldsByName, Boolean isRegularFilterRule) {
+    	String objName = isRegularFilterRule ? rule.object__c : AppConfig.getAppNamespacedName('License__c');
+    	String operator = rule.operator__c;
+    	String fieldName = isRegularFilterRule ? rule.field__c : rule.license_field__c;
+    	String fieldValue = rule.value__c;
     	  			
 		// do not validate 'not blank' operator
 		if (operator == 'not blank') {
@@ -71,7 +71,7 @@ public with sharing class LicenseRuleValidator extends RuleValidator{
     private boolean validateBooleanField(String value) {
     	Boolean result = true;   	
     	if (value != 'true' && value != 'false') {
-    		LicenseRuleHelper.logInfo('LicenseRuleValidator', 'validateBooleanField', 'invalid boolean field value - ' + value);
+    		LogUtils.logInfo('LicenseRuleValidator', 'validateBooleanField', 'invalid boolean field value - ' + value);
     		result = false;
     	}
     	
@@ -83,7 +83,7 @@ public with sharing class LicenseRuleValidator extends RuleValidator{
     	try {
     		Decimal.valueOf(value);
     	} catch (TypeException e) {
-    		LicenseRuleHelper.logInfo('LicenseRuleValidator', 'validateNumberField', 'invalid number field value - ' + value);
+    		LogUtils.logInfo('LicenseRuleValidator', 'validateNumberField', 'invalid number field value - ' + value);
     		result = false;
     	}
     	return result;
@@ -95,7 +95,7 @@ public with sharing class LicenseRuleValidator extends RuleValidator{
     	try {
     		Date.valueOf(value);
     	} catch (TypeException e) {
-    		LicenseRuleHelper.logInfo('LicenseRuleValidator', 'validateDateField', 'invalid date field value - ' + value);
+    		LogUtils.logInfo('LicenseRuleValidator', 'validateDateField', 'invalid date field value - ' + value);
     		result = false;
     	}
     	return result;
@@ -107,14 +107,14 @@ public with sharing class LicenseRuleValidator extends RuleValidator{
     	try {
     		Datetime.valueOf(value.replace('T',' ').replace('Z',''));
     	} catch (TypeException e) {
-    		LicenseRuleHelper.logInfo('LicenseRuleValidator', 'validateDatetimeField', 'invalid datetime field value - ' + value);
+    		LogUtils.logInfo('LicenseRuleValidator', 'validateDatetimeField', 'invalid datetime field value - ' + value);
     		result = false;
     	}
     	return result;
     }
     
     /**
-     licensingplus__operator__c field supported values:
+     operator__c field supported values:
      	equals 
      	greater than (only allow date and number display type)
      	greater or equal (only allow date and number display type)
@@ -141,25 +141,25 @@ public with sharing class LicenseRuleValidator extends RuleValidator{
      	return true;
      }
     
-    private void validateRegularFilterRule(licensingplus__License_Rule__c rule, Map<String, Map<String, Schema.SobjectField>> objFieldsByName) {
+    private void validateRegularFilterRule(License_Rule__c rule, Map<String, Map<String, Schema.SobjectField>> objFieldsByName) {
     	validateFilterRule(rule, objFieldsByName, true);
     }
     
-    private void validateLicenseFilterRule(licensingplus__License_Rule__c rule, Map<String, Map<String, Schema.SobjectField>> objFieldsByName) {
+    private void validateLicenseFilterRule(License_Rule__c rule, Map<String, Map<String, Schema.SobjectField>> objFieldsByName) {
     	validateFilterRule(rule, objFieldsByName, false);
     }
     
-    private void validateLicenseComparisonRule(licensingplus__License_Rule__c rule, Map<String, Map<String, Schema.SobjectField>> objFieldsByName) {
-    	String objName = rule.licensingplus__object__c;
-    	String operator = rule.licensingplus__operator__c;
-    	String fieldName = rule.licensingplus__field__c;
-    	String licenseFieldName = rule.licensingplus__license_field__c;
+    private void validateLicenseComparisonRule(License_Rule__c rule, Map<String, Map<String, Schema.SobjectField>> objFieldsByName) {
+    	String objName = rule.object__c;
+    	String operator = rule.operator__c;
+    	String fieldName = rule.field__c;
+    	String licenseFieldName = rule.license_field__c;
     	
     	//validate sobject and field is defined
     	Schema.SobjectField objField = ruleHelper.validateAndGetSObjectField(objName, null, fieldName, objFieldsByName);		
 		Schema.DescribeFieldResult objF = objField.getDescribe();
 		
-		Schema.SobjectField licenseField = ruleHelper.validateAndGetSObjectField('licensingplus__License__c', null, licenseFieldName, objFieldsByName);		
+		Schema.SobjectField licenseField = ruleHelper.validateAndGetSObjectField(AppConfig.getAppNamespacedName('License__c'), null, licenseFieldName, objFieldsByName);		
 		Schema.DescribeFieldResult licenseF = licenseField.getDescribe();
 		
 		SObjectUtils.FIELD_TYPE licenseFtype = SObjectUtils.getFieldType(licenseF.getType());

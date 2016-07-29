@@ -493,7 +493,7 @@
     IF(
       OR(
         ISBLANK(Field__c),
-        License_Field__c&lt;&gt;&apos;LicensingPlus__State__c&apos;,
+        LOWER(License_Field__c)&lt;&gt;&apos;licensingplus__state__c&apos;,
         TEXT(Operator__c)&lt;&gt;&apos;equals&apos;
       ), true, false), false)</errorConditionFormula>
         <errorMessage>For License state rule, you must specify field and set license field to &apos;LicensingPlus__State__c&apos; and operator to &apos;equals&apos;</errorMessage>
@@ -505,7 +505,7 @@
     RecordType.Name = &apos;Resident License Rule&apos;,
     IF( 
        OR( 
-          Value__c&lt;&gt;&apos;Resident State&apos;, 
+          LOWER(Value__c)&lt;&gt;&apos;resident state&apos;, 
           License_Field__c&lt;&gt;&apos;RecordType.Name&apos;,
           TEXT(Operator__c)&lt;&gt;&apos;equals&apos;
       ), true, false), false)</errorConditionFormula>

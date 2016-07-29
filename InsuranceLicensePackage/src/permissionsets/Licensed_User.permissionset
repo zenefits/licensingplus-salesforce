@@ -5,6 +5,10 @@
         <visible>true</visible>
     </applicationVisibilities>
     <classAccesses>
+        <apexClass>AppConfig</apexClass>
+        <enabled>false</enabled>
+    </classAccesses>
+    <classAccesses>
         <apexClass>BooleanExpressionEvaluator</apexClass>
         <enabled>false</enabled>
     </classAccesses>
@@ -18,6 +22,10 @@
     </classAccesses>
     <classAccesses>
         <apexClass>ComplianceControllerTest</apexClass>
+        <enabled>false</enabled>
+    </classAccesses>
+    <classAccesses>
+        <apexClass>EmailUtils</apexClass>
         <enabled>false</enabled>
     </classAccesses>
     <classAccesses>
@@ -101,6 +109,50 @@
         <enabled>false</enabled>
     </classAccesses>
     <classAccesses>
+        <apexClass>LogUtils</apexClass>
+        <enabled>false</enabled>
+    </classAccesses>
+    <classAccesses>
+        <apexClass>NIPRLicense</apexClass>
+        <enabled>false</enabled>
+    </classAccesses>
+    <classAccesses>
+        <apexClass>NIPRLicenseApprovalBatch</apexClass>
+        <enabled>false</enabled>
+    </classAccesses>
+    <classAccesses>
+        <apexClass>NIPRLicenseApprovalHelper</apexClass>
+        <enabled>false</enabled>
+    </classAccesses>
+    <classAccesses>
+        <apexClass>NIPRLicenseSyncApi</apexClass>
+        <enabled>false</enabled>
+    </classAccesses>
+    <classAccesses>
+        <apexClass>NIPRLicenseSyncHelper</apexClass>
+        <enabled>false</enabled>
+    </classAccesses>
+    <classAccesses>
+        <apexClass>NIPRLicenseSyncTest</apexClass>
+        <enabled>false</enabled>
+    </classAccesses>
+    <classAccesses>
+        <apexClass>NIPRSyncApiResponse</apexClass>
+        <enabled>false</enabled>
+    </classAccesses>
+    <classAccesses>
+        <apexClass>NIPRSyncError</apexClass>
+        <enabled>false</enabled>
+    </classAccesses>
+    <classAccesses>
+        <apexClass>NIPRSyncReportBuilder</apexClass>
+        <enabled>false</enabled>
+    </classAccesses>
+    <classAccesses>
+        <apexClass>NIPRSyncService</apexClass>
+        <enabled>false</enabled>
+    </classAccesses>
+    <classAccesses>
         <apexClass>RuleValidator</apexClass>
         <enabled>false</enabled>
     </classAccesses>
@@ -178,6 +230,11 @@
         <editable>false</editable>
         <field>License__c.Manager__c</field>
         <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>false</editable>
+        <field>License__c.NIPR_Manual_Override__c</field>
+        <readable>false</readable>
     </fieldPermissions>
     <fieldPermissions>
         <editable>false</editable>
