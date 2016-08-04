@@ -233,6 +233,11 @@
     </fieldPermissions>
     <fieldPermissions>
         <editable>false</editable>
+        <field>License__c.Missing_Criteria__c</field>
+        <readable>false</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>false</editable>
         <field>License__c.NIPR_Manual_Override__c</field>
         <readable>false</readable>
     </fieldPermissions>
@@ -280,6 +285,11 @@
         <editable>true</editable>
         <field>License__c.Type__c</field>
         <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>false</editable>
+        <field>User.NPN_Number__c</field>
+        <readable>false</readable>
     </fieldPermissions>
     <hasActivationRequired>false</hasActivationRequired>
     <label>Licensed User</label>
