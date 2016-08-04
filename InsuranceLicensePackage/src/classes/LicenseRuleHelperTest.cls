@@ -4,7 +4,7 @@ private class LicenseRuleHelperTest {
     static final LicenseRuleHelper ruleHelper = new LicenseRuleHelper();
     
     static testmethod void testGetRuleIdArray() {
-    	String ruleLogic = '000000000000000000 | 005360000023PA6AAM & 005360000023PA7AAM';
+    	String ruleLogic = '005360000023PA6AAD | 005360000023PA6AAM & 005360000023PA7AAM';
     	Set<String> ruleIdArray = ruleHelper.getRuleIdArray(ruleLogic);
     	System.assertEquals(3, ruleIdArray.size());
     	for (String ruleId : ruleIdArray) {
@@ -13,7 +13,7 @@ private class LicenseRuleHelperTest {
     }
     
     static testmethod void testSetToStringWithQuotes() {
-    	Set<String> strSet = new Set<String>{'000000000000000000','005360000023PA6AAM','005360000023PA7AAM'};
+    	Set<String> strSet = new Set<String>{'005360000023PA6AAD','005360000023PA6AAM','005360000023PA7AAM'};
     	
     	String actual = LicenseRuleHelper.setToStringWithQuotes(strSet);
     	
@@ -21,16 +21,14 @@ private class LicenseRuleHelperTest {
     	for (String str : strSet) {
     		System.assert(actual.contains(str));	
     	}
-    }
-    
-    static testmethod void testSetToStringWithoutQuotes() {
-    	Set<String> strSet = new Set<String>{'000000000000000000','005360000023PA6AAM','005360000023PA7AAM'};
     	
-    	String actual = LicenseRuleHelper.setToStringWithoutQuotes(strSet);
+    	Set<Id> idSet = new Set<Id>{'005360000023PA6AAD','005360000023PA6AAM','005360000023PA7AAM'};
+    	
+    	actual = LicenseRuleHelper.setToStringWithQuotes(idSet);
     	
     	System.assertEquals(3, actual.split(',').size());
-    	for (String str : strSet) {
-    		System.assert(actual.contains(str));	
+    	for (Id id : idSet) {
+    		System.assert(actual.contains(String.valueOf(id)));	
     	}
     }
     

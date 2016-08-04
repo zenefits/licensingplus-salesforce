@@ -19,7 +19,8 @@ public with sharing class LicenseRuleTestDataSeeder {
     public static Map<String, List<Map<String, String>>> filterRuleFieldsByObj = new Map<String, List<Map<String, String>>>();
     public static Map<String, String> stateFieldByObj = new Map<String, String>();
     public static Map<String, List<Map<String, String>>> comparisonRuleFieldsByObj = new Map<String, List<Map<String, String>>>();
-        
+    public static List<Map<String, String>> licenseApprovalCriteria = new List<Map<String, String>>();
+    
     private static Map<String, Schema.RecordTypeInfo> licenseRecordTypes = Schema.SObjectType.License__c.getRecordTypeInfosByName();
 
     static {
@@ -153,6 +154,70 @@ public with sharing class LicenseRuleTestDataSeeder {
 		opportunityLicenseComparisonFieldsMap1.put('operator__c', 'equals');
 		opportunityLicenseComparisonFieldsList1.add(opportunityLicenseComparisonFieldsMap1);
     	
+    	
+    	//LICENSE APPROVAL CRITERIA
+    	//((LastModifiedDate greater than 2005-10-08 01:02:03) & (number__c starts with test)) | ((LastModifiedDate greater than 2005-10-08 01:02:03) & (number__c starts with license))
+    	Map<String, String> licenseApprovalCriteriaMap1 = new Map<String, String>();
+		licenseApprovalCriteriaMap1.put('license_field__c', 'LastModifiedDate');
+		licenseApprovalCriteriaMap1.put('value__c', '2005-10-08 01:02:03');
+		licenseApprovalCriteriaMap1.put('operator__c', 'greater than');
+		licenseApprovalCriteria.add(licenseApprovalCriteriaMap1);
+		
+		Map<String, String> licenseApprovalCriteriaMap2 = new Map<String, String>();
+		licenseApprovalCriteriaMap2.put('license_field__c', AppConfig.getAppNamespacedName('number__c'));
+		licenseApprovalCriteriaMap2.put('value__c', 'test');
+		licenseApprovalCriteriaMap2.put('operator__c', 'starts with');
+		licenseApprovalCriteria.add(licenseApprovalCriteriaMap2);
+		
+		Map<String, String> licenseApprovalCriteriaMap3 = new Map<String, String>();
+		licenseApprovalCriteriaMap3.put('license_field__c', 'LastModifiedDate');
+		licenseApprovalCriteriaMap3.put('value__c', '2005-10-08 01:02:03');
+		licenseApprovalCriteriaMap3.put('operator__c', 'greater than');
+		licenseApprovalCriteria.add(licenseApprovalCriteriaMap3);
+		
+		Map<String, String> licenseApprovalCriteriaMap4 = new Map<String, String>();
+		licenseApprovalCriteriaMap4.put('license_field__c', AppConfig.getAppNamespacedName('number__c'));
+		licenseApprovalCriteriaMap4.put('value__c', 'license');
+		licenseApprovalCriteriaMap4.put('operator__c', 'starts with');
+		licenseApprovalCriteria.add(licenseApprovalCriteriaMap4);
+    }
+    
+    public static List<License_Rule__c> createLicenseApprovalCriteria(Boolean isActive) {
+    	List<License_Rule__c> rules = new List<License_Rule__c>();
+
+    	for (Map<String, String> criteria : licenseApprovalCriteria) {
+    		License_Rule__c rule = new License_Rule__c(
+	    		object__c=LICENSE_OBJ,
+	    		value__c=criteria.get('value__c'),
+	    		operator__c=criteria.get('operator__c'),
+	    		license_field__c=criteria.get('license_field__c'),
+	    		isActive__c=isActive	    		
+	    	);
+
+	    	rule.recordtypeid = LicenseRuleHelper.licenseFilterRuleRecordTypeId;
+	    	rules.add(rule);
+    	}
+    	
+    	insert rules;
+    	return rules;
+    }
+    
+    public static License_Rule_Logic__c createLicenseApprovalCriteriaLogic(List<License_Rule__c> rules, Boolean isActive) {
+    	String logicStr = '({1} & {2}) | ({3} & {4})';
+    	
+    	if (rules!=null) {
+    		logicStr = logicStr.replace('{1}', rules.get(0).id).replace('{2}', rules.get(1).id).replace('{3}', rules.get(2).id).replace('{4}', rules.get(3).id);   		
+    	}
+    	
+    	License_Rule_Logic__c validLogic = new License_Rule_Logic__c(
+    		recordTypeId=LicenseRuleHelper.filterRuleLogicRecordTypeId,
+    		object__c=LICENSE_OBJ,
+    		logic__c=logicStr,
+    		isActive__c=isActive
+    	);
+    	
+    	insert validLogic;
+    	return validLogic;
     }
     
     public static List<License_Rule__c> createValidFilterRules(String objName, Boolean isRuleOne) {

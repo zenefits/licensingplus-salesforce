@@ -53,7 +53,7 @@ public with sharing class LicenseSetController {
 		
 		String queryStr = String.format(queryTemplate, 
 										new String[]{
-											String.escapeSingleQuotes(LicenseRuleHelper.setToStringWithoutQuotes(licenseFields)), 
+											String.escapeSingleQuotes(String.join(new List<String>(licenseFields), ',')), 
 											AppConfig.getAppNamespacedName('Lines_Of_Authority__r'),
 											AppConfig.getAppNamespacedName('License__c'),
 											'\''+String.escapeSingleQuotes(runAs())+'\'',

@@ -6,7 +6,8 @@ public with sharing class NIPRSyncService {
     
     public List<NIPRSyncApiResponse.LicenseSyncResponse> syncLicenses(List<NIPRLicense> niprLicenses) {
     	NIPRSyncReportBuilder reportBuilder = new NIPRSyncReportBuilder();
-    	NIPRLicenseSyncHelper syncHelper = new NIPRLicenseSyncHelper(niprLicenses, reportBuilder);
+    	LicenseRuleHelper licenseRuleHelper = new LicenseRuleHelper();
+    	NIPRLicenseSyncHelper syncHelper = new NIPRLicenseSyncHelper(niprLicenses, reportBuilder, licenseRuleHelper);
     	List<NIPRSyncApiResponse.LicenseSyncResponse> responses = syncHelper.syncLicenses();
     	
     	String processName = getLicenseApprovalProcessName();
@@ -45,7 +46,7 @@ public with sharing class NIPRSyncService {
     	String processName = 'Insurance_License_Approval';
     	
     	//validate the process exists
-    	List<ProcessDefinition> processes = [SELECT DeveloperName,Id,TableEnumOrId,Type FROM ProcessDefinition WHERE TableEnumOrId = 'License__c' AND Type = 'Approval' AND DeveloperName =: processName];
+    	List<ProcessDefinition> processes = [SELECT DeveloperName,Id,TableEnumOrId,Type FROM ProcessDefinition WHERE TableEnumOrId =:AppConfig.getAppNamespacedName('License__c') AND Type = 'Approval' AND DeveloperName =:processName];
     	if (processes.isEmpty()) {
     		processName = null;
     	}

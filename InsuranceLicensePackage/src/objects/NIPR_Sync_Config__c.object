@@ -3,10 +3,10 @@
     <customSettingsType>Hierarchy</customSettingsType>
     <enableFeeds>false</enableFeeds>
     <fields>
-        <fullName>NIPR_Integration_User_Profile__c</fullName>
-        <description>Set nipr integration user profile to bypass license validation rules</description>
+        <fullName>NIPR_Integration_User_Name__c</fullName>
+        <description>Set nipr integration user name to bypass license validation rules</description>
         <externalId>false</externalId>
-        <label>NIPR Integration User Profile</label>
+        <label>NIPR Integration User Name</label>
         <length>255</length>
         <required>false</required>
         <trackTrending>false</trackTrending>
