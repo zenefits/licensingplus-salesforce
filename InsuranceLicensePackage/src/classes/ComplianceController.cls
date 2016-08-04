@@ -78,7 +78,7 @@ public with sharing class ComplianceController {
     public static Map<String,LicenseRuleSetResult> getAllLicenseRuleSetResults() {
       	Map<String,LicenseRuleSetResult> result = new Map<String,LicenseRuleSetResult>();
       	try {
-      		result = ruleHelper.getAllLicenseRuleSetResults();
+      		result = ruleHelper.getAllLicenseRuleSetResults(true);
       	} catch (Exception e) {
       		System.debug('[ComplianceController] ' + '[getAllLicenseRuleSetResults] ' + e.getMessage());
       		System.debug(e);
@@ -92,7 +92,7 @@ public with sharing class ComplianceController {
         LicenseRuleSetResult result = new LicenseRuleSetResult();
 
         try {
-          Map<String,LicenseRuleSetResult> results = ruleHelper.getAllLicenseRuleSetResults();
+          Map<String,LicenseRuleSetResult> results = ruleHelper.getAllLicenseRuleSetResults(false);
 
           if(results.containsKey(objName)){
             result = results.get(objName);

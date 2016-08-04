@@ -42,7 +42,7 @@ public with sharing class LicenseRuleChecker {
     		if (licenseRuleLogic != null) {
     			ruleLogicStr = licenseRuleLogic.logic__c;
     			ruleIdArray = ruleHelper.getRuleIdArray(ruleLogicStr);   
-    			LogUtils.logInfo('LicenseRuleChecker', 'validateLicenseRule', 'license filter rule ids: ' + LicenseRuleHelper.setToStringWithoutQuotes(ruleIdArray));			
+    			LogUtils.logInfo('LicenseRuleChecker', 'validateLicenseRule', 'license filter rule ids: ' + String.join(new List<String>(ruleIdArray), ','));			
     		}
 		    		
     		Set<Id> objIds = objIdsByFilterRuleLogicId.get(ruleLogicId);
@@ -136,7 +136,7 @@ public with sharing class LicenseRuleChecker {
     					License_Rule__c residentLicenseRule) {
     	
     	Map<String, Set<Id>> objIdsByFilterRuleLogicId = new Map<String, Set<Id>>(); 
-    	Set<String> ownerIds = new Set<String>();
+    	Set<Id> ownerIds = new Set<Id>();
 		
 		// no filter rule logic
 		if (filterRuleLogicById.isEmpty()) {
@@ -164,7 +164,7 @@ public with sharing class LicenseRuleChecker {
 	    			for (License_Rule_Logic__c ruleLogic : filterRuleLogicById.values()) {
 		    			String logic = ruleLogic.logic__c;
 		    			Set<String> ruleIdArray = ruleHelper.getRuleIdArray(logic);
-		    			LogUtils.logInfo('LicenseRuleChecker', 'validate', 'regular filter rule ids: ' + LicenseRuleHelper.setToStringWithoutQuotes(ruleIdArray));
+		    			LogUtils.logInfo('LicenseRuleChecker', 'validate', 'regular filter rule ids: ' + String.join(new List<String>(ruleIdArray), ','));
 		    			for (String ruleId : ruleIdArray) {
 		    				License_Rule__c rule = ruleById.get(ruleId);
 		    				if (rule==null) {
@@ -246,9 +246,9 @@ public with sharing class LicenseRuleChecker {
 			}
 		}
 		
-		LogUtils.logInfo('LicenseRuleChecker', 'checkLicenseRules', LicenseRuleHelper.setToStringWithoutQuotes(filterRuleLogicById.keySet()));
-		LogUtils.logInfo('LicenseRuleChecker', 'checkLicenseRules', LicenseRuleHelper.setToStringWithoutQuotes(licenseRuleLogicById.keySet()));
-		LogUtils.logInfo('LicenseRuleChecker', 'checkLicenseRules', LicenseRuleHelper.setToStringWithoutQuotes(licenseRuleLogicIdByFilterRuleLogicId.keySet()));
+		LogUtils.logInfo('LicenseRuleChecker', 'checkLicenseRules', String.join(new List<String>(filterRuleLogicById.keySet()), ','));
+		LogUtils.logInfo('LicenseRuleChecker', 'checkLicenseRules', String.join(new List<String>(licenseRuleLogicById.keySet()), ','));
+		LogUtils.logInfo('LicenseRuleChecker', 'checkLicenseRules', String.join(new List<String>(licenseRuleLogicIdByFilterRuleLogicId.keySet()), ','));
         
         LicenseRuleHelper.enforceCRUDAndFLS(AppConfig.getAppNamespacedName('License_Rule__c'), new Set<String> {'Id', 'RecordTypeId', AppConfig.getAppNamespacedName('Object__c'), AppConfig.getAppNamespacedName('Field__c'), AppConfig.getAppNamespacedName('License_Field__c'), AppConfig.getAppNamespacedName('Operator__c'), AppConfig.getAppNamespacedName('Value__c')}, 'query', false);
 		
@@ -258,9 +258,9 @@ public with sharing class LicenseRuleChecker {
     	Map<String, License_Rule__c> ruleById = new Map<String, License_Rule__c>();
     	Set<String> licenseFields = new Set<String>();
     	// always add Id, OwnerId and RecordTypeId column
-    	licenseFields.add('Id');
-    	licenseFields.add('RecordTypeId');
-    	licenseFields.add('OwnerId');
+    	licenseFields.add('id');
+    	licenseFields.add('recordtypeId');
+    	licenseFields.add('ownerId');
     	License_Rule__c stateRule = null;
     	License_Rule__c residentLicenseRule = null;
     	
@@ -274,13 +274,13 @@ public with sharing class LicenseRuleChecker {
     		}
     		  		
     		if (rule.license_field__c != null) {
-				licenseFields.add(rule.license_field__c);
+				licenseFields.add(rule.license_field__c.toLowerCase());
 			}		
     	}
     	
     	LogUtils.logInfo('LicenseRuleChecker', 'checkLicenseRules', stateRule == null ? 'state rule not found' : 'state rule found with state field ' + stateRule.field__c);
     	LogUtils.logInfo('LicenseRuleChecker', 'checkLicenseRules', residentLicenseRule == null ? 'resident license rule not found' : 'resident license rule found with resident license field ' + residentLicenseRule.license_field__c);
-    	LogUtils.logInfo('LicenseRuleChecker', 'checkLicenseRules', LicenseRuleHelper.setToStringWithoutQuotes(licenseFields));
+    	LogUtils.logInfo('LicenseRuleChecker', 'checkLicenseRules', String.join(new List<String>(licenseFields), ','));
 	
 		Set<String> sObjectNames = new Set<String>();
 		sObjectNames.add(objName);
@@ -292,7 +292,7 @@ public with sharing class LicenseRuleChecker {
 				if (!licenseRuleLogicById.isEmpty()) {
 					LogUtils.logInfo('LicenseRuleChecker', 'checkLicenseRules', '[ERROR] - no filter rule logic, no state, license rule logic found');
 					String errorMessage = RuleValidator.errorMessageByType.get(RuleValidator.RuleError.ONLY_LICENSE_FILTER_COMPARISON_RULE);
-					throw new LicenseRuleException(String.format(errorMessage, new String[]{LicenseRuleHelper.setToStringWithoutQuotes(licenseRuleLogicById.keySet())}));
+					throw new LicenseRuleException(String.format(errorMessage, new String[]{String.join(new List<String>(licenseRuleLogicById.keySet()), ',')}));
 				
 				} else {
 					LogUtils.logInfo('LicenseRuleChecker', 'checkLicenseRules', 'no filter rule logic, no state, no license rule logic');
@@ -318,7 +318,7 @@ public with sharing class LicenseRuleChecker {
 				} else {
 					LogUtils.logInfo('LicenseRuleChecker', 'checkLicenseRules', '[ERROR] - no filter rule logic found, state found, multiple license rule logics found');
 					String errorMessage = RuleValidator.errorMessageByType.get(RuleValidator.RuleError.MULTIPLE_LICENSE_FILTER_COMPARISON_RULES);
-					throw new LicenseRuleException(String.format(errorMessage, new String[]{LicenseRuleHelper.setToStringWithoutQuotes(licenseRuleLogicById.keySet())}));
+					throw new LicenseRuleException(String.format(errorMessage, new String[]{String.join(new List<String>(licenseRuleLogicById.keySet()), ',')}));
 				}
 			}
 			
@@ -326,7 +326,7 @@ public with sharing class LicenseRuleChecker {
 			if (stateRule == null) {
 				LogUtils.logInfo('LicenseRuleChecker', 'checkLicenseRules', '[ERROR] - filter rule logic found, no state found');
 				String errorMessage = RuleValidator.errorMessageByType.get(RuleValidator.RuleError.NO_LICENSE_STATE_RULE);
-				throw new LicenseRuleException(String.format(errorMessage, new String[]{LicenseRuleHelper.setToStringWithoutQuotes(filterRuleLogicById.keySet())}));
+				throw new LicenseRuleException(String.format(errorMessage, new String[]{String.join(new List<String>(filterRuleLogicById.keySet()), ',')}));
 			
 			} else {
 				LogUtils.logInfo('LicenseRuleChecker', 'checkLicenseRules', 'filter rule logic, state' + (licenseRuleLogicById.isEmpty() ? ' found' : ', license rule logic found'));

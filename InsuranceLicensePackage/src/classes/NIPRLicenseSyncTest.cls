@@ -21,11 +21,11 @@ private class NIPRLicenseSyncTest {
     
     
     class LicenseRequestBody {
-    	String className = 'testClass';
+    	String className = 'test';
     	Date effectiveDate  = Date.newInstance(2015, 6, 1);
     	Date expirationDate = Date.newInstance(2036, 7, 2);
     	Boolean isResidentLicense = true;
-    	String licenseNumber = 'test1234';
+    	String licenseNumber = 'test';
     	Boolean isActive = true;
     	String resident_state = 'CA';
     	String non_resident_state = 'HI';
@@ -197,7 +197,7 @@ private class NIPRLicenseSyncTest {
     	List<License__c> testNonResidentLicenses = allLicenses.get(1);
     	
     	getProcessName();
-    	
+
     	if (processName!=null) {
     		// create an approved approval
 	    	Approval.ProcessSubmitRequest licenseRequest1 = new Approval.ProcessSubmitRequest();
@@ -272,11 +272,11 @@ private class NIPRLicenseSyncTest {
     	LicenseRequestBody licenseBody = new LicenseRequestBody();
     	NIPRLicense newNipr = new NIPRLicense();
     	newNipr.npnNumber = newNPNNumber;
-    	newNipr.className = licenseBody.className+5000;
+    	newNipr.className = licenseBody.className + 1;
 		newNipr.effectiveDate = licenseBody.effectiveDate;
 		newNipr.expirationDate = licenseBody.expirationDate;
 		newNipr.state = 'MI';
-		newNipr.licenseNumber = licenseBody.licenseNumber + 5000;
+		newNipr.licenseNumber = licenseBody.licenseNumber + 1;
 		newNipr.isActive = true;
 		newNipr.isResidentLicense = true;
 		
@@ -293,12 +293,12 @@ private class NIPRLicenseSyncTest {
 		
 		// add new non resident license - life & health
     	NIPRLicense newNipr1 = new NIPRLicense();
-    	newNipr1.className = licenseBody.className+5001;
+    	newNipr1.className = 'mytest'+ 5001;
     	newNipr1.npnNumber = newNPNNumber;
 		newNipr1.effectiveDate = licenseBody.effectiveDate;
 		newNipr1.expirationDate = null;
 		newNipr1.state = 'VA';
-		newNipr1.licenseNumber = licenseBody.licenseNumber + 5001;
+		newNipr1.licenseNumber = 'mytest' + 5001;
 		newNipr1.isActive = true;
 		newNipr1.isResidentLicense = false;
 	    NIPRLicense.LineOfAuthority loa3 = new NIPRLicense.LineOfAuthority();
@@ -385,7 +385,7 @@ private class NIPRLicenseSyncTest {
     }
     
     static void getProcessName() {
-    	List<ProcessDefinition> processes = [SELECT DeveloperName,Id,TableEnumOrId,Type FROM ProcessDefinition WHERE TableEnumOrId = 'License__c' AND Type = 'Approval'];
+    	List<ProcessDefinition> processes = [SELECT DeveloperName,Id,TableEnumOrId,Type FROM ProcessDefinition WHERE TableEnumOrId =: AppConfig.getAppNamespacedName('License__c') AND Type = 'Approval'];
     	if (!processes.isEmpty()) {
     		processName = processes.get(0).developerName;
     		
@@ -395,9 +395,8 @@ private class NIPRLicenseSyncTest {
     
     static void createNIPRSyncConfig() {
     	NIPR_Sync_Config__c syncConfig = NIPR_Sync_Config__c.getOrgDefaults();
-    	syncConfig.NIPR_Integration_User_Profile__c = 'System Administrator';
+    	syncConfig.NIPR_Integration_User_Name__c = adminUser.username;
     	insert syncConfig;
-    	
     }
     
     static testMethod void testNIPRLicenseSync() {
@@ -409,6 +408,9 @@ private class NIPRLicenseSyncTest {
 	    	List<List<License__c>> allLicenses = generateTestLicenses(ownerIdByNpnNumber, licenseRequestBody);
 	    	List<Line_of_Authority__c> allLoas = generateTestLOAs(allLicenses);
 	    	
+	    	List<License_Rule__c> approvalCriteria = LicenseRuleTestDataSeeder.createLicenseApprovalCriteria(true);
+    		License_Rule_Logic__c approvalCriteriaLogic = LicenseRuleTestDataSeeder.createLicenseApprovalCriteriaLogic(approvalCriteria, true);
+    		
 	    	updateNiprLicenses(licenseRequestBody);
 	    	addNewNiprLicenses(licenseRequestBody);
 	    	addNewInvalidNiprLicenses(licenseRequestBody);
@@ -444,7 +446,7 @@ private class NIPRLicenseSyncTest {
 	        	if (license.recordTypeId == rlRecordTypeId) {
 	        		system.assert(license.approved__c);
 	        	} else {
-	        		system.assert(license.approved__c);        		
+	        		system.assert(!license.approved__c);        		
 	        	}        	 
 	        }
 	

@@ -145,6 +145,15 @@
         <unique>false</unique>
     </fields>
     <fields>
+        <fullName>Missing_Criteria__c</fullName>
+        <defaultValue>false</defaultValue>
+        <externalId>false</externalId>
+        <label>Missing Criteria</label>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Checkbox</type>
+    </fields>
+    <fields>
         <fullName>NIPR_Manual_Override__c</fullName>
         <defaultValue>false</defaultValue>
         <description>if checked, nipr will ignore the updates on this record</description>
@@ -981,8 +990,8 @@
        ISBLANK(Effective_Date__c),
        ISBLANK(Expiration_Date__c)
        ),
-        OR(ISBLANK($Setup.NIPR_Sync_Config__c.NIPR_Integration_User_Profile__c), 
-     $Profile.Name!= $Setup.NIPR_Sync_Config__c.NIPR_Integration_User_Profile__c)
+        OR(ISBLANK($Setup.NIPR_Sync_Config__c.NIPR_Integration_User_Name__c), 
+     $User.Username!= $Setup.NIPR_Sync_Config__c.NIPR_Integration_User_Name__c)
    )</errorConditionFormula>
         <errorDisplayField>Expiration_Date__c</errorDisplayField>
         <errorMessage>License Effective Date and Expiration Date are required</errorMessage>
@@ -1024,8 +1033,8 @@
     NOT(ISCHANGED(Force_Expire__c)),
     NOT(ISCHANGED(Approved__c)),
     NOT(ISCHANGED(Resident_License__c)),
-    OR(ISBLANK($Setup.NIPR_Sync_Config__c.NIPR_Integration_User_Profile__c), 
-     $Profile.Name!= $Setup.NIPR_Sync_Config__c.NIPR_Integration_User_Profile__c) 
+    OR(ISBLANK($Setup.NIPR_Sync_Config__c.NIPR_Integration_User_Name__c), 
+     $User.Username!= $Setup.NIPR_Sync_Config__c.NIPR_Integration_User_Name__c) 
 )</errorConditionFormula>
         <errorMessage>You can&apos;t edit an approved license</errorMessage>
     </validationRules>

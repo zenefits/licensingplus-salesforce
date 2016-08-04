@@ -15,25 +15,20 @@ public with sharing class LicenseRuleHelper {
 	
     public Map<String,Set<License__c>> constructLicensesByOwnerId(
     						Set<String> licenseFields, 
-    						Set<String> ownerIds) {
+    						Set<Id> ownerIds) {
         
         LicenseRuleHelper.enforceCRUDAndFLS('License__c', licenseFields, 'query', false);
-        
-        Set<String> ownerIdsEscaped = new Set<String>();
-        for (String ownerId : ownerIds) {
-        	ownerIdsEscaped.add(String.escapeSingleQuotes(ownerId));
-        }
     	
     	String licenseQueryTemplate = 'SELECT {0} FROM {1} WHERE {2}={3} AND ownerId IN ({4})';
 	    
-	    String licenseFieldsStr = String.escapeSingleQuotes(LicenseRuleHelper.setToStringWithoutQuotes(licenseFields));
+	    String licenseFieldsStr = String.escapeSingleQuotes(String.join(new List<String>(licenseFields), ','));
 	    String licenseQuery = String.format(licenseQueryTemplate, 
 	    									new String[]{
-	    										String.escapeSingleQuotes(licenseFieldsStr), 
+	    										licenseFieldsStr, 
 	    										AppConfig.getAppNamespacedName('License__c'),
 	    										AppConfig.getAppNamespacedName('Status__c'),
 	    										'\'Active\'',
-	    										LicenseRuleHelper.setToStringWithQuotes(ownerIdsEscaped)});
+	    										LicenseRuleHelper.setToStringWithQuotes(ownerIds)});
     	LogUtils.logInfo('LicenseRuleHelper', 'constructLicensesByOwnerId', 'LICENSE QUERY - ' + licenseQuery);
     	
     	List<License__c> licenses = null;
@@ -548,16 +543,26 @@ public with sharing class LicenseRuleHelper {
 		}
      }
     
-     public Map<String, LicenseRuleSetResult> getAllLicenseRuleSetResults() {    	
+     public Map<String, LicenseRuleSetResult> getAllLicenseRuleSetResults(Boolean excludeLicenseObj) {    	
     	Map<String, List<License_Rule_Logic__c>> ruleLogicsByObjName = new Map<String, List<License_Rule_Logic__c>>();
     	Map<String, List<License_Rule__c>> rulesByObjName = new Map<String, List<License_Rule__c>>();
     	Set<String> objNames = new Set<String>();
-
+		Set<String> objNamesException = new Set<String> {
+			AppConfig.getAppNamespacedName('License__c')
+		};
         
         LicenseRuleHelper.enforceCRUDAndFLS(AppConfig.getAppNamespacedName('License_Rule_Logic__c'), new Set<String> {'CreatedDate', 'Id', AppConfig.getAppNamespacedName('Logic__c'), AppConfig.getAppNamespacedName('Object__c'), AppConfig.getAppNamespacedName('Filter_Rule__c'), 'RecordTypeid', AppConfig.getAppNamespacedName('IsActive__c')}, 'query', false);
-            	
-    	for (License_Rule_Logic__c ruleLogic : [SELECT CreatedDate, Id, Logic__c, Object__c, Filter_Rule__c, RecordTypeid, RecordType.Name,
-													IsActive__c FROM License_Rule_Logic__c]) {
+        
+        // exclude license obj if displaying compliance criteria
+        List<License_Rule_Logic__c> ruleLogicList = null;
+        if (excludeLicenseObj) {			
+			ruleLogicList = [SELECT CreatedDate, Id, Logic__c, Object__c, Filter_Rule__c, RecordTypeid, RecordType.Name,
+													IsActive__c FROM License_Rule_Logic__c WHERE object__c not in:objNamesException];
+		} else {
+			ruleLogicList = [SELECT CreatedDate, Id, Logic__c, Object__c, Filter_Rule__c, RecordTypeid, RecordType.Name,
+													IsActive__c FROM License_Rule_Logic__c];
+		}
+    	for (License_Rule_Logic__c ruleLogic : ruleLogicList) {
 			String objName = ruleLogic.object__c;
 			List<License_Rule_Logic__c> ruleLogics = ruleLogicsByObjName.get(objName);
 			if (ruleLogics == null) {
@@ -571,8 +576,16 @@ public with sharing class LicenseRuleHelper {
         
         LicenseRuleHelper.enforceCRUDAndFLS(AppConfig.getAppNamespacedName('License_Rule__c'), new Set<String> {'CreatedDate', 'Id', 'RecordTypeId', AppConfig.getAppNamespacedName('Object__c'), AppConfig.getAppNamespacedName('Field__c'), AppConfig.getAppNamespacedName('License_Field__c'), AppConfig.getAppNamespacedName('Operator__c'), AppConfig.getAppNamespacedName('Value__c'), AppConfig.getAppNamespacedName('IsActive__c')}, 'query', false);
 		
-		for (License_Rule__c rule : [SELECT CreatedDate, Id, RecordTypeId, Object__c, Field__c, License_Field__c, Operator__c, Value__c, RecordType.Name,
-    											IsActive__c FROM License_Rule__c]) {  		
+		// exclude license obj if displaying compliance criteria
+		List<License_Rule__c> ruleList = null;
+		if (excludeLicenseObj) {
+			ruleList = [SELECT CreatedDate, Id, RecordTypeId, Object__c, Field__c, License_Field__c, Operator__c, Value__c, RecordType.Name,
+    											IsActive__c FROM License_Rule__c WHERE object__c not in:objNamesException];
+		} else {
+			ruleList = [SELECT CreatedDate, Id, RecordTypeId, Object__c, Field__c, License_Field__c, Operator__c, Value__c, RecordType.Name,
+    											IsActive__c FROM License_Rule__c];
+		}		
+		for (License_Rule__c rule : ruleList) {  		
     		String objName = rule.object__c;
 			List<License_Rule__c> rules = rulesByObjName.get(objName);
 			if (rules == null) {
@@ -684,27 +697,20 @@ public with sharing class LicenseRuleHelper {
     	return str;
     }
     
-    public static String setToStringWithoutQuotes(Set<String> strSet) {
-    	return setToString(strSet, false);
+    public static String setToStringWithQuotes(Set<Id> idSet) {
+    	List<String> idWithQuotes = new List<String>();
+    	for (Id id : idSet) {
+    		idWithQuotes.add('\'' + id + '\'');
+    	}
+    	return String.join(idWithQuotes, ',');
     }
     
     public static String setToStringWithQuotes(Set<String> strSet) {
-    	return setToString(strSet, true);
-    }
-    
-    private static String setToString(Set<String> strSet, Boolean wrapQuotes) {
-    	String str = '';
-		for(String s : strSet) {
-			if (wrapQuotes) {
-				str += '\'' + s + '\',';
-			} else {
-				str += s + ',';
-			}		
-		}
-		if (str.length() > 0) {
-			str = str.substring(0, str.length()-1);
-		}
-		return str;
+    	List<String> strWithQuotes = new List<String>();
+    	for (String str : strSet) {
+    		strWithQuotes.add('\'' + str + '\'');
+    	}
+    	return String.join(strWithQuotes, ',');
     }
    
     private static boolean enforceCRUD(Schema.DescribeSObjectResult objResult, String dmlType, Boolean addMessage) {
