@@ -18,12 +18,14 @@ private class NIPRLicenseSyncTest {
     private static Id rejectInstanceId = null;
     private static String processName = null;  
     private static User adminUser;
-    
+    private static Date niprUpdateDate1 = Date.newInstance(2015, 8, 9);
+    private static Date niprUpdateDate2 = Date.newInstance(2015, 8, 10);
     
     class LicenseRequestBody {
     	String className = 'test';
     	Date effectiveDate  = Date.newInstance(2015, 6, 1);
     	Date expirationDate = Date.newInstance(2036, 7, 2);
+    	Date niprUpdateDate = niprUpdateDate1;
     	Boolean isResidentLicense = true;
     	String licenseNumber = 'test';
     	Boolean isActive = true;
@@ -88,6 +90,7 @@ private class NIPRLicenseSyncTest {
     		residentnipr.npnNumber = npnNumber;
     		residentnipr.isActive = true;
     		residentnipr.isResidentLicense = true;
+    		residentnipr.niprUpdateDate = licenseBody.niprUpdateDate;
     		
     		String loaName1 = licenseBody.loaName1;
     		String loaName2 = licenseBody.loaName2;
@@ -113,6 +116,7 @@ private class NIPRLicenseSyncTest {
     		nonresidentnipr.npnNumber = npnNumber;
     		nonresidentnipr.isActive = true;
     		nonresidentnipr.isResidentLicense = false;
+    		nonresidentnipr.niprUpdateDate = licenseBody.niprUpdateDate;
     		
     		NIPRLicense.LineOfAuthority loa3 = new NIPRLicense.LineOfAuthority();
     		loa3.name = loaName1;
@@ -279,6 +283,7 @@ private class NIPRLicenseSyncTest {
 		newNipr.licenseNumber = licenseBody.licenseNumber + 1;
 		newNipr.isActive = true;
 		newNipr.isResidentLicense = true;
+		newNipr.niprUpdateDate = licenseBody.niprUpdateDate;
 		
 		NIPRLicense.LineOfAuthority loa1 = new NIPRLicense.LineOfAuthority();
 		loa1.name = licenseBody.loaName1;
@@ -301,6 +306,7 @@ private class NIPRLicenseSyncTest {
 		newNipr1.licenseNumber = 'mytest' + 5001;
 		newNipr1.isActive = true;
 		newNipr1.isResidentLicense = false;
+		newNipr1.niprUpdateDate = licenseBody.niprUpdateDate;
 	    NIPRLicense.LineOfAuthority loa3 = new NIPRLicense.LineOfAuthority();
 		loa3.name = 'bad bad';
 		loa3.isActive = true;
@@ -320,6 +326,7 @@ private class NIPRLicenseSyncTest {
 		newNipr2.licenseNumber = licenseBody.licenseNumber + 1002;
 		newNipr2.isActive = true;
 		newNipr2.isResidentLicense = false;
+		newNipr2.niprUpdateDate = licenseBody.niprUpdateDate;
 		
 		//expired license not in sfdc
 		NIPRLicense newNipr3 = new NIPRLicense();
@@ -330,6 +337,7 @@ private class NIPRLicenseSyncTest {
 		newNipr3.licenseNumber = licenseBody.licenseNumber + 1004;
 		newNipr3.isActive = false;
 		newNipr3.isResidentLicense = true;
+		newNipr3.niprUpdateDate = licenseBody.niprUpdateDate;
 		
 		licenseRequestBody.add(newNipr);
 		licenseRequestBody.add(newNipr1);
@@ -349,17 +357,21 @@ private class NIPRLicenseSyncTest {
 		newNipr.licenseNumber = licenseBody.licenseNumber + 1005;
 		newNipr.isActive = true;
 		newNipr.isResidentLicense = true;
+		newNipr.niprUpdateDate = licenseBody.niprUpdateDate;
 		
 		licenseRequestBody.add(newNipr);
     }
     
     static void updateNiprLicenses(List<NIPRLicense> licenseRequestBody) {
+    	
     	// update some license to not active
     	NIPRLicense niprToUpdate1 = licenseRequestBody.get(0);
     	niprToUpdate1.className = updateClassName;
+    	niprToUpdate1.niprUpdateDate = niprUpdateDate2;
     	
     	NIPRLicense niprToUpdate2 = licenseRequestBody.get(1);
     	niprToUpdate2.isActive = false;
+    	niprToUpdate2.niprUpdateDate = niprUpdateDate2;
     	for (NIPRLicense.LineOfAuthority loa : niprToUpdate2.linesOfAuthority) {
     		loa.isActive = false;
     	}
@@ -374,14 +386,17 @@ private class NIPRLicenseSyncTest {
     	// remove all loas
     	NIPRLicense niprToDeleteLOAs = licenseRequestBody.get(3);
     	niprToDeleteLOAs.linesOfAuthority.clear();
+    	niprToDeleteLOAs.niprUpdateDate = niprUpdateDate2;
     	
     	// test nipr manual override field
     	NIPRLicense niprToTestOverride = licenseRequestBody.get(4);
     	niprToTestOverride.className = updateClassName;
+    	niprToTestOverride.niprUpdateDate = niprUpdateDate2;
     	
     	// remove one loa
     	NIPRLicense niprToRemoveLOAs = licenseRequestBody.get(5);
     	niprToRemoveLOAs.linesOfAuthority.remove(0);
+    	niprToRemoveLOAs.niprUpdateDate = niprUpdateDate2;
     }
     
     static void getProcessName() {
@@ -434,7 +449,7 @@ private class NIPRLicenseSyncTest {
 	        String[] newNPNNumbers = new String[]{newNPNNumber};
 
 	        //verify new license is added and approved
-	        List<License__c> newLicenses = [SELECT resident_license__r.npn_number__c, effective_date__c, expiration_date__c, id, approved__c, recordtypeid, (SELECT id FROM Lines_of_Authority__r)  FROM License__c WHERE  (npn_number__c IN:newNPNNumbers OR resident_license__r.npn_number__c IN:newNPNNumbers)];
+	        List<License__c> newLicenses = [SELECT nipr_update_date__c, resident_license__r.npn_number__c, effective_date__c, expiration_date__c, id, approved__c, recordtypeid, (SELECT id FROM Lines_of_Authority__r)  FROM License__c WHERE  (npn_number__c IN:newNPNNumbers OR resident_license__r.npn_number__c IN:newNPNNumbers)];
 	        system.assertEquals(2, newLicenses.size());
 	        for (License__c license : newLicenses) {
 	        	Integer loaCount = 0;
@@ -442,6 +457,7 @@ private class NIPRLicenseSyncTest {
 	        		loaCount += 1;
 	        	}
 	        	system.assertEquals(2, loaCount);
+	        	system.assertEquals(niprUpdateDate1.day(), license.nipr_update_date__c.day());
 	        	
 	        	if (license.recordTypeId == rlRecordTypeId) {
 	        		system.assert(license.approved__c);
@@ -451,9 +467,10 @@ private class NIPRLicenseSyncTest {
 	        }
 	
 	        //verify licese is updated
-	        List<License__c> updatedLicenses = [SELECT force_expire__c, class__c, recordTypeId, status__c, approved__c, number__c, (SELECT id FROM Lines_of_Authority__r) FROM License__c WHERE (npn_number__c=:licenseRequestBody.get(0).npnNumber OR resident_license__r.npn_number__c=:licenseRequestBody.get(0).npnNumber)];
+	        List<License__c> updatedLicenses = [SELECT nipr_update_date__c, force_expire__c, class__c, recordTypeId, status__c, approved__c, number__c, (SELECT id FROM Lines_of_Authority__r) FROM License__c WHERE (npn_number__c=:licenseRequestBody.get(0).npnNumber OR resident_license__r.npn_number__c=:licenseRequestBody.get(0).npnNumber)];
 	        system.assertEquals(2, updatedLicenses.size());
 	        for (License__c license : updatedLicenses) {
+	        	system.assertEquals(niprUpdateDate2.day(), license.nipr_update_date__c.day());
 	        	if (license.recordTypeId == rlRecordTypeId) {
 	        		system.assertEquals(updateClassName, license.class__c);
 	        		system.assertEquals(false, license.force_expire__c);

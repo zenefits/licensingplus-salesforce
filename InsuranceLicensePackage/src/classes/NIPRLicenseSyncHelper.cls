@@ -615,6 +615,7 @@ public with sharing class NIPRLicenseSyncHelper {
         license.number__c = nipr.licenseNumber;
         license.class__c = nipr.className;
         license.ownerId = ownerInfo.userId;
+        license.nipr_update_date__c = nipr.niprUpdateDate;
          
         for (NIPRLicense.LineOfAuthority loa : nipr.linesOfAuthority) {
             if (loa.isActive) { 
@@ -648,6 +649,7 @@ public with sharing class NIPRLicenseSyncHelper {
         license.class__c = nipr.className;
         license.effective_date__c = nipr.effectiveDate;
         license.expiration_date__c = nipr.expirationDate;
+        license.nipr_update_date__c = nipr.niprUpdateDate;
         this.licensesToUpdateByKey.put(key, license);
         
         Map<String, Line_of_Authority__c> loaByName = new Map<String, Line_of_Authority__c>();

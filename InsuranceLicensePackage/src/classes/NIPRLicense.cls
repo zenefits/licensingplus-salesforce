@@ -3,6 +3,7 @@ public with sharing class NIPRLicense {
     public String className {get;set;}
     public Date effectiveDate {get;set;}
     public Date expirationDate {get;set;}
+    public Date niprUpdateDate {get;set;}
     public String state {get;set;}
     public Boolean isResidentLicense {get;set;}
     public String licenseNumber {get;set;}
