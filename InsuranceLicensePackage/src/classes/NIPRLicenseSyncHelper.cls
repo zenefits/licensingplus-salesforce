@@ -81,7 +81,7 @@ public with sharing class NIPRLicenseSyncHelper {
     	LicenseRuleHelper.enforceCRUDAndFLS(AppConfig.getAppNamespacedName('License__c'), licenseQueryFields, 'query', false);  
     	LicenseRuleHelper.enforceCRUDAndFLS(AppConfig.getAppNamespacedName('Line_of_Authority__c'), new Set<String>(), 'query', false); 	
     	
-        List<License__c> existingIncompleteLicenses = [SELECT nipr_manual_override__c, ownerid, id, npn_number__c, number__c, resident_license__r.npn_number__c, effective_date__c, state__c,  (SELECT id, name FROM Lines_of_Authority__r) 
+        List<License__c> existingIncompleteLicenses = [SELECT nipr_update_date__c, nipr_manual_override__c, ownerid, id, npn_number__c, number__c, resident_license__r.npn_number__c, effective_date__c, state__c,  (SELECT id, name FROM Lines_of_Authority__r) 
                                             FROM License__c WHERE (npn_number__c = null AND resident_license__r.npn_number__c=null) OR number__c = null OR effective_date__c = null];
         
         Map<String, License__c> existingIncompleteLicenseByKey = buildExistingIncompleteLicenseMap(existingIncompleteLicenses);
@@ -95,7 +95,7 @@ public with sharing class NIPRLicenseSyncHelper {
         
         logInfo('syncLicense', '[LICENSE STATS] total complete licenses to process - ' + completeNiprLicenses.size());
             
-        List<License__c> existingLicenses = [SELECT nipr_manual_override__c, id, npn_number__c, number__c, resident_license__r.npn_number__c, effective_date__c, state__c,  (SELECT id, name FROM Lines_of_Authority__r) 
+        List<License__c> existingLicenses = [SELECT nipr_update_date__c, nipr_manual_override__c, id, npn_number__c, number__c, resident_license__r.npn_number__c, effective_date__c, state__c,  (SELECT id, name FROM Lines_of_Authority__r) 
                                             FROM License__c WHERE (npn_number__c IN:npnNumbers OR resident_license__r.npn_number__c IN:npnNumbers) AND effective_date__c IN:effectiveDates AND 
                                             					state__c IN:states AND number__c IN:licenseNumbers];
         
@@ -491,7 +491,18 @@ public with sharing class NIPRLicenseSyncHelper {
                         return;
                     }
                     
-                    updateLicense(nipr, license, ownerInfo);
+                    Date niprUpdateDate = nipr.niprUpdateDate;
+                    Date latestNIPRUpdateDate = license.nipr_update_date__c;
+                    if (latestNIPRUpdateDate!=null && niprUpdateDate!=null && niprUpdateDate<latestNIPRUpdateDate) {
+                    	this.totalFailures += 1;
+                    	String errorMessage = NIPRSyncError.errorMessageByType.get(NIPRSyncError.SyncError.STALE_DATA_FOUND);
+		                NIPRSyncApiResponse.LicenseSyncResponse response = NIPRSyncApiResponse.getLicenseSyncResponse(key, false, NIPRSyncError.SyncError.STALE_DATA_FOUND, errorMessage);
+		                this.responseByKey.put(key, response);
+		                logError('handleLicenseCreateOrUpdate', '[LICENSE ERROR] this license is already updated with more recent NIPR data - ' + key);
+		                            	
+                    } else {
+                    	updateLicense(nipr, license, ownerInfo);
+                    }            
                 }   
             }
         } else {
