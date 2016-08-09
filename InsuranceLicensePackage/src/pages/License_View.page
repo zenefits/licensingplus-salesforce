@@ -6,7 +6,7 @@
         <apex:pageBlock mode="maindetail" title="License Detail">
             <apex:pageBlockButtons >
                 <apex:commandButton rendered="{!OR(isAdmin, AND($User.Id = License__c.OwnerId, NOT(locked)))}" action="{!edit}" value="Edit" />
-                <apex:commandButton rendered="{!AND(NOT(locked), $User.Id = License__c.OwnerId)}" value="Submit for Approval" action="{!URLFOR($Action.licensingplus__License__c.Submit, licensingplus__License__c.Id)}" />
+                <apex:commandButton rendered="{!AND(NOT(locked), $User.Id = License__c.OwnerId)}" value="Submit for Approval" action="{!URLFOR($Action.License__c.Submit, License__c.Id)}" />
                 <apex:commandButton rendered="{!AND(locked, NOT(ISNULL(approver)))}" value="Approve / Reject" action="{!approveReject}" />
             </apex:pageBlockButtons>
             <apex:pageBlockSection title="Information" columns="1">
