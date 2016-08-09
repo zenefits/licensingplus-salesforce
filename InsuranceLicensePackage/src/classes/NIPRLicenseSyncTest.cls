@@ -20,6 +20,7 @@ private class NIPRLicenseSyncTest {
     private static User adminUser;
     private static Date niprUpdateDate1 = Date.newInstance(2015, 8, 9);
     private static Date niprUpdateDate2 = Date.newInstance(2015, 8, 10);
+    private static Date niprUpdateDateOld = Date.newInstance(2015, 8, 8);
     
     class LicenseRequestBody {
     	String className = 'test';
@@ -154,6 +155,7 @@ private class NIPRLicenseSyncTest {
 	    		license.ownerId = ownerIdByNpnNumber.get(nipr.npnNumber);
 	    		license.recordTypeId = recordTypeId;
 	    		license.approved__c = !(index==firstIncomplete || index==secondIncomplete) ? true: false;
+	    		license.nipr_update_date__c = nipr.niprUpdateDate;
 	    		if (nipr.isResidentLicense) {
 	    			testResidentLicenses.add(license);
 	    		} else {
@@ -397,6 +399,15 @@ private class NIPRLicenseSyncTest {
     	NIPRLicense niprToRemoveLOAs = licenseRequestBody.get(5);
     	niprToRemoveLOAs.linesOfAuthority.remove(0);
     	niprToRemoveLOAs.niprUpdateDate = niprUpdateDate2;
+    	
+    	// update license with old nipr update date
+    	NIPRLicense niprToUpdateWithOldNiprDate1 = licenseRequestBody.get(10);
+    	niprToUpdateWithOldNiprDate1.className = updateClassName;
+    	niprToUpdateWithOldNiprDate1.niprUpdateDate = niprUpdateDateOld;
+    	
+    	NIPRLicense niprToUpdateWithOldNiprDate2 = licenseRequestBody.get(11);
+    	niprToUpdateWithOldNiprDate2.className = updateClassName;
+    	niprToUpdateWithOldNiprDate2.niprUpdateDate = niprUpdateDateOld;
     }
     
     static void getProcessName() {
@@ -483,6 +494,14 @@ private class NIPRLicenseSyncTest {
 	        		system.assertEquals('Expired', license.status__c);
 	        		system.assert(license.approved__c);
 	        	}
+	        }
+	        
+	        //verify licese is not updated with old nipr update date
+	        List<License__c> notUpdatedLicenses = [SELECT nipr_update_date__c, force_expire__c, class__c, recordTypeId, status__c, approved__c, number__c, (SELECT id FROM Lines_of_Authority__r) FROM License__c WHERE (npn_number__c=:licenseRequestBody.get(10).npnNumber OR resident_license__r.npn_number__c=:licenseRequestBody.get(10).npnNumber)];
+	        system.assertEquals(2, notUpdatedLicenses.size());
+	        for (License__c notUpdatedLicense : notUpdatedLicenses) {
+	        	system.assertEquals(niprUpdateDate1.day(), notUpdatedLicense.nipr_update_date__c.day());
+	        	system.assertNotEquals(updateClassName, notUpdatedLicense.class__c);
 	        }
 	        
 	        //verify loa are added
