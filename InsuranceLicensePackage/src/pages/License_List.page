@@ -4,7 +4,7 @@
         <apex:sectionHeader title="Licenses" />        
         <apex:pageBlock title="Licenses" >
             <apex:pageBlockButtons location="top">
-                <apex:commandButton action="{!URLFOR($Action.licensingplus__License__c.New, null)}" value="New" />
+                <apex:commandButton action="{!URLFOR($Action.License__c.New, null)}" value="New" />
             </apex:pageBlockButtons>                        
             <apex:pageBlockTable value="{!insuranceLicenses}" var="license" rendered="{!insuranceLicenses.size > 0}">
                 <apex:column >
