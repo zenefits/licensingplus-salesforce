@@ -1,6 +1,12 @@
 public with sharing class ComplianceController {
     
     public class ComplianceException extends Exception {}
+
+    public String namespace {
+        get {
+            return AppConfig.getAppNamespacedName('');
+        }
+    }
     
     private static final Set<Schema.DisplayType> excludedDisplayTypes = new Set<Schema.DisplayType> {
     	Schema.DisplayType.MultiPicklist,

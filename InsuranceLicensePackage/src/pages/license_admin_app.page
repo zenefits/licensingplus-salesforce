@@ -8,6 +8,7 @@
     <div class="header"></div>
     <div id="root"></div>
     <script>
+      var NAMESPACE_PREFIX = '{!namespace}';
     	StaticResource = {};
     	StaticResource.CONFIGURATION_LOA = "{!URLFOR($Resource.loa_configuration, 'loa_configuration.csv')}";
     </script>
