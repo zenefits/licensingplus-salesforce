@@ -47,7 +47,6 @@
     <allowInChatterGroups>false</allowInChatterGroups>
     <compactLayoutAssignment>SYSTEM</compactLayoutAssignment>
     <deploymentStatus>Deployed</deploymentStatus>
-    <deprecated>false</deprecated>
     <enableActivities>false</enableActivities>
     <enableBulkApi>true</enableBulkApi>
     <enableFeeds>false</enableFeeds>
@@ -59,7 +58,6 @@
     <fields>
         <fullName>Filter_Rule__c</fullName>
         <deleteConstraint>SetNull</deleteConstraint>
-        <deprecated>false</deprecated>
         <externalId>false</externalId>
         <label>Filter Rule</label>
         <referenceTo>License_Rule_Logic__c</referenceTo>
@@ -71,7 +69,6 @@
     </fields>
     <fields>
         <fullName>Logic__c</fullName>
-        <deprecated>false</deprecated>
         <externalId>false</externalId>
         <label>Logic</label>
         <length>255</length>
@@ -82,7 +79,6 @@
     </fields>
     <fields>
         <fullName>Object__c</fullName>
-        <deprecated>false</deprecated>
         <externalId>false</externalId>
         <label>Object</label>
         <length>255</length>
@@ -94,7 +90,6 @@
     <fields>
         <fullName>isActive__c</fullName>
         <defaultValue>false</defaultValue>
-        <deprecated>false</deprecated>
         <externalId>false</externalId>
         <label>isActive</label>
         <trackTrending>false</trackTrending>

@@ -55,7 +55,6 @@
     <allowInChatterGroups>false</allowInChatterGroups>
     <compactLayoutAssignment>SYSTEM</compactLayoutAssignment>
     <deploymentStatus>Deployed</deploymentStatus>
-    <deprecated>false</deprecated>
     <enableActivities>true</enableActivities>
     <enableBulkApi>true</enableBulkApi>
     <enableFeeds>false</enableFeeds>
@@ -72,7 +71,6 @@
     <fields>
         <fullName>Approved__c</fullName>
         <defaultValue>false</defaultValue>
-        <deprecated>false</deprecated>
         <externalId>false</externalId>
         <label>Approved</label>
         <trackHistory>true</trackHistory>
@@ -81,7 +79,6 @@
     </fields>
     <fields>
         <fullName>Class__c</fullName>
-        <deprecated>false</deprecated>
         <externalId>false</externalId>
         <label>Class</label>
         <length>255</length>
@@ -93,7 +90,6 @@
     </fields>
     <fields>
         <fullName>Effective_Date__c</fullName>
-        <deprecated>false</deprecated>
         <externalId>false</externalId>
         <label>Effective Date</label>
         <required>false</required>
@@ -103,7 +99,6 @@
     </fields>
     <fields>
         <fullName>Expiration_Date__c</fullName>
-        <deprecated>false</deprecated>
         <externalId>false</externalId>
         <label>Expiration Date</label>
         <required>false</required>
@@ -114,7 +109,6 @@
     <fields>
         <fullName>Force_Expire__c</fullName>
         <defaultValue>false</defaultValue>
-        <deprecated>false</deprecated>
         <externalId>false</externalId>
         <label>Force Expire</label>
         <trackHistory>true</trackHistory>
@@ -123,7 +117,6 @@
     </fields>
     <fields>
         <fullName>Manager_Email__c</fullName>
-        <deprecated>false</deprecated>
         <externalId>false</externalId>
         <label>Manager Email</label>
         <required>false</required>
@@ -134,7 +127,6 @@
     </fields>
     <fields>
         <fullName>Manager__c</fullName>
-        <deprecated>false</deprecated>
         <externalId>false</externalId>
         <formula>Owner:User.Manager.FirstName &amp; &quot; &quot; &amp; Owner:User.Manager.LastName</formula>
         <label>Manager</label>
@@ -175,7 +167,6 @@
     </fields>
     <fields>
         <fullName>NPN_Number_Formula__c</fullName>
-        <deprecated>false</deprecated>
         <externalId>false</externalId>
         <formula>IF(RecordType.Name = &apos;Non-Resident State&apos;, Resident_License__r.NPN_Number__c, NPN_Number__c)</formula>
         <label>NPN Number (Resident License)</label>
@@ -187,7 +178,6 @@
     </fields>
     <fields>
         <fullName>NPN_Number__c</fullName>
-        <deprecated>false</deprecated>
         <externalId>false</externalId>
         <label>NPN Number</label>
         <length>255</length>
@@ -199,7 +189,6 @@
     </fields>
     <fields>
         <fullName>Number__c</fullName>
-        <deprecated>false</deprecated>
         <externalId>false</externalId>
         <label>License Number</label>
         <length>255</length>
@@ -211,7 +200,6 @@
     </fields>
     <fields>
         <fullName>OwnerActive__c</fullName>
-        <deprecated>false</deprecated>
         <externalId>false</externalId>
         <formula>Owner:User.IsActive</formula>
         <label>Owner Active</label>
@@ -222,7 +210,6 @@
     <fields>
         <fullName>Pending_Approval__c</fullName>
         <defaultValue>false</defaultValue>
-        <deprecated>false</deprecated>
         <externalId>false</externalId>
         <label>Pending Approval</label>
         <trackHistory>true</trackHistory>
@@ -232,7 +219,6 @@
     <fields>
         <fullName>Resident_License__c</fullName>
         <deleteConstraint>SetNull</deleteConstraint>
-        <deprecated>false</deprecated>
         <externalId>false</externalId>
         <label>Resident License</label>
         <referenceTo>License__c</referenceTo>
@@ -245,7 +231,6 @@
     </fields>
     <fields>
         <fullName>State__c</fullName>
-        <deprecated>false</deprecated>
         <externalId>false</externalId>
         <label>State</label>
         <picklist>
@@ -461,7 +446,6 @@
     </fields>
     <fields>
         <fullName>Status__c</fullName>
-        <deprecated>false</deprecated>
         <externalId>false</externalId>
         <formula>IF(
   Force_Expire__c,
@@ -513,7 +497,6 @@
     </fields>
     <fields>
         <fullName>Type__c</fullName>
-        <deprecated>false</deprecated>
         <externalId>false</externalId>
         <label>Type</label>
         <length>255</length>
@@ -963,8 +946,8 @@
         </picklistValues>
     </recordTypes>
     <searchLayouts>
-        <excludedStandardButtons>Accept</excludedStandardButtons>
         <excludedStandardButtons>ChangeOwner</excludedStandardButtons>
+        <excludedStandardButtons>Accept</excludedStandardButtons>
         <lookupDialogsAdditionalFields>State__c</lookupDialogsAdditionalFields>
         <lookupDialogsAdditionalFields>RECORDTYPE</lookupDialogsAdditionalFields>
         <lookupPhoneDialogsAdditionalFields>State__c</lookupPhoneDialogsAdditionalFields>
