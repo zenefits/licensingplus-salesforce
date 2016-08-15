@@ -47,7 +47,6 @@
     <allowInChatterGroups>false</allowInChatterGroups>
     <compactLayoutAssignment>SYSTEM</compactLayoutAssignment>
     <deploymentStatus>Deployed</deploymentStatus>
-    <deprecated>false</deprecated>
     <enableActivities>false</enableActivities>
     <enableBulkApi>true</enableBulkApi>
     <enableFeeds>false</enableFeeds>
@@ -58,7 +57,6 @@
     <enableStreamingApi>true</enableStreamingApi>
     <fields>
         <fullName>License__c</fullName>
-        <deprecated>false</deprecated>
         <externalId>false</externalId>
         <label>Insurance License</label>
         <referenceTo>License__c</referenceTo>

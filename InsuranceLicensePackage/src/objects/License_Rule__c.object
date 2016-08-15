@@ -47,7 +47,6 @@
     <allowInChatterGroups>false</allowInChatterGroups>
     <compactLayoutAssignment>SYSTEM</compactLayoutAssignment>
     <deploymentStatus>Deployed</deploymentStatus>
-    <deprecated>false</deprecated>
     <enableActivities>false</enableActivities>
     <enableBulkApi>true</enableBulkApi>
     <enableFeeds>false</enableFeeds>
@@ -58,7 +57,6 @@
     <enableStreamingApi>true</enableStreamingApi>
     <fields>
         <fullName>Field__c</fullName>
-        <deprecated>false</deprecated>
         <externalId>false</externalId>
         <label>Field</label>
         <length>255</length>
@@ -69,7 +67,6 @@
     </fields>
     <fields>
         <fullName>License_Field__c</fullName>
-        <deprecated>false</deprecated>
         <externalId>false</externalId>
         <label>License Field</label>
         <length>255</length>
@@ -80,7 +77,6 @@
     </fields>
     <fields>
         <fullName>Object__c</fullName>
-        <deprecated>false</deprecated>
         <externalId>false</externalId>
         <label>Object</label>
         <length>255</length>
@@ -91,7 +87,6 @@
     </fields>
     <fields>
         <fullName>Operator__c</fullName>
-        <deprecated>false</deprecated>
         <externalId>false</externalId>
         <label>Operator</label>
         <picklist>
@@ -151,7 +146,6 @@
     </fields>
     <fields>
         <fullName>Value__c</fullName>
-        <deprecated>false</deprecated>
         <externalId>false</externalId>
         <label>Value</label>
         <length>255</length>
@@ -163,7 +157,6 @@
     <fields>
         <fullName>isActive__c</fullName>
         <defaultValue>false</defaultValue>
-        <deprecated>false</deprecated>
         <externalId>false</externalId>
         <label>isActive</label>
         <trackTrending>false</trackTrending>

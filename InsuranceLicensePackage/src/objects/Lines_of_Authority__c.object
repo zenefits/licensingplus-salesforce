@@ -4,7 +4,6 @@
     <enableFeeds>false</enableFeeds>
     <fields>
         <fullName>LOA_Name__c</fullName>
-        <deprecated>false</deprecated>
         <externalId>false</externalId>
         <label>LOA Name</label>
         <length>255</length>
@@ -15,7 +14,6 @@
     </fields>
     <fields>
         <fullName>Type__c</fullName>
-        <deprecated>false</deprecated>
         <externalId>false</externalId>
         <label>Type</label>
         <length>250</length>
