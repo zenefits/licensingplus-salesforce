@@ -294,7 +294,7 @@
     <fieldPermissions>
         <editable>false</editable>
         <field>User.NPN_Number__c</field>
-        <readable>false</readable>
+        <readable>true</readable>
     </fieldPermissions>
     <hasActivationRequired>false</hasActivationRequired>
     <label>License Compliance Admin</label>
