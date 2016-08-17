@@ -126,7 +126,7 @@
     </classAccesses>
     <classAccesses>
         <apexClass>NIPRLicenseSyncApi</apexClass>
-        <enabled>false</enabled>
+        <enabled>true</enabled>
     </classAccesses>
     <classAccesses>
         <apexClass>NIPRLicenseSyncHelper</apexClass>
