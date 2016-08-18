@@ -132,4 +132,21 @@ public with sharing class ComplianceController {
       		throw new ComplianceException('Error encountered. Please contact administrator, error: ' + e.getMessage());
       	}
     }
+    
+    @RemoteAction
+    public static List<NIPRSyncApiResponse.LicenseSyncResponse> importLicenseData(List<NIPRLicense> niprLicenses) {
+        List<NIPRSyncApiResponse.LicenseSyncResponse> results = new List<NIPRSyncApiResponse.LicenseSyncResponse>();
+        
+        try {
+            if(niprLicenses != null && !niprLicenses.isEmpty()) {
+                NIPRSyncService syncservice = new NIPRSyncService();
+                results = syncservice.syncLicenses(niprLicenses);
+            }
+        } catch (Exception e) {
+            System.debug('[ComplianceController] ' + '[importLicenseData] ' + e.getMessage());
+            System.debug(e);
+            throw new ComplianceException('Error encountered. Please contact administrator, error: ' + e.getMessage());
+        }
+        return results;
+    } 
 }

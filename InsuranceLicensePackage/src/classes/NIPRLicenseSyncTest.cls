@@ -580,4 +580,150 @@ private class NIPRLicenseSyncTest {
             system.assert(dmlError);
         }
     }  
+    
+    static testmethod void testImportLicenseData() {
+        Map<String, String> ownerIdByNpnNumber = setupUsers();
+        System.runAs(adminUser) {
+            createNIPRSyncConfig();
+            List<NIPRLicense> licenseRequestBody = generateLicenseRequestBody();
+            List<List<License__c>> allLicenses = generateTestLicenses(ownerIdByNpnNumber, licenseRequestBody);
+            List<Line_of_Authority__c> allLoas = generateTestLOAs(allLicenses);
+            
+            List<License_Rule__c> approvalCriteria = LicenseRuleTestDataSeeder.createLicenseApprovalCriteria(true);
+            License_Rule_Logic__c approvalCriteriaLogic = LicenseRuleTestDataSeeder.createLicenseApprovalCriteriaLogic(approvalCriteria, true);
+            
+            updateNiprLicenses(licenseRequestBody);
+            addNewNiprLicenses(licenseRequestBody);
+            addNewInvalidNiprLicenses(licenseRequestBody);
+            
+            License__c licenseToSetOverride = allLicenses.get(0).get(2);
+            licenseToSetOverride.nipr_manual_override__c = true;
+            update licenseToSetOverride;
+            
+            
+            Test.startTest();
+            List<NIPRSyncApiResponse.LicenseSyncResponse> responses = ComplianceController.importLicenseData(licenseRequestBody);
+            Test.stopTest();
+            
+            String[] newNPNNumbers = new String[]{newNPNNumber};
+                
+                //verify new license is added and approved
+                List<License__c> newLicenses = [SELECT nipr_update_date__c, resident_license__r.npn_number__c, effective_date__c, expiration_date__c, id, approved__c, recordtypeid, (SELECT id FROM Lines_of_Authority__r)  FROM License__c WHERE  (npn_number__c IN:newNPNNumbers OR resident_license__r.npn_number__c IN:newNPNNumbers)];
+            system.assertEquals(2, newLicenses.size());
+            for (License__c license : newLicenses) {
+                Integer loaCount = 0;
+                for (Line_of_Authority__c loa : license.Lines_of_Authority__r) {
+                    loaCount += 1;
+                }
+                system.assertEquals(2, loaCount);
+                system.assertEquals(niprUpdateDate1.day(), license.nipr_update_date__c.day());
+                
+                if (license.recordTypeId == rlRecordTypeId) {
+                    system.assert(license.approved__c);
+                } else {
+                    system.assert(!license.approved__c);            
+                }           
+            }
+            
+            //verify licese is updated
+            List<License__c> updatedLicenses = [SELECT nipr_update_date__c, force_expire__c, class__c, recordTypeId, status__c, approved__c, number__c, (SELECT id FROM Lines_of_Authority__r) FROM License__c WHERE (npn_number__c=:licenseRequestBody.get(0).npnNumber OR resident_license__r.npn_number__c=:licenseRequestBody.get(0).npnNumber)];
+            system.assertEquals(2, updatedLicenses.size());
+            for (License__c license : updatedLicenses) {
+                system.assertEquals(niprUpdateDate2.day(), license.nipr_update_date__c.day());
+                if (license.recordTypeId == rlRecordTypeId) {
+                    system.assertEquals(updateClassName, license.class__c);
+                    system.assertEquals(false, license.force_expire__c);
+                    system.assertEquals('Active', license.status__c);
+                    system.assertNotEquals(updatedLicenseNumber, license.number__c);
+                    system.assert(license.approved__c);
+                    
+                } else {
+                    system.assertEquals(true, license.force_expire__c);
+                    system.assertEquals('Expired', license.status__c);
+                    system.assert(license.approved__c);
+                }
+            }
+            
+            //verify licese is not updated with old nipr update date
+            List<License__c> notUpdatedLicenses = [SELECT nipr_update_date__c, force_expire__c, class__c, recordTypeId, status__c, approved__c, number__c, (SELECT id FROM Lines_of_Authority__r) FROM License__c WHERE (npn_number__c=:licenseRequestBody.get(10).npnNumber OR resident_license__r.npn_number__c=:licenseRequestBody.get(10).npnNumber)];
+            system.assertEquals(2, notUpdatedLicenses.size());
+            for (License__c notUpdatedLicense : notUpdatedLicenses) {
+                system.assertEquals(niprUpdateDate1.day(), notUpdatedLicense.nipr_update_date__c.day());
+                system.assertNotEquals(updateClassName, notUpdatedLicense.class__c);
+            }
+            
+            //verify loa are added
+            List<License__c> loaUpdatedLicenses = [SELECT class__c, effective_date__c, expiration_date__c, recordTypeId, status__c, approved__c, (SELECT id, name FROM Lines_of_Authority__r) FROM License__c WHERE (npn_number__c=:licenseRequestBody.get(2).npnNumber OR resident_license__r.npn_number__c=:licenseRequestBody.get(2).npnNumber)];
+            system.assertEquals(2, loaUpdatedLicenses.size());
+            for (License__c license : loaUpdatedLicenses) {
+                if (license.recordTypeId == rlRecordTypeId) {
+                    Boolean newLOAAdded = false;
+                    for (Line_of_Authority__c loa : license.Lines_of_Authority__r) {
+                        if (loa.name == testLOA) {
+                            newLOAAdded = true;
+                        }
+                    }
+                    system.assert(newLOAAdded);
+                    system.assert(license.approved__c);
+                    
+                } else {
+                    system.assert(license.approved__c);
+                } 
+            }
+            
+            //verify loa are added
+            List<License__c> loaUpdatedLicenses1 = [SELECT class__c, effective_date__c, expiration_date__c, recordTypeId, status__c, approved__c, (SELECT id, name FROM Lines_of_Authority__r) FROM License__c WHERE (npn_number__c=:licenseRequestBody.get(4).npnNumber OR resident_license__r.npn_number__c=:licenseRequestBody.get(4).npnNumber)];
+            system.assertEquals(2, loaUpdatedLicenses1.size());
+            for (License__c license : loaUpdatedLicenses1) {
+                if (license.recordTypeId == rlRecordTypeId) {
+                    system.assert(license.approved__c);
+                    system.assertNotEquals(updateClassName, license.class__c);
+                } else {
+                    system.assert(license.approved__c);
+                } 
+            }
+            
+            //verify approval process are created and approved
+            if (processName!=null) {
+                List<License__c> approvedLicenses = [SELECT id FROM License__c WHERE (npn_number__c=:licenseRequestBody.get(10).npnNumber OR resident_license__r.npn_number__c=:licenseRequestBody.get(10).npnNumber) OR (npn_number__c=:licenseRequestBody.get(12).npnNumber OR resident_license__r.npn_number__c=:licenseRequestBody.get(12).npnNumber)];
+                system.assertEquals(4, approvedLicenses.size());
+                List<Id> approvedLicenseIds = new List<Id>();
+                for (License__c approvedLicense : approvedLicenses) {
+                    approvedLicenseIds.add(approvedLicense.id);
+                }
+                
+                List<ProcessInstance> processInstances = [Select p.Id, p.TargetObjectId, p.status from ProcessInstance p where p.TargetObjectId in:approvedLicenseIds];
+                
+                Boolean existingPendingApprovalFound = false;
+                for (ProcessInstance processInstance : processInstances) {            
+                    if (processInstance.id == rejectInstanceId) {
+                        system.assertEquals('Rejected', processInstance.status);
+                        
+                    } else {
+                        if (processInstance.id == pendingInstanceId) {
+                            existingPendingApprovalFound = true;
+                        }
+                        system.assertEquals('Approved', processInstance.status);  
+                    }
+                }
+                
+                system.assert(existingPendingApprovalFound);
+            }
+            
+            Boolean npnNumberNotFound = false;
+            Boolean dmlError = false;
+            for (NIPRSyncApiResponse.LicenseSyncResponse response : responses) {
+                if (!response.isSuccess) {
+                    if (response.errorCode==NIPRSyncError.SyncError.NPN_NUMBER_NOT_FOUND.name()) {
+                        npnNumberNotFound = true;
+                    } else if (response.errorCode==NIPRSyncError.SyncError.DML_ERROR.name()) {
+                        dmlError = true;
+                    }            
+                }
+            }
+            system.assert(npnNumberNotFound);
+            system.assert(dmlError);
+            
+        }
+    } 
 }
