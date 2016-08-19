@@ -21,7 +21,7 @@ private class NIPRLicenseSyncTest {
     private static Date niprUpdateDate1 = Date.newInstance(2015, 8, 9);
     private static Date niprUpdateDate2 = Date.newInstance(2015, 8, 10);
     private static Date niprUpdateDateOld = Date.newInstance(2015, 8, 8);
-    private static PermissionSet ps = [SELECT ID From PermissionSet WHERE Name = 'License_Compliance_Admin'];   
+    private static PermissionSet ps = [SELECT ID From PermissionSet WHERE Name = 'License_Compliance_Admin']; 
     
     class LicenseRequestBody {
         String className = 'test';
@@ -425,6 +425,8 @@ private class NIPRLicenseSyncTest {
     static void createNIPRSyncConfig() {
         NIPR_Sync_Config__c syncConfig = NIPR_Sync_Config__c.getOrgDefaults();
         syncConfig.NIPR_Integration_User_Name__c = adminUser.username;
+        syncConfig.ApprovalProcess__c = [SELECT Id,DeveloperName FROM ProcessDefinition WHERE TableEnumOrId = :AppConfig.getAppNamespacedName('License__c') AND Type = 'Approval' LIMIT 1].DeveloperName;
+        syncConfig.ForceExpire__c = true;
         insert syncConfig;
     }
     
