@@ -3,6 +3,22 @@
     <customSettingsType>Hierarchy</customSettingsType>
     <enableFeeds>false</enableFeeds>
     <fields>
+        <fullName>ApprovalProcess__c</fullName>
+        <externalId>false</externalId>
+        <label>ApprovalProcess</label>
+        <required>false</required>
+        <trackTrending>false</trackTrending>
+        <type>TextArea</type>
+    </fields>
+    <fields>
+        <fullName>ForceExpire__c</fullName>
+        <defaultValue>false</defaultValue>
+        <externalId>false</externalId>
+        <label>ForceExpire</label>
+        <trackTrending>false</trackTrending>
+        <type>Checkbox</type>
+    </fields>
+    <fields>
         <fullName>NIPR_Integration_User_Name__c</fullName>
         <description>Set nipr integration user name to bypass license validation rules</description>
         <externalId>false</externalId>
