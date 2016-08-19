@@ -149,4 +149,57 @@ public with sharing class ComplianceController {
         }
         return results;
     } 
+    
+  
+    @RemoteAction
+	public static List<String> getApprovalProcessNames() {
+		List<String> approvalProcessList = new List<String>();
+		for(ProcessDefinition definition: [SELECT Id,Name, DeveloperName FROM ProcessDefinition WHERE TableEnumOrId =:AppConfig.getAppNamespacedName('License__c') AND Type = 'Approval']) {
+			approvalProcessList.add(definition.DeveloperName);		
+		}
+		return approvalProcessList;
+	}
+	
+	@RemoteAction
+    public static List<User> getUserNames(String searchString) {
+    	List<User> userList = new List<User>();
+    	if(!String.isBlank(searchString)) {
+    		searchString = '%'+searchString+'%';
+    		userList = [SELECT Id,UserName,Name FROM User WHERE UserName LIKE :searchString OR Name LIKE :searchString];
+    	}
+		return userList;
+    }
+    
+    @RemoteAction
+    public static Map<String,Object> getApprovalCriteriaConfig() {
+    	Map<String,Object> criteriaMap = new Map<String,Object>();
+    	NIPR_Sync_Config__c  configSetting = NIPR_Sync_Config__c.getOrgDefaults();
+		if(configSetting.id == null) {
+    		insert configSetting;
+		}
+		criteriaMap.put('niprSyncConfig',configSetting);
+		criteriaMap.put('licenseRuleSetResult',getLicenseRuleSetResult(AppConfig.getAppNamespacedName('License__c')));			
+    	return criteriaMap;
+    }
+    
+     @RemoteAction
+    public static void saveApprovalCriteriaConfig(NIPR_Sync_Config__c niprSyncConfig,LicenseRuleSetResult licenseResult) {
+    	if(niprSyncConfig != null) {
+    		NIPR_Sync_Config__c defaultSetting = NIPR_Sync_Config__c.getOrgDefaults();
+    		if(!String.isBlank(niprSyncConfig.NIPR_Integration_User_Name__c)) {
+    			defaultSetting.NIPR_Integration_User_Name__c = niprSyncConfig.NIPR_Integration_User_Name__c;
+    		}
+    		if(niprSyncConfig.ForceExpire__c != null) {
+    			defaultSetting.ForceExpire__c = niprSyncConfig.ForceExpire__c;
+    		}
+    		if(!String.isBlank(niprSyncConfig.ApprovalProcess__c)) {
+    			defaultSetting.ApprovalProcess__c = niprSyncConfig.ApprovalProcess__c;
+    		}
+    		update defaultSetting;
+    	}
+ 	  if(licenseResult != null) {
+ 	  		saveLicenseRuleSetResult(licenseResult,AppConfig.getAppNamespacedName('License__c'));
+ 			toggleLicenseRuleSet(AppConfig.getAppNamespacedName('License__c'),true); 	 
+ 	  	}	
+    }   
 }
