@@ -17,6 +17,7 @@ public with sharing class NIPRLicenseSyncHelper {
     
     private final NIPRSyncReportBuilder reportBuilder;
     private final LicenseRuleHelper ruleHelper;
+    private NIPR_Sync_Config__c defaultSetting = NIPR_Sync_Config__c.getOrgDefaults();
    
    	// used for existing licenses matching
     private Set<String> npnNumbers;
@@ -418,7 +419,7 @@ public with sharing class NIPRLicenseSyncHelper {
     		this.ruleById.put(rule.id, rule);
     	}
     	
-    	this.objFieldsByName = this.ruleHelper.getObjFieldsByName(new Set<String>{AppConfig.getAppNamespacedName('License__c')});  	
+    	this.objFieldsByName = this.ruleHelper.getObjFieldsByName(new Set<String>{AppConfig.getAppNamespacedName('License__c')}); 	
 	}
     
     /** Logic to handle incomplete license information in the system **/
@@ -642,7 +643,12 @@ public with sharing class NIPRLicenseSyncHelper {
         String key = getNIPRLicenseKey(nipr);
         if (!nipr.isActive) {
             logInfo('updateLicense', String.format('[LICENSE ERROR] license key - {0} with record id - {1} is now inactive', new String[]{key, license.id}));
-            license.force_expire__c = true;
+            if(defaultSetting.ForceExpire__c != null && defaultSetting.ForceExpire__c ) {
+            	license.force_expire__c = true;
+            }
+            else {
+            	 license.force_expire__c = false;
+            } 
         } else {
             license.force_expire__c = false;
         }

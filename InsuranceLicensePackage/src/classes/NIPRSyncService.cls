@@ -1,7 +1,7 @@
 public with sharing class NIPRSyncService {
     
     private static final Integer BATCH_SIZE = 200;
-    
+    private NIPR_Sync_Config__c defaultSetting = NIPR_Sync_Config__c.getOrgDefaults() ;
     public NIPRSyncService() {}
     
     public List<NIPRSyncApiResponse.LicenseSyncResponse> syncLicenses(List<NIPRLicense> niprLicenses) {
@@ -42,15 +42,16 @@ public with sharing class NIPRSyncService {
     
     //method to get approval processes
     private String getLicenseApprovalProcessName() {
+    	String processName = null;
     	//read the name from custom settings
-    	String processName = 'Insurance_License_Approval';
-    	
-    	//validate the process exists
-    	List<ProcessDefinition> processes = [SELECT DeveloperName,Id,TableEnumOrId,Type FROM ProcessDefinition WHERE TableEnumOrId =:AppConfig.getAppNamespacedName('License__c') AND Type = 'Approval' AND DeveloperName =:processName];
-    	if (processes.isEmpty()) {
-    		processName = null;
+    	if(!String.isBlank(defaultSetting.ApprovalProcess__c)) {
+    		processName = defaultSetting.ApprovalProcess__c;
+    		//validate the process exists
+    		List<ProcessDefinition> processes = [SELECT DeveloperName,Id,TableEnumOrId,Type FROM ProcessDefinition WHERE TableEnumOrId =:AppConfig.getAppNamespacedName('License__c') AND Type = 'Approval' AND DeveloperName =:processName];
+    		if (processes.isEmpty()) {
+    			processName = null;
+    		}	
     	}
-    	
     	return processName;
     }
 }
