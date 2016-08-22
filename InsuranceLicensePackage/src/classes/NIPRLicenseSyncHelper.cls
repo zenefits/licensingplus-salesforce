@@ -1,4 +1,4 @@
-public with sharing class NIPRLicenseSyncHelper {
+\public with sharing class NIPRLicenseSyncHelper {
     
     private class OwnerInfo {
         String npnNumber;
@@ -19,15 +19,15 @@ public with sharing class NIPRLicenseSyncHelper {
     private final LicenseRuleHelper ruleHelper;
     private NIPR_Sync_Config__c defaultSetting = NIPR_Sync_Config__c.getOrgDefaults();
    
-   	// used for existing licenses matching
+     // used for existing licenses matching
     private Set<String> npnNumbers;
     private Set<String> states;
     private Set<Date> effectiveDates;
     private Set<String> licenseNumbers;
 
-	private Map<String, License_Rule__c> ruleById;
-	private License_Rule_Logic__c ruleLogic;
-	private Map<String, Map<String, Schema.SobjectField>> objFieldsByName;
+  private Map<String, License_Rule__c> ruleById;
+  private License_Rule_Logic__c ruleLogic;
+  private Map<String, Map<String, Schema.SobjectField>> objFieldsByName;
     private List<NIPRLicense> niprLicenses;
     private Map<String, License__c> residentLicensesToCreateByKey;
     private Map<String, License__c> nonresidentLicensesToCreateByKey;
@@ -56,7 +56,7 @@ public with sharing class NIPRLicenseSyncHelper {
         AppConfig.getAppNamespacedName('state__c')};
     
     public NIPRLicenseSyncHelper(List<NIPRLicense> niprLicenses, NIPRSyncReportBuilder reportBuilder, LicenseRuleHelper ruleHelper) {
-    	this.reportBuilder = reportBuilder;
+      this.reportBuilder = reportBuilder;
         this.niprLicenses = niprLicenses;
         this.ruleHelper = ruleHelper;
         
@@ -76,12 +76,12 @@ public with sharing class NIPRLicenseSyncHelper {
     }
     
     public List<NIPRSyncApiResponse.LicenseSyncResponse> syncLicenses() {
-    	Set<String> licenseQueryFields = licenseFields.clone();
-    	licenseQueryFields.add(AppConfig.getAppNamespacedName('status__c'));
-    	
-    	LicenseRuleHelper.enforceCRUDAndFLS(AppConfig.getAppNamespacedName('License__c'), licenseQueryFields, 'query', false);  
-    	LicenseRuleHelper.enforceCRUDAndFLS(AppConfig.getAppNamespacedName('Line_of_Authority__c'), new Set<String>(), 'query', false); 	
-    	
+      Set<String> licenseQueryFields = licenseFields.clone();
+      licenseQueryFields.add(AppConfig.getAppNamespacedName('status__c'));
+      
+      LicenseRuleHelper.enforceCRUDAndFLS(AppConfig.getAppNamespacedName('License__c'), licenseQueryFields, 'query', false);  
+      LicenseRuleHelper.enforceCRUDAndFLS(AppConfig.getAppNamespacedName('Line_of_Authority__c'), new Set<String>(), 'query', false);   
+      
         List<License__c> existingIncompleteLicenses = [SELECT nipr_update_date__c, nipr_manual_override__c, ownerid, id, npn_number__c, number__c, resident_license__r.npn_number__c, effective_date__c, state__c,  (SELECT id, name FROM Lines_of_Authority__r) 
                                             FROM License__c WHERE (npn_number__c = null AND resident_license__r.npn_number__c=null) OR number__c = null OR effective_date__c = null];
         
@@ -98,7 +98,7 @@ public with sharing class NIPRLicenseSyncHelper {
             
         List<License__c> existingLicenses = [SELECT nipr_update_date__c, nipr_manual_override__c, id, npn_number__c, number__c, resident_license__r.npn_number__c, effective_date__c, state__c,  (SELECT id, name FROM Lines_of_Authority__r) 
                                             FROM License__c WHERE (npn_number__c IN:npnNumbers OR resident_license__r.npn_number__c IN:npnNumbers) AND effective_date__c IN:effectiveDates AND 
-                                            					state__c IN:states AND number__c IN:licenseNumbers];
+                                                      state__c IN:states AND number__c IN:licenseNumbers];
         
         Map<String, License__c> existingLicenseByKey = buildExistingLicenseMap(existingLicenses);
         for (NIPRLicense nipr : completeNiprLicenses) {
@@ -123,21 +123,24 @@ public with sharing class NIPRLicenseSyncHelper {
                 }       
             }
         }
-        
-        // set approved flag on resident license object, since not all fields are set by nipr integration, we have to do a separate update call
-		Map<String, License__c> residentLicenseToCheckApprovedByKey = checkLicenseApprovalCriteria(residentLicenseIds);
-		if (!residentLicenseToCheckApprovedByKey.isEmpty()) {
-            insertOrUpdateLicenses(residentLicenseToCheckApprovedByKey, false, false);
-            for (String key : residentLicenseToCheckApprovedByKey.keySet()) {
-                License__c license = residentLicenseToCheckApprovedByKey.get(key);
-                if (license.id!=null) {
-                    logInfo('syncLicense', '[LICENSE UPDATE APPROVAL CRITERIA] update resident licenseId: ' + license.id + ' Key: ' + key);
-                    if (license.approved__c) {
-                    	licensesToApprove.add(license);
-                    }                   
-                }       
+    
+    if(!residentLicenseIds.isEmpty()) {
+         // set approved flag on resident license object, since not all fields are set by nipr integration, we have to do a separate update call
+        Map<String, License__c> residentLicenseToCheckApprovedByKey = checkLicenseApprovalCriteria(residentLicenseIds);
+        if (!residentLicenseToCheckApprovedByKey.isEmpty()) {
+                insertOrUpdateLicenses(residentLicenseToCheckApprovedByKey, false, false);
+                for (String key : residentLicenseToCheckApprovedByKey.keySet()) {
+                    License__c license = residentLicenseToCheckApprovedByKey.get(key);
+                    if (license.id!=null) {
+                        logInfo('syncLicense', '[LICENSE UPDATE APPROVAL CRITERIA] update resident licenseId: ' + license.id + ' Key: ' + key);
+                        if (license.approved__c) {
+                          licensesToApprove.add(license);
+                        }                   
+                    }       
+                }
             }
-        }
+        }    
+       
         
         logInfo('syncLicense', '[LICENSE STATS] total non resident licenses to create ' + nonresidentLicensesToCreateByKey.size());
         Set<Id> nonresidentLicenseIds = new Set<Id>();
@@ -206,21 +209,24 @@ public with sharing class NIPRLicenseSyncHelper {
                 }       
             }
         }
-        
+     
+     if(!nonresidentLicenseIds.isEmpty()) {
         // set approved flag on non resident license object, since not all fields are set by nipr integration, we have to file a separate update call
-		Map<String, License__c> nonresidentlicenseToCheckApprovedByKey = checkLicenseApprovalCriteria(nonresidentLicenseIds);
-		if (!nonresidentlicenseToCheckApprovedByKey.isEmpty()) {
-            insertOrUpdateLicenses(nonresidentlicenseToCheckApprovedByKey, false, false);
-            for (String key : nonresidentlicenseToCheckApprovedByKey.keySet()) {
-                License__c license = nonresidentlicenseToCheckApprovedByKey.get(key);
-                if (license.id!=null) {
-                    logInfo('syncLicense', '[LICENSE UPDATE APPROVAL CRITERIA] updated licenseId: ' + license.id + ' Key: ' + key);
-                    if (license.approved__c) {
-                    	licensesToApprove.add(license);
-                    }                   
-                }       
+        Map<String, License__c> nonresidentlicenseToCheckApprovedByKey = checkLicenseApprovalCriteria(nonresidentLicenseIds);
+        if (!nonresidentlicenseToCheckApprovedByKey.isEmpty()) {
+                insertOrUpdateLicenses(nonresidentlicenseToCheckApprovedByKey, false, false);
+                for (String key : nonresidentlicenseToCheckApprovedByKey.keySet()) {
+                    License__c license = nonresidentlicenseToCheckApprovedByKey.get(key);
+                    if (license.id!=null) {
+                        logInfo('syncLicense', '[LICENSE UPDATE APPROVAL CRITERIA] updated licenseId: ' + license.id + ' Key: ' + key);
+                        if (license.approved__c) {
+                          licensesToApprove.add(license);
+                        }                   
+                    }       
+                }
             }
-        }
+        }   
+        
         
         /* handle loa is not active case
         logInfo('syncLicense', 'Total loas to delete ' + loaToDelete.size());
@@ -249,8 +255,8 @@ public with sharing class NIPRLicenseSyncHelper {
             
             //this should not happen
             if (response==null) {
-            	String errorMessage = NIPRSyncError.errorMessageByType.get(NIPRSyncError.SyncError.NPN_NUMBER_NOT_FOUND);
-            	response = NIPRSyncApiResponse.getLicenseSyncResponse(key, false, NIPRSyncError.SyncError.RESPONSE_NOT_FOUND, errorMessage); 
+              String errorMessage = NIPRSyncError.errorMessageByType.get(NIPRSyncError.SyncError.NPN_NUMBER_NOT_FOUND);
+              response = NIPRSyncApiResponse.getLicenseSyncResponse(key, false, NIPRSyncError.SyncError.RESPONSE_NOT_FOUND, errorMessage); 
             }
             responses.add(response);
         }
@@ -259,131 +265,131 @@ public with sharing class NIPRLicenseSyncHelper {
     }
     
     public List<License__c> getLicensesToApprove() {
-    	return this.licensesToApprove;
+      return this.licensesToApprove;
     }
     
     public Integer getTotalFailures() {
-    	return this.totalFailures;
+      return this.totalFailures;
     }
     
     public Integer getTotalLOAFailures() {
-    	return this.totalLOAFailures;
+      return this.totalLOAFailures;
     }
     
     public Integer getTotalLicenses() {
-    	return this.totalLicenses;
+      return this.totalLicenses;
     }
      
     /** PRIVATE METHODS GOES HERE **/
-    private Map<String, License__c> checkLicenseApprovalCriteria(Set<Id> licenseIds) {  	        
+    private Map<String, License__c> checkLicenseApprovalCriteria(Set<Id> licenseIds) {            
         Set<String> licenseQueryFields = licenseFields.clone();
-    	licenseQueryFields.add(AppConfig.getAppNamespacedName('pending_approval__c'));
-    	for (License_Rule__c rule : this.ruleById.values()) {
-    		licenseQueryFields.add(rule.license_field__c.toLowerCase());
-    	}
-    	
-    	LicenseRuleHelper.enforceCRUDAndFLS(AppConfig.getAppNamespacedName('License__c'), licenseFields, 'query', false);
-    	licenseQueryFields.add(AppConfig.getAppNamespacedName('resident_license__r')+'.'+AppConfig.getAppNamespacedName('npn_number__c'));
-    	String licenseQueryTemplate = 'SELECT {0} FROM {1} WHERE id IN ({2})';
-    	String licenseFieldsStr = String.escapeSingleQuotes(String.join(new List<String>(licenseQueryFields), ','));
-	    String licenseQuery = String.format(licenseQueryTemplate, 
-	    									new String[]{
-	    										licenseFieldsStr, 
-	    										AppConfig.getAppNamespacedName('License__c'),
-	    										LicenseRuleHelper.setToStringWithQuotes(licenseIds)});
-    	logInfo('checkLicenseApprovalCriteria', 'LICENSE QUERY - ' + licenseQuery);
+      licenseQueryFields.add(AppConfig.getAppNamespacedName('pending_approval__c'));
+      for (License_Rule__c rule : this.ruleById.values()) {
+        licenseQueryFields.add(rule.license_field__c.toLowerCase());
+      }
+      
+      LicenseRuleHelper.enforceCRUDAndFLS(AppConfig.getAppNamespacedName('License__c'), licenseFields, 'query', false);
+      licenseQueryFields.add(AppConfig.getAppNamespacedName('resident_license__r')+'.'+AppConfig.getAppNamespacedName('npn_number__c'));
+      String licenseQueryTemplate = 'SELECT {0} FROM {1} WHERE id IN ({2})';
+      String licenseFieldsStr = String.escapeSingleQuotes(String.join(new List<String>(licenseQueryFields), ','));
+      String licenseQuery = String.format(licenseQueryTemplate, 
+                        new String[]{
+                          licenseFieldsStr, 
+                          AppConfig.getAppNamespacedName('License__c'),
+                          LicenseRuleHelper.setToStringWithQuotes(licenseIds)});
+      logInfo('checkLicenseApprovalCriteria', 'LICENSE QUERY - ' + licenseQuery);
     
-    	Map<String, License__c> licenseToCheckApprovedByKey = new Map<String, License__c>();
-    	try {
-    		List<License__c> licenses = Database.query(licenseQuery);
-    		for (License__c license : licenses) {
-    			String key = getNIPRLicenseKey(license);
-    			Boolean isApprovedBefore = license.approved__c;
-			    setLicenseApproved(license, key);
-			    if (isApprovedBefore && !license.approved__c) {
-			        license.pending_approval__c = false;
-			    }	 
-    			
-    			licenseToCheckApprovedByKey.put(key, license);
-    		}
-    	} catch (QueryException e) {
-    		String errorMessage = RuleValidator.errorMessageByType.get(RuleValidator.RuleError.LICENSE_QUERY_EXCEPTION);
-			throw new LicenseRuleException(String.format(errorMessage, new String[]{licenseFieldsStr}), e);
-    	}
+      Map<String, License__c> licenseToCheckApprovedByKey = new Map<String, License__c>();
+      try {
+        List<License__c> licenses = Database.query(licenseQuery);
+        for (License__c license : licenses) {
+          String key = getNIPRLicenseKey(license);
+          Boolean isApprovedBefore = license.approved__c;
+          setLicenseApproved(license, key);
+          if (isApprovedBefore && !license.approved__c) {
+              license.pending_approval__c = false;
+          }   
+          
+          licenseToCheckApprovedByKey.put(key, license);
+        }
+      } catch (QueryException e) {
+        String errorMessage = RuleValidator.errorMessageByType.get(RuleValidator.RuleError.LICENSE_QUERY_EXCEPTION);
+      throw new LicenseRuleException(String.format(errorMessage, new String[]{licenseFieldsStr}), e);
+      }
 
-	    return licenseToCheckApprovedByKey;
+      return licenseToCheckApprovedByKey;
     }
     
     private Boolean setLicenseApproved(License__c license, String key) {
         if (ruleLogic == null) {
-        	license.approved__c = true;
-        	license.missing_criteria__c = false;
-        	logInfo('setLicenseApproved', String.format('No approval criteria, license - {0} is approved', new String[]{key})); 
-       	
+          license.approved__c = true;
+          license.missing_criteria__c = false;
+          logInfo('setLicenseApproved', String.format('No approval criteria, license - {0} is approved', new String[]{key})); 
+         
         } else {
-        	String ruleLogicStr = this.ruleLogic.logic__c;
-			Set<String> ruleIdArray = this.ruleHelper.getRuleIdArray(ruleLogicStr);   
-			logInfo('setLicenseApproved', 'filter rule ids: ' + String.join(new List<String>(ruleIdArray), ','));			
-			
-			String logic = ruleLogicStr;
-			for (String ruleId : ruleIdArray) {
-				License_Rule__c rule = this.ruleById.get(ruleId);
-				Boolean result = false;
-				if (rule==null) {
-					String errorMessage = RuleValidator.errorMessageByType.get(RuleValidator.RuleError.RULE_NOT_FOUND);
-					throw new LicenseRuleException(String.format(errorMessage, new String[]{ 'License Filter Rule', ruleLogicStr, ruleId}));
-				} else {
-					Boolean isLicenseFilterRule = (rule.recordtypeId == LicenseRuleHelper.licenseFilterRuleRecordTypeId);			    					
-					if (isLicenseFilterRule){
-						result = ruleHelper.evaluateLicenseFilterRule(license, rule, this.objFieldsByName);
-						logInfo('setLicenseApproved', 'ruleId: '+ ruleId + ' - ' + result);
-					} else {
-						String errorMessage = RuleValidator.errorMessageByType.get(RuleValidator.RuleError.WRONG_RULE_TYPE);
-						throw new LicenseRuleException(String.format(errorMessage, new String[]{rule.recordtype.name, ruleLogic.recordtype.name}));
-					}
-				}
-				logic = logic.replace(ruleId, String.valueOf(result));
-			}
-			
-			logInfo('setLicenseApproved', 'BEFORE evaluate license rule ' + logic);
-			BooleanExpressionEvaluator licenseLogicBooleanEval = new BooleanExpressionEvaluator(logic); 
-			Boolean hasValidLicenseRule = licenseLogicBooleanEval.eval();
-			
-			if (hasValidLicenseRule) {
-				license.approved__c = true;
-        		license.missing_criteria__c = false;			
-				logInfo('setLicenseApproved', String.format('Approval criteria - {0}, license - {1} is approved', new String[]{ruleLogicStr, key})); 
+          String ruleLogicStr = this.ruleLogic.logic__c;
+      Set<String> ruleIdArray = this.ruleHelper.getRuleIdArray(ruleLogicStr);   
+      logInfo('setLicenseApproved', 'filter rule ids: ' + String.join(new List<String>(ruleIdArray), ','));      
+      
+      String logic = ruleLogicStr;
+      for (String ruleId : ruleIdArray) {
+        License_Rule__c rule = this.ruleById.get(ruleId);
+        Boolean result = false;
+        if (rule==null) {
+          String errorMessage = RuleValidator.errorMessageByType.get(RuleValidator.RuleError.RULE_NOT_FOUND);
+          throw new LicenseRuleException(String.format(errorMessage, new String[]{ 'License Filter Rule', ruleLogicStr, ruleId}));
+        } else {
+          Boolean isLicenseFilterRule = (rule.recordtypeId == LicenseRuleHelper.licenseFilterRuleRecordTypeId);                    
+          if (isLicenseFilterRule){
+            result = ruleHelper.evaluateLicenseFilterRule(license, rule, this.objFieldsByName);
+            logInfo('setLicenseApproved', 'ruleId: '+ ruleId + ' - ' + result);
+          } else {
+            String errorMessage = RuleValidator.errorMessageByType.get(RuleValidator.RuleError.WRONG_RULE_TYPE);
+            throw new LicenseRuleException(String.format(errorMessage, new String[]{rule.recordtype.name, ruleLogic.recordtype.name}));
+          }
+        }
+        logic = logic.replace(ruleId, String.valueOf(result));
+      }
+      
+      logInfo('setLicenseApproved', 'BEFORE evaluate license rule ' + logic);
+      BooleanExpressionEvaluator licenseLogicBooleanEval = new BooleanExpressionEvaluator(logic); 
+      Boolean hasValidLicenseRule = licenseLogicBooleanEval.eval();
+      
+      if (hasValidLicenseRule) {
+        license.approved__c = true;
+            license.missing_criteria__c = false;      
+        logInfo('setLicenseApproved', String.format('Approval criteria - {0}, license - {1} is approved', new String[]{ruleLogicStr, key})); 
         
-			} else {
-				license.approved__c = false;
-        		license.missing_criteria__c = true;     		
-				logInfo('setLicenseApproved', String.format('Approval criteria - {0}, license - {1} is not approved', new String[]{ruleLogicStr, key})); 
-			
-			}			
-		}
+      } else {
+        license.approved__c = false;
+            license.missing_criteria__c = true;         
+        logInfo('setLicenseApproved', String.format('Approval criteria - {0}, license - {1} is not approved', new String[]{ruleLogicStr, key})); 
+      
+      }      
+    }
        
         return license.approved__c;
     }
     
     private void logInfo(String method, String message) {
-    	LogUtils.logInfo('NIPRLicenseSyncHelper', method, message);
-    	this.reportBuilder.logInfoReport('NIPRLicenseSyncHelper', method, message);
+      LogUtils.logInfo('NIPRLicenseSyncHelper', method, message);
+      this.reportBuilder.logInfoReport('NIPRLicenseSyncHelper', method, message);
     }
     
     private void logError(String method, String message) {
-    	logInfo(method, message);
-    	this.reportBuilder.logErrorReport('NIPRLicenseSyncHelper', method, message);
+      logInfo(method, message);
+      this.reportBuilder.logErrorReport('NIPRLicenseSyncHelper', method, message);
     }
     
     private void init() {
         //key will be (npn number, state, effective date, license number)
         for (NIPRLicense nipr : this.niprLicenses) {
-        	String originalState = nipr.state;
-	        nipr.state = LicensingUtils.stateMap.get(nipr.state);	        	        
-	        if (nipr.state == null) {
-	           logInfo('init', '[LICENSE ERROR] not able to find state ' + originalState);
-	           continue;
-	        }                   
+          String originalState = nipr.state;
+          nipr.state = LicensingUtils.stateMap.get(nipr.state);                    
+          if (nipr.state == null) {
+             logInfo('init', '[LICENSE ERROR] not able to find state ' + originalState);
+             continue;
+          }                   
 
             this.npnNumbers.add(nipr.npnNumber);
             this.states.add(nipr.state);        
@@ -400,27 +406,27 @@ public with sharing class NIPRLicenseSyncHelper {
         }
         
         List<License_Rule_Logic__c> ruleLogics = [SELECT Id, Logic__c, Object__c, Filter_Rule__c, RecordTypeid, RecordType.Name
-													FROM License_Rule_Logic__c WHERE Object__c=:AppConfig.getAppNamespacedName('License__c')
-													AND isActive__c = true];
-		
-		if (!ruleLogics.isEmpty()) {
-			this.ruleLogic = ruleLogics.get(0);
-		}
-									
-		LicenseRuleHelper.enforceCRUDAndFLS(AppConfig.getAppNamespacedName('License_Rule__c'), new Set<String> {'Id', 'RecordTypeId', AppConfig.getAppNamespacedName('Object__c'), AppConfig.getAppNamespacedName('Field__c'), AppConfig.getAppNamespacedName('License_Field__c'), AppConfig.getAppNamespacedName('Operator__c'), AppConfig.getAppNamespacedName('Value__c')}, 'query', false);
-		
-		List<License_Rule__c> rules = [SELECT Id, RecordTypeId, Object__c, Field__c, License_Field__c, Operator__c, Value__c, RecordType.Name 
-    											FROM License_Rule__c WHERE Object__c=:AppConfig.getAppNamespacedName('License__c') and isActive__c=true];											
-    	this.ruleById = new Map<String, License_Rule__c>();
-    	
-    	LicenseRuleHelper.enforceCRUDAndFLS(AppConfig.getAppNamespacedName('License_Rule_Logic__c'), new Set<String> {'Id', AppConfig.getAppNamespacedName('Logic__c'), AppConfig.getAppNamespacedName('Object__c'), AppConfig.getAppNamespacedName('Filter_Rule__c'), 'RecordTypeid'}, 'query', false); 	
- 		
-    	for (License_Rule__c rule : rules) {
-    		this.ruleById.put(rule.id, rule);
-    	}
-    	
-    	this.objFieldsByName = this.ruleHelper.getObjFieldsByName(new Set<String>{AppConfig.getAppNamespacedName('License__c')}); 	
-	}
+                          FROM License_Rule_Logic__c WHERE Object__c=:AppConfig.getAppNamespacedName('License__c')
+                          AND isActive__c = true];
+    
+    if (!ruleLogics.isEmpty()) {
+      this.ruleLogic = ruleLogics.get(0);
+    }
+                  
+    LicenseRuleHelper.enforceCRUDAndFLS(AppConfig.getAppNamespacedName('License_Rule__c'), new Set<String> {'Id', 'RecordTypeId', AppConfig.getAppNamespacedName('Object__c'), AppConfig.getAppNamespacedName('Field__c'), AppConfig.getAppNamespacedName('License_Field__c'), AppConfig.getAppNamespacedName('Operator__c'), AppConfig.getAppNamespacedName('Value__c')}, 'query', false);
+    
+    List<License_Rule__c> rules = [SELECT Id, RecordTypeId, Object__c, Field__c, License_Field__c, Operator__c, Value__c, RecordType.Name 
+                          FROM License_Rule__c WHERE Object__c=:AppConfig.getAppNamespacedName('License__c') and isActive__c=true];                      
+      this.ruleById = new Map<String, License_Rule__c>();
+      
+      LicenseRuleHelper.enforceCRUDAndFLS(AppConfig.getAppNamespacedName('License_Rule_Logic__c'), new Set<String> {'Id', AppConfig.getAppNamespacedName('Logic__c'), AppConfig.getAppNamespacedName('Object__c'), AppConfig.getAppNamespacedName('Filter_Rule__c'), 'RecordTypeid'}, 'query', false);   
+     
+      for (License_Rule__c rule : rules) {
+        this.ruleById.put(rule.id, rule);
+      }
+      
+      this.objFieldsByName = this.ruleHelper.getObjFieldsByName(new Set<String>{AppConfig.getAppNamespacedName('License__c')});    
+  }
     
     /** Logic to handle incomplete license information in the system **/
     private void handleIncompleteLicenseUpdate(NIPRLicense nipr, Map<String, License__c> existingIncompleteLicenseByKey, List<NIPRLicense> completeLicenses, Set<Id> incompleteLicenseIds) {
@@ -428,7 +434,7 @@ public with sharing class NIPRLicenseSyncHelper {
         OwnerInfo ownerInfo = this.ownerInfoByNpnNumber.get(nipr.npnNumber);
         if (ownerInfo!=null) {
             if (nipr.state==null) {
-            	this.totalFailures += 1;
+              this.totalFailures += 1;
                 String errorMessage = NIPRSyncError.errorMessageByType.get(NIPRSyncError.SyncError.STATE_NOT_FOUND);
                 NIPRSyncApiResponse.LicenseSyncResponse response = NIPRSyncApiResponse.getLicenseSyncResponse(key, false, NIPRSyncError.SyncError.STATE_NOT_FOUND, errorMessage);
                 this.responseByKey.put(key, response);
@@ -454,8 +460,8 @@ public with sharing class NIPRLicenseSyncHelper {
                 }
             }
         } else {
-        	this.totalFailures += 1;
-        	String errorMessage = NIPRSyncError.errorMessageByType.get(NIPRSyncError.SyncError.NPN_NUMBER_NOT_FOUND);
+          this.totalFailures += 1;
+          String errorMessage = NIPRSyncError.errorMessageByType.get(NIPRSyncError.SyncError.NPN_NUMBER_NOT_FOUND);
             NIPRSyncApiResponse.LicenseSyncResponse response = NIPRSyncApiResponse.getLicenseSyncResponse(key, false, NIPRSyncError.SyncError.NPN_NUMBER_NOT_FOUND, errorMessage);
             this.responseByKey.put(key, response);
             logError('handleIncompleteLicenseUpdate', '[LICENSE ERROR] not able to match owner with npn number ' + nipr.npnNumber);
@@ -467,7 +473,7 @@ public with sharing class NIPRLicenseSyncHelper {
         OwnerInfo ownerInfo = this.ownerInfoByNpnNumber.get(nipr.npnNumber);
         if (ownerInfo!=null) {
             if (nipr.state==null) {
-            	this.totalFailures += 1;
+              this.totalFailures += 1;
                 String errorMessage = NIPRSyncError.errorMessageByType.get(NIPRSyncError.SyncError.STATE_NOT_FOUND);
                 NIPRSyncApiResponse.LicenseSyncResponse response = NIPRSyncApiResponse.getLicenseSyncResponse(key, false, NIPRSyncError.SyncError.STATE_NOT_FOUND, errorMessage);
                 this.responseByKey.put(key, response);
@@ -495,21 +501,21 @@ public with sharing class NIPRLicenseSyncHelper {
                     Date niprUpdateDate = nipr.niprUpdateDate;
                     Date latestNIPRUpdateDate = license.nipr_update_date__c;
                     if (latestNIPRUpdateDate!=null && niprUpdateDate!=null && niprUpdateDate<latestNIPRUpdateDate) {
-                    	this.totalFailures += 1;
-                    	String errorMessage = NIPRSyncError.errorMessageByType.get(NIPRSyncError.SyncError.STALE_DATA_FOUND);
-		                NIPRSyncApiResponse.LicenseSyncResponse response = NIPRSyncApiResponse.getLicenseSyncResponse(key, false, NIPRSyncError.SyncError.STALE_DATA_FOUND, errorMessage);
-		                this.responseByKey.put(key, response);
-		                logError('handleLicenseCreateOrUpdate', '[LICENSE ERROR] this license is already updated with more recent NIPR data - ' + key);
-		                            	
+                      this.totalFailures += 1;
+                      String errorMessage = NIPRSyncError.errorMessageByType.get(NIPRSyncError.SyncError.STALE_DATA_FOUND);
+                    NIPRSyncApiResponse.LicenseSyncResponse response = NIPRSyncApiResponse.getLicenseSyncResponse(key, false, NIPRSyncError.SyncError.STALE_DATA_FOUND, errorMessage);
+                    this.responseByKey.put(key, response);
+                    logError('handleLicenseCreateOrUpdate', '[LICENSE ERROR] this license is already updated with more recent NIPR data - ' + key);
+                                  
                     } else {
-                    	updateLicense(nipr, license, ownerInfo);
+                      updateLicense(nipr, license, ownerInfo);
                     }            
                 }   
             }
         } else {
-        	this.totalFailures += 1;
-        	String errorMessage = NIPRSyncError.errorMessageByType.get(NIPRSyncError.SyncError.NPN_NUMBER_NOT_FOUND);
-           	NIPRSyncApiResponse.LicenseSyncResponse response = NIPRSyncApiResponse.getLicenseSyncResponse(key, false, NIPRSyncError.SyncError.RESPONSE_NOT_FOUND, errorMessage); 
+          this.totalFailures += 1;
+          String errorMessage = NIPRSyncError.errorMessageByType.get(NIPRSyncError.SyncError.NPN_NUMBER_NOT_FOUND);
+             NIPRSyncApiResponse.LicenseSyncResponse response = NIPRSyncApiResponse.getLicenseSyncResponse(key, false, NIPRSyncError.SyncError.RESPONSE_NOT_FOUND, errorMessage); 
             
             this.responseByKey.put(key, response);
             logError('handleLicenseCreateOrUpdate', '[LICENSE ERROR] not able to match owner with npn number ' + nipr.npnNumber);
@@ -548,7 +554,7 @@ public with sharing class NIPRLicenseSyncHelper {
         
         List<Database.SaveResult> results = null;
         if (isInsert) {
-        	LicenseRuleHelper.enforceCRUDAndFLS(AppConfig.getAppNamespacedName('License__c'), licenseFields, 'insert', false);  
+          LicenseRuleHelper.enforceCRUDAndFLS(AppConfig.getAppNamespacedName('License__c'), licenseFields, 'insert', false);  
             results = Database.insert(licenses, false);
         } else {
             LicenseRuleHelper.enforceCRUDAndFLS(AppConfig.getAppNamespacedName('License__c'), licenseFields, 'update', false); 
@@ -564,7 +570,7 @@ public with sharing class NIPRLicenseSyncHelper {
            } else {
                 NIPRSyncApiResponse.LicenseSyncResponse response = NIPRSyncApiResponse.getLicenseSyncResponse(key, true, null, null);
                 if (addToResponse) {
-                	this.responseByKey.put(key, response);
+                  this.responseByKey.put(key, response);
                 }        
            }
         }
@@ -582,20 +588,20 @@ public with sharing class NIPRLicenseSyncHelper {
                 String key = failedKeys[i];
                 NIPRSyncApiResponse.LicenseSyncResponse response = null;
                 if(!saveResult.isSuccess()) {
-                   	String errorMessage = '';
-                   	for (Database.Error error : saveResult.getErrors()) {
-                      	errorMessage += error.getMessage() + '\n';
-                   	}
-                   	String message = String.format(NIPRSyncError.errorMessageByType.get(NIPRSyncError.SyncError.DML_ERROR), new String[]{errorMessage});
-            		response = NIPRSyncApiResponse.getLicenseSyncResponse(key, false, NIPRSyncError.SyncError.DML_ERROR, errorMessage); 
-					totalFailures += 1;
-                   	logError('insertOrUpdateLicenses', '[LICENSE ERROR ' + (addToResponse? '' : 'APPROVAL CRITERIA') + ']'+ message + ' license key: ' + key);                
+                     String errorMessage = '';
+                     for (Database.Error error : saveResult.getErrors()) {
+                        errorMessage += error.getMessage() + '\n';
+                     }
+                     String message = String.format(NIPRSyncError.errorMessageByType.get(NIPRSyncError.SyncError.DML_ERROR), new String[]{errorMessage});
+                response = NIPRSyncApiResponse.getLicenseSyncResponse(key, false, NIPRSyncError.SyncError.DML_ERROR, errorMessage); 
+          totalFailures += 1;
+                     logError('insertOrUpdateLicenses', '[LICENSE ERROR ' + (addToResponse? '' : 'APPROVAL CRITERIA') + ']'+ message + ' license key: ' + key);                
                
                 } else {
-                	response = NIPRSyncApiResponse.getLicenseSyncResponse(key, true, null, null);
+                  response = NIPRSyncApiResponse.getLicenseSyncResponse(key, true, null, null);
                 }
                 if (addToResponse) {
-                	this.responseByKey.put(key, response);
+                  this.responseByKey.put(key, response);
                 }
              }
          }
@@ -644,10 +650,10 @@ public with sharing class NIPRLicenseSyncHelper {
         if (!nipr.isActive) {
             logInfo('updateLicense', String.format('[LICENSE ERROR] license key - {0} with record id - {1} is now inactive', new String[]{key, license.id}));
             if(defaultSetting.ForceExpire__c != null && defaultSetting.ForceExpire__c ) {
-            	license.force_expire__c = true;
+                license.force_expire__c = true;
             }
             else {
-            	 license.force_expire__c = false;
+                 license.force_expire__c = false;
             } 
         } else {
             license.force_expire__c = false;
@@ -662,7 +668,7 @@ public with sharing class NIPRLicenseSyncHelper {
             license.npn_number__c = null;
         }
         
-       	license.number__c = nipr.licenseNumber;
+         license.number__c = nipr.licenseNumber;
         license.class__c = nipr.className;
         license.effective_date__c = nipr.effectiveDate;
         license.expiration_date__c = nipr.expirationDate;
