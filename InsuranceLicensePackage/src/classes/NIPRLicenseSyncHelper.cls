@@ -1,4 +1,4 @@
-\public with sharing class NIPRLicenseSyncHelper {
+ public with sharing class NIPRLicenseSyncHelper {
     
     private class OwnerInfo {
         String npnNumber;
