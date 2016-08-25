@@ -1,14 +1,14 @@
 public with sharing class AppConfig {
 
     public static String getAppNamespace() {
-    	//return 'licensingplus__';
-      String prefix = ComplianceController.class.getName().substringBefore('ComplianceController');
+      //return 'licensingplus__';
+      String prefix = getClassNamespace();
       if(prefix != ''){
-          prefix = prefix.substringBefore('.').toLowerCase() + '__';
+          prefix = prefix.toLowerCase() + '__';
       }
-      return  prefix;
+      return prefix;
     }
-    
+
     public static String getClassNamespace() {
       //return 'LicensingPlus';
       String prefix = ComplianceController.class.getName().substringBefore('ComplianceController');
@@ -19,7 +19,7 @@ public with sharing class AppConfig {
     }
     
     public static String getAppNamespacedName(String name) {
-    	return getAppNamespace() + name;
+      return getAppNamespace() + name;
     }
     
 }

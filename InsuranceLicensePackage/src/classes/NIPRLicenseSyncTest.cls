@@ -205,8 +205,6 @@ private class NIPRLicenseSyncTest {
         List<License__c> testResidentLicenses = allLicenses.get(0);
         List<License__c> testNonResidentLicenses = allLicenses.get(1);
         
-        getProcessName();
-        
         if (processName!=null) {
             // create an approved approval
             Approval.ProcessSubmitRequest licenseRequest1 = new Approval.ProcessSubmitRequest();
@@ -413,20 +411,17 @@ private class NIPRLicenseSyncTest {
         niprToUpdateWithOldNiprDate2.niprUpdateDate = niprUpdateDateOld;
     }
     
-    static void getProcessName() {
+    static void createNIPRSyncConfig() {
+    	NIPR_Sync_Config__c syncConfig = NIPR_Sync_Config__c.getOrgDefaults();
+        syncConfig.NIPR_Integration_User_Name__c = adminUser.username;
+        syncConfig.ForceExpire__c = true;
+    	
         List<ProcessDefinition> processes = [SELECT DeveloperName,Id,TableEnumOrId,Type FROM ProcessDefinition WHERE TableEnumOrId =: AppConfig.getAppNamespacedName('License__c') AND Type = 'Approval'];
         if (!processes.isEmpty()) {
             processName = processes.get(0).developerName;
-            
-            //insert custom setting if needed
-        }
-    }
-    
-    static void createNIPRSyncConfig() {
-        NIPR_Sync_Config__c syncConfig = NIPR_Sync_Config__c.getOrgDefaults();
-        syncConfig.NIPR_Integration_User_Name__c = adminUser.username;
-        syncConfig.ApprovalProcess__c = [SELECT Id,DeveloperName FROM ProcessDefinition WHERE TableEnumOrId = :AppConfig.getAppNamespacedName('License__c') AND Type = 'Approval' LIMIT 1].DeveloperName;
-        syncConfig.ForceExpire__c = true;
+            syncConfig.ApprovalProcess__c = processName;
+        }     
+        
         insert syncConfig;
     }
     

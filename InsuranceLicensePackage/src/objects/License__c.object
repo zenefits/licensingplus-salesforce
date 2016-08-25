@@ -147,6 +147,7 @@
     <fields>
         <fullName>Missing_Criteria__c</fullName>
         <defaultValue>false</defaultValue>
+        <deprecated>false</deprecated>
         <externalId>false</externalId>
         <label>Missing Criteria</label>
         <trackHistory>true</trackHistory>
@@ -156,6 +157,7 @@
     <fields>
         <fullName>NIPR_Manual_Override__c</fullName>
         <defaultValue>false</defaultValue>
+        <deprecated>false</deprecated>
         <description>if checked, nipr will ignore the updates on this record</description>
         <externalId>false</externalId>
         <label>NIPR Manual Override</label>
@@ -165,6 +167,7 @@
     </fields>
     <fields>
         <fullName>NIPR_Update_Date__c</fullName>
+        <deprecated>false</deprecated>
         <description>store the last modified time nipr touched the license record, DO NOT MANUALLY OVERRIDE IT.</description>
         <externalId>false</externalId>
         <label>NIPR Update Date</label>
@@ -526,6 +529,14 @@
     <label>Insurance License</label>
     <listViews>
         <fullName>All</fullName>
+        <columns>NAME</columns>
+        <columns>Approved__c</columns>
+        <columns>Class__c</columns>
+        <columns>Number__c</columns>
+        <columns>NIPR_Update_Date__c</columns>
+        <columns>NPN_Number__c</columns>
+        <columns>NPN_Number_Formula__c</columns>
+        <columns>LAST_UPDATE</columns>
         <filterScope>Everything</filterScope>
         <label>All</label>
     </listViews>
@@ -993,16 +1004,20 @@
         <fullName>License_Dates_required</fullName>
         <active>true</active>
         <errorConditionFormula>AND(
-    NOT(ISCHANGED(Resident_License__c)),
-    NOT(ISCHANGED(Force_Expire__c)),
-    NOT(ISBLANK(Number__c)),
+    AND(
+        NOT(ISCHANGED(Resident_License__c)),
+        NOT(ISCHANGED(Force_Expire__c)),
+        NOT(ISBLANK(Number__c)),
+        OR(
+           ISBLANK(Effective_Date__c),
+           ISBLANK(Expiration_Date__c)
+        )
+    ),
     OR(
-       ISBLANK(Effective_Date__c),
-       ISBLANK(Expiration_Date__c)
-       ),
-        OR(ISBLANK($Setup.NIPR_Sync_Config__c.NIPR_Integration_User_Name__c), 
-     LOWER($User.Username)!= LOWER($Setup.NIPR_Sync_Config__c.NIPR_Integration_User_Name__c))
-   )</errorConditionFormula>
+        ISBLANK($Setup.NIPR_Sync_Config__c.NIPR_Integration_User_Name__c), 
+        LOWER($User.Username)!= LOWER($Setup.NIPR_Sync_Config__c.NIPR_Integration_User_Name__c)
+    )
+)</errorConditionFormula>
         <errorDisplayField>Expiration_Date__c</errorDisplayField>
         <errorMessage>License Effective Date and Expiration Date are required</errorMessage>
     </validationRules>
@@ -1038,13 +1053,17 @@
         <fullName>Unable_to_edit_an_approved_license</fullName>
         <active>true</active>
         <errorConditionFormula>AND(
-    NOT(ISNEW()),
-    Approved__c,
-    NOT(ISCHANGED(Force_Expire__c)),
-    NOT(ISCHANGED(Approved__c)),
-    NOT(ISCHANGED(Resident_License__c)),
-    OR(ISBLANK($Setup.NIPR_Sync_Config__c.NIPR_Integration_User_Name__c), 
-     LOWER($User.Username)!= LOWER($Setup.NIPR_Sync_Config__c.NIPR_Integration_User_Name__c)) 
+   AND(
+        NOT(ISNEW()),
+        Approved__c,
+        NOT(ISCHANGED(Force_Expire__c)),
+        NOT(ISCHANGED(Approved__c)),
+        NOT(ISCHANGED(Resident_License__c))
+    ),
+    OR(
+        ISBLANK($Setup.NIPR_Sync_Config__c.NIPR_Integration_User_Name__c), 
+        LOWER($User.Username)!= LOWER($Setup.NIPR_Sync_Config__c.NIPR_Integration_User_Name__c)
+    )
 )</errorConditionFormula>
         <errorMessage>You can&apos;t edit an approved license</errorMessage>
     </validationRules>

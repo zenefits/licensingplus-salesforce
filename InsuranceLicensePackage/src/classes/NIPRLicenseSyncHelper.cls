@@ -1,4 +1,4 @@
- public with sharing class NIPRLicenseSyncHelper {
+public with sharing class NIPRLicenseSyncHelper {
     
     private class OwnerInfo {
         String npnNumber;
@@ -25,9 +25,9 @@
     private Set<Date> effectiveDates;
     private Set<String> licenseNumbers;
 
-  private Map<String, License_Rule__c> ruleById;
-  private License_Rule_Logic__c ruleLogic;
-  private Map<String, Map<String, Schema.SobjectField>> objFieldsByName;
+    private Map<String, License_Rule__c> ruleById;
+    private License_Rule_Logic__c ruleLogic;
+    private Map<String, Map<String, Schema.SobjectField>> objFieldsByName;
     private List<NIPRLicense> niprLicenses;
     private Map<String, License__c> residentLicensesToCreateByKey;
     private Map<String, License__c> nonresidentLicensesToCreateByKey;
@@ -56,7 +56,7 @@
         AppConfig.getAppNamespacedName('state__c')};
     
     public NIPRLicenseSyncHelper(List<NIPRLicense> niprLicenses, NIPRSyncReportBuilder reportBuilder, LicenseRuleHelper ruleHelper) {
-      this.reportBuilder = reportBuilder;
+    	this.reportBuilder = reportBuilder;
         this.niprLicenses = niprLicenses;
         this.ruleHelper = ruleHelper;
         
@@ -76,11 +76,11 @@
     }
     
     public List<NIPRSyncApiResponse.LicenseSyncResponse> syncLicenses() {
-      Set<String> licenseQueryFields = licenseFields.clone();
-      licenseQueryFields.add(AppConfig.getAppNamespacedName('status__c'));
+		Set<String> licenseQueryFields = licenseFields.clone();
+		licenseQueryFields.add(AppConfig.getAppNamespacedName('status__c'));
       
-      LicenseRuleHelper.enforceCRUDAndFLS(AppConfig.getAppNamespacedName('License__c'), licenseQueryFields, 'query', false);  
-      LicenseRuleHelper.enforceCRUDAndFLS(AppConfig.getAppNamespacedName('Line_of_Authority__c'), new Set<String>(), 'query', false);   
+		LicenseRuleHelper.enforceCRUDAndFLS(AppConfig.getAppNamespacedName('License__c'), licenseQueryFields, 'query', false);  
+		LicenseRuleHelper.enforceCRUDAndFLS(AppConfig.getAppNamespacedName('Line_of_Authority__c'), new Set<String>(), 'query', false);   
       
         List<License__c> existingIncompleteLicenses = [SELECT nipr_update_date__c, nipr_manual_override__c, ownerid, id, npn_number__c, number__c, resident_license__r.npn_number__c, effective_date__c, state__c,  (SELECT id, name FROM Lines_of_Authority__r) 
                                             FROM License__c WHERE (npn_number__c = null AND resident_license__r.npn_number__c=null) OR number__c = null OR effective_date__c = null];
