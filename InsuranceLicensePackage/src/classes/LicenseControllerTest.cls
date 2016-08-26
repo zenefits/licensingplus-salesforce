@@ -3,11 +3,11 @@ public class LicenseControllerTest {
     @testSetup
     public static void setup() {
         // setup LOA custom setting data
-        Lines_of_Authority__c health = new Lines_of_Authority__c(name = 'Health', loa_name__c = 'Health', type__c = 'Health');
-        Lines_of_Authority__c life = new Lines_of_Authority__c(name = 'Life', loa_name__c = 'Life', type__c = 'Life');
-        Lines_of_Authority__c property = new Lines_of_Authority__c(name = 'P&C1', loa_name__c = 'Property & Casualty', type__c = 'Property'); 
-        Lines_of_Authority__c casualty = new Lines_of_Authority__c(name = 'P&C2', loa_name__c = 'Property & Casualty', type__c = 'Casualty');            
-        insert new List<Lines_of_Authority__c>{health, life, property, casualty};           
+        Line_Of_Authority_Map__c health = new Line_Of_Authority_Map__c(name = 'Health', loa_name__c = 'Health', type__c = 'Health');
+        Line_Of_Authority_Map__c life = new Line_Of_Authority_Map__c(name = 'Life', loa_name__c = 'Life', type__c = 'Life');
+        Line_Of_Authority_Map__c property = new Line_Of_Authority_Map__c(name = 'P&C1', loa_name__c = 'Property & Casualty', type__c = 'Property'); 
+        Line_Of_Authority_Map__c casualty = new Line_Of_Authority_Map__c(name = 'P&C2', loa_name__c = 'Property & Casualty', type__c = 'Casualty');            
+        insert new List<Line_Of_Authority_Map__c>{health, life, property, casualty};           
     }
 
     public static testMethod void testGetIsAdmin() {        

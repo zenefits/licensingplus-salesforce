@@ -4,26 +4,24 @@
     <enableFeeds>false</enableFeeds>
     <fields>
         <fullName>LOA_Name__c</fullName>
-        <deprecated>false</deprecated>
         <externalId>false</externalId>
         <label>LOA Name</label>
         <length>255</length>
-        <required>true</required>
+        <required>false</required>
         <trackTrending>false</trackTrending>
         <type>Text</type>
         <unique>false</unique>
     </fields>
     <fields>
         <fullName>Type__c</fullName>
-        <deprecated>false</deprecated>
         <externalId>false</externalId>
         <label>Type</label>
         <length>250</length>
-        <required>true</required>
+        <required>false</required>
         <trackTrending>false</trackTrending>
         <type>Text</type>
         <unique>false</unique>
     </fields>
-    <label>Lines of Authority(Deprecated)</label>
-    <visibility>Protected</visibility>
+    <label>Line Of Authority Map</label>
+    <visibility>Public</visibility>
 </CustomObject>

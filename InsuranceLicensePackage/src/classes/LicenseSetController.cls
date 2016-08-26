@@ -32,8 +32,8 @@ public with sharing class LicenseSetController {
         }
         // end Field Level Security checks        
         
-        for (String loaSettingName : Lines_of_Authority__c.getAll().keyset()) {
-            Lines_of_Authority__c loaSetting = Lines_of_Authority__c.getInstance(loaSettingName);
+        for (String loaSettingName : Line_Of_Authority_Map__c.getAll().keyset()) {
+            Line_Of_Authority_Map__c loaSetting = Line_Of_Authority_Map__c.getInstance(loaSettingName);
             String loaName = loaSetting.loa_name__c.toLowerCase();
             Set<String> loaTypes = loaTypesByName.get(loaName) != null ? loaTypesByName.get(loaName) : new Set<String>();
             loaTypes.add(loaSetting.type__c);

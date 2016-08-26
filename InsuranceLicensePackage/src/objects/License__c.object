@@ -1014,8 +1014,8 @@
         )
     ),
     OR(
-        ISBLANK($Setup.NIPR_Sync_Config__c.NIPR_Integration_User_Name__c), 
-        LOWER($User.Username)!= LOWER($Setup.NIPR_Sync_Config__c.NIPR_Integration_User_Name__c)
+        ISBLANK($Setup.NIPR_Sync_Setting__c.NIPR_Integration_User_Name__c), 
+        LOWER($User.Username)!= LOWER($Setup.NIPR_Sync_Setting__c.NIPR_Integration_User_Name__c)
     )
 )</errorConditionFormula>
         <errorDisplayField>Expiration_Date__c</errorDisplayField>
@@ -1061,8 +1061,8 @@
         NOT(ISCHANGED(Resident_License__c))
     ),
     OR(
-        ISBLANK($Setup.NIPR_Sync_Config__c.NIPR_Integration_User_Name__c), 
-        LOWER($User.Username)!= LOWER($Setup.NIPR_Sync_Config__c.NIPR_Integration_User_Name__c)
+        ISBLANK($Setup.NIPR_Sync_Setting__c.NIPR_Integration_User_Name__c), 
+        LOWER($User.Username)!= LOWER($Setup.NIPR_Sync_Setting__c.NIPR_Integration_User_Name__c)
     )
 )</errorConditionFormula>
         <errorMessage>You can&apos;t edit an approved license</errorMessage>

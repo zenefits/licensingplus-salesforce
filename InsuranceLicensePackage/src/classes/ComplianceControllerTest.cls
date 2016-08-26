@@ -308,52 +308,52 @@ private class ComplianceControllerTest {
 
     static testmethod void testGetLinesOfAuth() {
         // setup LOA custom setting data
-        List<Lines_of_Authority__c> loaSettings = new List<Lines_of_Authority__c>();
-        Lines_of_Authority__c health = new Lines_of_Authority__c(name = 'Health', loa_name__c = 'Health', type__c = 'Health');
-        Lines_of_Authority__c life = new Lines_of_Authority__c(name = 'Life', loa_name__c = 'Life', type__c = 'Life');
-        Lines_of_Authority__c property = new Lines_of_Authority__c(name = 'P&C1', loa_name__c = 'Property & Casualty', type__c = 'Property'); 
-        Lines_of_Authority__c casualty = new Lines_of_Authority__c(name = 'P&C2', loa_name__c = 'Property & Casualty', type__c = 'Casualty');            
-        loaSettings.addAll(new List<Lines_of_Authority__c>{health, life, property, casualty});
+        List<Line_Of_Authority_Map__c> loaSettings = new List<Line_Of_Authority_Map__c>();
+        Line_Of_Authority_Map__c health = new Line_Of_Authority_Map__c(name = 'Health', loa_name__c = 'Health', type__c = 'Health');
+        Line_Of_Authority_Map__c life = new Line_Of_Authority_Map__c(name = 'Life', loa_name__c = 'Life', type__c = 'Life');
+        Line_Of_Authority_Map__c property = new Line_Of_Authority_Map__c(name = 'P&C1', loa_name__c = 'Property & Casualty', type__c = 'Property'); 
+        Line_Of_Authority_Map__c casualty = new Line_Of_Authority_Map__c(name = 'P&C2', loa_name__c = 'Property & Casualty', type__c = 'Casualty');            
+        loaSettings.addAll(new List<Line_Of_Authority_Map__c>{health, life, property, casualty});
         insert loaSettings;
 
         test.startTest();
-        List<Lines_of_Authority__c> loasFromController = ComplianceController.getLinesOfAuth();
+        List<Line_Of_Authority_Map__c> loasFromController = ComplianceController.getLinesOfAuth();
         test.stopTest();
 
-        system.assertEquals(Lines_of_Authority__c.getAll().size(), loasFromController.size());
+        system.assertEquals(Line_Of_Authority_Map__c.getAll().size(), loasFromController.size());
     }
 
     static testmethod void testDeleteLineOfAuth() {
         // setup LOA custom setting data
-        List<Lines_of_Authority__c> loaSettings = new List<Lines_of_Authority__c>();
-        Lines_of_Authority__c health = new Lines_of_Authority__c(name = 'Health', loa_name__c = 'Health', type__c = 'Health');
-        Lines_of_Authority__c life = new Lines_of_Authority__c(name = 'Life', loa_name__c = 'Life', type__c = 'Life');
-        Lines_of_Authority__c property = new Lines_of_Authority__c(name = 'P&C1', loa_name__c = 'Property & Casualty', type__c = 'Property'); 
-        Lines_of_Authority__c casualty = new Lines_of_Authority__c(name = 'P&C2', loa_name__c = 'Property & Casualty', type__c = 'Casualty');            
-        loaSettings.addAll(new List<Lines_of_Authority__c>{health, life, property, casualty});
+        List<Line_Of_Authority_Map__c> loaSettings = new List<Line_Of_Authority_Map__c>();
+        Line_Of_Authority_Map__c health = new Line_Of_Authority_Map__c(name = 'Health', loa_name__c = 'Health', type__c = 'Health');
+        Line_Of_Authority_Map__c life = new Line_Of_Authority_Map__c(name = 'Life', loa_name__c = 'Life', type__c = 'Life');
+        Line_Of_Authority_Map__c property = new Line_Of_Authority_Map__c(name = 'P&C1', loa_name__c = 'Property & Casualty', type__c = 'Property'); 
+        Line_Of_Authority_Map__c casualty = new Line_Of_Authority_Map__c(name = 'P&C2', loa_name__c = 'Property & Casualty', type__c = 'Casualty');            
+        loaSettings.addAll(new List<Line_Of_Authority_Map__c>{health, life, property, casualty});
         insert loaSettings;
 
         test.startTest();
         ComplianceController.deleteLineOfAuth(health);
         test.stopTest();
 
-        System.assertEquals(loaSettings.size() - 1, Lines_of_Authority__c.getAll().size());
+        System.assertEquals(loaSettings.size() - 1, Line_Of_Authority_Map__c.getAll().size());
     }    
 
     static testmethod void testInsertLinesOfAuth() {
         // setup LOA custom setting data
-        List<Lines_of_Authority__c> loaSettings = new List<Lines_of_Authority__c>();
-        Lines_of_Authority__c health = new Lines_of_Authority__c(name = 'Health', loa_name__c = 'Health', type__c = 'Health');
-        Lines_of_Authority__c life = new Lines_of_Authority__c(name = 'Life', loa_name__c = 'Life', type__c = 'Life');
-        Lines_of_Authority__c property = new Lines_of_Authority__c(name = 'P&C1', loa_name__c = 'Property & Casualty', type__c = 'Property'); 
-        Lines_of_Authority__c casualty = new Lines_of_Authority__c(name = 'P&C2', loa_name__c = 'Property & Casualty', type__c = 'Casualty');            
-        loaSettings.addAll(new List<Lines_of_Authority__c>{health, life, property, casualty});
+        List<Line_Of_Authority_Map__c> loaSettings = new List<Line_Of_Authority_Map__c>();
+        Line_Of_Authority_Map__c health = new Line_Of_Authority_Map__c(name = 'Health', loa_name__c = 'Health', type__c = 'Health');
+        Line_Of_Authority_Map__c life = new Line_Of_Authority_Map__c(name = 'Life', loa_name__c = 'Life', type__c = 'Life');
+        Line_Of_Authority_Map__c property = new Line_Of_Authority_Map__c(name = 'P&C1', loa_name__c = 'Property & Casualty', type__c = 'Property'); 
+        Line_Of_Authority_Map__c casualty = new Line_Of_Authority_Map__c(name = 'P&C2', loa_name__c = 'Property & Casualty', type__c = 'Casualty');            
+        loaSettings.addAll(new List<Line_Of_Authority_Map__c>{health, life, property, casualty});
 
         test.startTest();
         ComplianceController.insertLinesOfAuth(loaSettings);
         test.stopTest();
 
-        System.assertEquals(loaSettings.size(), Lines_of_Authority__c.getAll().size());
+        System.assertEquals(loaSettings.size(), Line_Of_Authority_Map__c.getAll().size());
     }      
 
     static testmethod void testGetChecklist() {

@@ -412,7 +412,7 @@ private class NIPRLicenseSyncTest {
     }
     
     static void createNIPRSyncConfig() {
-    	NIPR_Sync_Config__c syncConfig = NIPR_Sync_Config__c.getOrgDefaults();
+    	NIPR_Sync_Setting__c syncConfig = NIPR_Sync_Setting__c.getOrgDefaults();
         syncConfig.NIPR_Integration_User_Name__c = adminUser.username;
         syncConfig.ForceExpire__c = true;
     	

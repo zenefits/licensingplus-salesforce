@@ -1,7 +1,7 @@
 public with sharing class NIPRSyncService {
     
     private static final Integer BATCH_SIZE = 200;
-    private NIPR_Sync_Config__c defaultSetting = NIPR_Sync_Config__c.getOrgDefaults() ;
+    private NIPR_Sync_Setting__c defaultSetting = NIPR_Sync_Setting__c.getOrgDefaults() ;
     public NIPRSyncService() {}
     
     public List<NIPRSyncApiResponse.LicenseSyncResponse> syncLicenses(List<NIPRLicense> niprLicenses) {

@@ -101,6 +101,22 @@
         <type>Checkbox</type>
     </fields>
     <label>License Rule Logic</label>
+    <listViews>
+        <fullName>All1</fullName>
+        <filterScope>Everything</filterScope>
+        <label>All</label>
+    </listViews>
+    <listViews>
+        <fullName>all</fullName>
+        <columns>NAME</columns>
+        <columns>isActive__c</columns>
+        <columns>Object__c</columns>
+        <columns>Logic__c</columns>
+        <columns>Filter_Rule__c</columns>
+        <columns>CREATEDBY_USER</columns>
+        <filterScope>Everything</filterScope>
+        <label>all</label>
+    </listViews>
     <nameField>
         <label>License Rule Logic Name</label>
         <type>Text</type>

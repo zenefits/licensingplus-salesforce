@@ -22,17 +22,17 @@ public with sharing class ComplianceController {
     private static final LicenseRuleHelper ruleHelper = new LicenseRuleHelper();
     
     @RemoteAction
-    public static List<Lines_of_Authority__c> getLinesOfAuth( ) {
-      return [SELECT name, loa_name__c, type__c FROM Lines_of_Authority__c];
+    public static List<Line_of_Authority_Map__c> getLinesOfAuth( ) {
+      return [SELECT name, loa_name__c, type__c FROM Line_of_Authority_Map__c];
     }
 
     @RemoteAction
-    public static void deleteLineOfAuth( Lines_of_Authority__c lineOfAuth) {
+    public static void deleteLineOfAuth( Line_of_Authority_Map__c lineOfAuth) {
       delete lineOfAuth;
     }
 
     @RemoteAction
-    public static List<Lines_of_Authority__c> insertLinesOfAuth( List<Lines_of_Authority__c> linesOfAuth ) {
+    public static List<Line_of_Authority_Map__c> insertLinesOfAuth( List<Line_of_Authority_Map__c> linesOfAuth ) {
       insert linesOfAuth;
       return getLinesOfAuth();
     }
@@ -179,7 +179,7 @@ public with sharing class ComplianceController {
     @RemoteAction
     public static Map<String,Object> getApprovalCriteriaConfig() {
         Map<String,Object> criteriaMap = new Map<String,Object>();
-        NIPR_Sync_Config__c  configSetting = NIPR_Sync_Config__c.getOrgDefaults();
+        NIPR_Sync_Setting__c  configSetting = NIPR_Sync_Setting__c.getOrgDefaults();
         if(configSetting.id == null) {
             insert configSetting;
         }
@@ -189,11 +189,11 @@ public with sharing class ComplianceController {
     }
     
      @RemoteAction
-    public static void saveApprovalCriteriaConfig(NIPR_Sync_Config__c niprSyncConfig,LicenseRuleSetResult licenseResult) {
+    public static void saveApprovalCriteriaConfig(NIPR_Sync_Setting__c niprSyncConfig,LicenseRuleSetResult licenseResult) {
         try {
         	// save nipr sync config
 	        if(niprSyncConfig != null) {
-	            NIPR_Sync_Config__c defaultSetting = NIPR_Sync_Config__c.getOrgDefaults();
+	            NIPR_Sync_Setting__c defaultSetting = NIPR_Sync_Setting__c.getOrgDefaults();
 	            if(!String.isBlank(niprSyncConfig.NIPR_Integration_User_Name__c)) {
 	                defaultSetting.NIPR_Integration_User_Name__c = niprSyncConfig.NIPR_Integration_User_Name__c;
 	            }

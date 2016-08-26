@@ -17,7 +17,7 @@ public with sharing class NIPRLicenseSyncHelper {
     
     private final NIPRSyncReportBuilder reportBuilder;
     private final LicenseRuleHelper ruleHelper;
-    private NIPR_Sync_Config__c defaultSetting = NIPR_Sync_Config__c.getOrgDefaults();
+    private NIPR_Sync_Setting__c defaultSetting = NIPR_Sync_Setting__c.getOrgDefaults();
    
      // used for existing licenses matching
     private Set<String> npnNumbers;
