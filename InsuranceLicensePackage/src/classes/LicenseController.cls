@@ -44,6 +44,7 @@ public with sharing class LicenseController {
 	        AppConfig.getAppNamespacedName('Class__c'),
 	        AppConfig.getAppNamespacedName('NPN_Number__c'),
 	        AppConfig.getAppNamespacedName('Number__c'),
+	        AppConfig.getAppNamespacedName('Status__c'),
 	        AppConfig.getAppNamespacedName('Effective_Date__c'),
 	        AppConfig.getAppNamespacedName('Expiration_Date__c')
 	    };
