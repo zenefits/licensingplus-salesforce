@@ -63,6 +63,21 @@
         <triggerType>onCreateOrTriggeringUpdate</triggerType>
     </rules>
     <rules>
+        <fullName>License Missing Criteria</fullName>
+        <active>false</active>
+        <criteriaItems>
+            <field>License__c.Missing_Criteria__c</field>
+            <operation>equals</operation>
+            <value>True</value>
+        </criteriaItems>
+        <criteriaItems>
+            <field>License__c.Status__c</field>
+            <operation>notEqual</operation>
+            <value>Expired</value>
+        </criteriaItems>
+        <triggerType>onCreateOrTriggeringUpdate</triggerType>
+    </rules>
+    <rules>
         <fullName>Populate Manager Email</fullName>
         <actions>
             <name>Populate_Manager_Email</name>
