@@ -10,9 +10,9 @@
     <script>
       var NAMESPACE_PREFIX = '{!namespace}';
       var CLASS_NAMESPACE = '{!classNamespace}';
-      var CLASS_PREFIX = CLASS_NAMESPACE + '.';
-    	StaticResource = {};
-    	StaticResource.CONFIGURATION_LOA = "{!URLFOR($Resource.loa_configuration, 'loa_configuration.csv')}";
+      var CLASS_PREFIX = CLASS_NAMESPACE!=='' ?  CLASS_NAMESPACE + '.' : CLASS_NAMESPACE;
+   	  StaticResource = {};
+      StaticResource.CONFIGURATION_LOA = "{!URLFOR($Resource.loa_configuration, 'loa_configuration.csv')}";
     </script>
     <script src="{!URLFOR($Resource.license_admin_js)}" type="text/javascript"></script>
   </body>

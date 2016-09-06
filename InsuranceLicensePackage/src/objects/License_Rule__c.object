@@ -509,10 +509,10 @@
     IF(
       OR(
         ISBLANK(Field__c),
-        LOWER(License_Field__c)&lt;&gt;&apos;state__c&apos;,
+        LOWER(License_Field__c)&lt;&gt;&apos;licensingplus__state__c&apos;,
         TEXT(Operator__c)&lt;&gt;&apos;equals&apos;
       ), true, false), false)</errorConditionFormula>
-        <errorMessage>For License state rule, you must specify field and set license field to &apos;State__c&apos; and operator to &apos;equals&apos;</errorMessage>
+        <errorMessage>For License state rule, you must specify field and set license field to &apos;LicensingPlus__State__c&apos; and operator to &apos;equals&apos;</errorMessage>
     </validationRules>
     <validationRules>
         <fullName>Resident_License_Rule</fullName>
