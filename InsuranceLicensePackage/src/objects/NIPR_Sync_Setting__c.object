@@ -4,6 +4,7 @@
     <enableFeeds>false</enableFeeds>
     <fields>
         <fullName>ApprovalProcess__c</fullName>
+        <deprecated>false</deprecated>
         <externalId>false</externalId>
         <label>ApprovalProcess</label>
         <length>255</length>
@@ -15,6 +16,7 @@
     <fields>
         <fullName>ForceExpire__c</fullName>
         <defaultValue>false</defaultValue>
+        <deprecated>false</deprecated>
         <externalId>false</externalId>
         <label>ForceExpire</label>
         <trackTrending>false</trackTrending>
@@ -22,6 +24,7 @@
     </fields>
     <fields>
         <fullName>NIPR_Integration_User_Name__c</fullName>
+        <deprecated>false</deprecated>
         <externalId>false</externalId>
         <label>NIPR Integration User Name</label>
         <length>255</length>
