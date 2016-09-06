@@ -1,6 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Workflow xmlns="http://soap.sforce.com/2006/04/metadata">
     <alerts>
+        <fullName>Insurance_License_Missing_Criteria</fullName>
+        <description>Insurance License Missing Criteria</description>
+        <protected>false</protected>
+        <recipients>
+            <type>owner</type>
+        </recipients>
+        <senderType>CurrentUser</senderType>
+        <template>License_Templates/Insurance_License_Missing_Criteria</template>
+    </alerts>
+    <alerts>
         <fullName>License_Expiring_in_N_days</fullName>
         <description>License Expiring in N days</description>
         <protected>false</protected>
