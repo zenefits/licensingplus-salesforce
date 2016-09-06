@@ -499,7 +499,13 @@
         NOT(ISBLANK(Expiration_Date__c)),
          /* TRUE */
          &quot;Expired&quot;,
-         &quot;Incomplete&quot;
+      
+          /* FALSE */
+          IF(
+             Approved__c = True,
+            &quot;Active&quot;, 
+            &quot;Incomplete&quot;
+           )
         )
       ),
       
