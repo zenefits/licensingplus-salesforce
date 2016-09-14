@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<EmailTemplate xmlns="http://soap.sforce.com/2006/04/metadata">
+    <available>true</available>
+    <encodingKey>ISO-8859-1</encodingKey>
+    <name>License Expires on Expiration Date</name>
+    <style>none</style>
+    <subject>URGENT: Your {!License__c.State__c} license expiring on {!LicensingPlus__License__c.Expiration__Date__c}</subject>
+    <textOnly>Please renew your {!License__c.State__c} license as soon as possible. It expires on {!License__c.Expiration_Date__c}.
+
+{!License__c.Link}</textOnly>
+    <type>custom</type>
+</EmailTemplate>

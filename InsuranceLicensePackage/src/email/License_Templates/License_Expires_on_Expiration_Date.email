@@ -1,0 +1,6 @@
+<p>
+Please renew your {!License__c.State__c} license as soon as possible. It expires on {!License__c.Expiration_Date__c}.
+</p>
+<p>
+{!License__c.Link}
+</p>

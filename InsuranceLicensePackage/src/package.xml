@@ -43,7 +43,7 @@
     <types>
         <members>License_Templates</members>
         <members>License_Templates/Insurance_License_Missing_Criteria</members>
-        <members>License_Templates/License_Expires_in_N_days</members>
+        <members>License_Templates/License_Expires_on_Expiration_Date</members>
         <members>License_Templates/Populate_License</members>
         <name>EmailTemplate</name>
     </types>
