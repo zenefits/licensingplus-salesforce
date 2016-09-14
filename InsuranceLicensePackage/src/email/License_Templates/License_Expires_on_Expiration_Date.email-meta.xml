@@ -5,7 +5,9 @@
     <name>License Expires on Expiration Date</name>
     <style>none</style>
     <subject>URGENT: Your {!License__c.State__c} license expiring on {!LicensingPlus__License__c.Expiration__Date__c}</subject>
-    <textOnly>Please renew your {!License__c.State__c} license as soon as possible. It expires on {!License__c.Expiration_Date__c}.
+    <textOnly>Hi {!License__c.OwnerFullName},
+
+Please renew your {!License__c.State__c} license as soon as possible. It expires on {!License__c.Expiration_Date__c}.
 
 {!License__c.Link}</textOnly>
     <type>custom</type>
