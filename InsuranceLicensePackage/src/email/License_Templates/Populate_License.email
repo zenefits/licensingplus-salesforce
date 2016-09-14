@@ -1,0 +1,7 @@
+Hi {!License__c.OwnerFirstName},
+
+It has been a few days since you applied for your {!License__c.State__c} license. We need to have the actual license number which should be available now. Please find and update SFDC with your license number and expiration date.
+
+{!License__c.Link}
+
+Thank you!
