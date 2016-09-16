@@ -1,8 +1,9 @@
 import React, { Component } from 'react';
 import { Link } from 'react-router';
+import { connect } from 'react-redux';
 import { EMBED_VIDEO_LINK } from '../constants/constants';
 
-class Extend extends Component {
+export class Extend extends Component {
   constructor(props) {
     super(props)
   }
@@ -12,7 +13,7 @@ class Extend extends Component {
     trigger TestValidationTrigger on TestCustomObject__c (after insert, after update) {
       if (trigger.isAfter) {
         if (trigger.isInsert || trigger.isUpdate) {
-          LicensingUtils.checkSObjectLicenseRules(trigger.newMap, \'TestCustomObject__c\');
+          LicensingPlus.LicensingUtils.checkSObjectLicenseRules(trigger.newMap, \'TestCustomObject__c\');
         }
       }
     }`
@@ -21,6 +22,13 @@ class Extend extends Component {
         {code}
       </pre>
     );
+  }
+
+  renderLink() {
+    let theLink = (this.props.isMaintainanceMode) ? '/checklistcomplete' : '/compliancechecklist';
+    return (
+      <Link to={theLink} className="welcome-get-started-btn">Go Back to Checklist</Link>
+    )
   }
 
   render() {
@@ -55,7 +63,7 @@ class Extend extends Component {
           <div className='row welcome-main-row'>
             <div className="col-md-12">
               <div className="welcom-btn-box">
-                <Link to='/checklist' className="welcome-get-started-btn">Go Back to Checklist</Link>
+                {this.renderLink()}
               </div>
             </div>
           </div>
@@ -65,5 +73,18 @@ class Extend extends Component {
   }
 }
 
+const mapStateToProps = (state) => {
+    return {
+        isMaintainanceMode: state.isMaintainanceMode
+    };
+}
 
-export default Extend
+const mapDispatchToProps = (dispatch) => {
+    return {
+    }
+}
+
+export default connect(
+    mapStateToProps,
+    mapDispatchToProps
+)(Extend)

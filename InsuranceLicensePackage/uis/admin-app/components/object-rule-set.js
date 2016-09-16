@@ -6,9 +6,11 @@ import moment from 'moment';
 import Toggle from 'react-toggle'
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
-
+import {OBJECTPREFIX } from '../constants/constants';
 import * as constants from '../constants/constants';
 import Utils from '../utils/utils';
+import { Tooltip } from 'reactstrap';
+
 import {
   addAdvancedRule,
   addComplianceRule,
@@ -28,8 +30,9 @@ import {
   toggleChangeResidentRule,
   showAdvancedRule
 } from '../actions/object-rule-set-actions';
+import Sidebar from './sidebar.container';
 
-class ObjectRuleSet extends Component {
+export class ObjectRuleSet extends Component {
 
   constructor(props) {
     super(props);
@@ -69,16 +72,26 @@ class ObjectRuleSet extends Component {
     this.toggleChangeResidentRule = this.toggleChangeResidentRule.bind(this);
     this.toggleShowAdvancedRule = this.toggleShowAdvancedRule.bind(this);
     this.validate = this.validate.bind(this);
+    this.toggle = this.toggle.bind(this);
+    this.state = {
+      tooltipOpen: false
+    };
   }
 
   componentWillMount() {
     this.props.getSobjectWithFields(this.props.params.sobjectname);
-    this.props.getLicenseFields('licensingplus__license__c');
+    this.props.getLicenseFields(OBJECTPREFIX + 'license__c');
     this.props.getLicenseRuleSetResult(this.props.params.sobjectname);
   }
 
   componentWillUnmount() {
     this.props.clearState();
+  }
+
+  toggle() {
+    this.setState({
+      tooltipOpen: !this.state.tooltipOpen
+    });
   }
 
   saveLicenseRuleSetResult(event) {
@@ -113,11 +126,11 @@ class ObjectRuleSet extends Component {
   renderSubmit() {
     if (this.props.errors) {
       return (
-        <input className='btn btn-orange' type='button' disabled={true} onClick={this.saveLicenseRuleSetResult.bind(this) } value='Save' />
+        <input className='btn btn-orange' type='button' disabled={true} onClick={this.saveLicenseRuleSetResult.bind(this) }  value={this.props.isMaintainanceMode ? 'Save' : 'Save & Next'} />
       );
     } else {
-      return (
-        <input className='btn btn-orange' type='button' disabled={this.props.isReadOnly} onClick={this.saveLicenseRuleSetResult.bind(this) } value='Save' />
+      return (        
+        <input className='btn btn-orange' type='button' disabled={this.props.isReadOnly} onClick={this.saveLicenseRuleSetResult.bind(this) } value={this.props.isMaintainanceMode ? 'Save' : 'Save & Next'} />
       );
     }
   }
@@ -136,7 +149,7 @@ class ObjectRuleSet extends Component {
       return (
         <div className="alert alert-danger toast" >
           <a onClick={this.props.hideToast.bind(null) }>Dismiss</a>
-          <strong className='glyphicon glyphicon-alert'></strong> Something went wrong
+          <strong className='fa fa-exclamation-triangle'></strong> Something went wrong
         </div>
       );
     }
@@ -166,15 +179,15 @@ class ObjectRuleSet extends Component {
     var error = this.props.errors;
     var value;
 
-    if (colName === 'licensingplus__field__c') {
+    if (colName === OBJECTPREFIX + 'field__c') {
       value = event.target.value;
       valueType = this.props.sobject.fields[value];
       error = (_.trim(value) === '') ? true : false;
-    } else if (colName === 'licensingplus__operator__c') {
+    } else if (colName === OBJECTPREFIX + 'operator__c') {
       value = event.target.value;
       valueType = this.props.sobject.fields[fieldValue];
       error = (_.trim(value) === '') ? true : false;
-    } else if (colName === 'licensingplus__value__c') {
+    } else if (colName === OBJECTPREFIX + 'value__c') {
       valueType = this.props.sobject.fields[fieldValue];
       switch (valueType) {
         case 'BOOLEAN_FIELD':
@@ -230,11 +243,15 @@ class ObjectRuleSet extends Component {
   renderAdvancedFields() {
     var options = [<option key={'Field'} value=''>Field</option>];
     return options.concat(
-      Object.keys(this.props.sobject.fields).map((key) => {
-        return (
-          <option key={key} value={key}>{key}</option>
-        );
-      })
+      _.chain(this.props.sobject.fields)
+        .keys()
+        .sortBy((key) => {return key})
+        .map((key) => {
+          return (
+            <option key={key} value={key}>{key}</option>
+          );
+        })
+        .value()
     );
   }
 
@@ -242,13 +259,18 @@ class ObjectRuleSet extends Component {
     var fieldType = this.props.licenseSobject.fields[valueType];
     var options = [<option key={'Field'} value=''>Field</option>];
     return options.concat(
-      _.map(this.props.sobject.fields, (value, key) => {
-        if (value === fieldType) {
-          return (
-            <option key={key} value={key}>{_.capitalize(this.props.params.sobjectname) }.{key}</option>
-          );
-        }
-      })
+      _.chain(this.props.sobject.fields)
+        .keys()
+        .sortBy((key) => {return key})
+        .map((key) => {
+          let keyType = this.props.sobject.fields[key];
+          if (keyType === fieldType) {
+            return (
+              <option key={key} value={key}>{_.capitalize(this.props.params.sobjectname) }.{key}</option>
+            )
+          }
+        })
+        .value()
     );
   }
 
@@ -267,11 +289,15 @@ class ObjectRuleSet extends Component {
   renderComplianceFields() {
     var options = [<option key={'Field'} value=''>Field</option>];
     return options.concat(
-      Object.keys(this.props.licenseSobject.fields).map((key, value) => {
-        return (
-          <option key={key} value={key}>{key}</option>
-        );
-      })
+      _.chain(this.props.licenseSobject.fields)
+        .keys()
+        .sortBy((key) => {return key})
+        .map((key) => {
+          return (
+            <option key={key} value={key}>{key}</option>
+          );
+        })
+        .value()
     );
   }
 
@@ -294,41 +320,47 @@ class ObjectRuleSet extends Component {
     var options = [<option key={'Field'} value=''>Field</option>];
     return (
       options.concat(
-        _.map(this.props.sobject.fields, (value, key) => {
-          if (value === 'STRING_FIELD') {
+        _.chain(this.props.sobject.fields)
+        .keys()
+        .sortBy((key) => {return key})
+        .map((key) => {
+          let keyType = this.props.sobject.fields[key];
+          if (keyType === 'STRING_FIELD') {
             return (
-              <option key={key} value={key}>{_.capitalize(this.props.params.sobjectname) }.{key}</option>
-            )
+              <option key={key} value={key}>{key}</option>
+            );
           }
         })
+        .value()
       )
     )
   }
 
   renderStateRule() {
     let stateRule = this.props.stateRule;
-    if (stateRule && stateRule.licensingplus__license_field__c) {
-      var fieldClassname = (stateRule.licensingplus__field__c === '') ? 'form-group has-error' : ' form-group';
+    //let OBJECTPREFIX = OBJECTPREFIX;
+    if (stateRule && stateRule[OBJECTPREFIX + 'license_field__c']) {
+      var fieldClassname = (stateRule[OBJECTPREFIX + 'field__c'] === '') ? 'form-group has-error' : ' form-group';
       return (
         <tr key={0}>
           <td></td>
           <td>
             <div className='form-group'>
-              <select className='form-control' value={stateRule.licensingplus__license_field__c} name='licensingplus__license_field__c' disabled={true}>
-                <option value={stateRule.licensingplus__license_field__c}>{stateRule.licensingplus__license_field__c}</option>
+              <select className='form-control' value={stateRule[OBJECTPREFIX + 'license_field__c']} name={OBJECTPREFIX + 'license_field__c'} disabled={true}>
+                <option value={stateRule[OBJECTPREFIX + 'license_field__c']}>{stateRule[OBJECTPREFIX + 'license_field__c']}</option>
               </select>
             </div>
           </td>
           <td>
             <div className='form-group'>
-              <select className='form-control' value={stateRule.licensingplus__operator__c} name='licensingplus__operator__c' disabled={true}>
-                <option value={stateRule.licensingplus__operator__c}>{stateRule.licensingplus__operator__c}</option>
+              <select className='form-control' value={stateRule[OBJECTPREFIX + 'operator__c']} name={OBJECTPREFIX + 'operator__c'} disabled={true}>
+                <option value={stateRule[OBJECTPREFIX + 'operator__c']}>{stateRule[OBJECTPREFIX + 'operator__c']}</option>
               </select>
             </div>
           </td>
           <td>
             <div className={fieldClassname}>
-              <select className='form-control' disabled={this.props.isReadOnly} value={stateRule.licensingplus__field__c} onChange={this.handleStateRuleChange.bind(null) } name='licensingplus__field__c'>
+              <select className='form-control' disabled={this.props.isReadOnly} value={stateRule[OBJECTPREFIX + 'field__c']} onChange={this.handleStateRuleChange.bind(null) } name={OBJECTPREFIX + 'field__c'}>
                 {this.renderStateRuleFields() }
               </select>
             </div>
@@ -345,29 +377,29 @@ class ObjectRuleSet extends Component {
       let fieldInput;
       let operatorInput;
       return this.props.complianceRulesList.map((item, index) => {
-        var licClassname = !this.validate(item.licensingplus__license_field__c) ? 'form-group has-error' : ' form-group';
+        var licClassname = !this.validate(item[OBJECTPREFIX + 'license_field__c']) ? 'form-group has-error' : ' form-group';
         licenseInput = (
           <div className={licClassname} >
-            <select className='form-control' disabled={this.props.isReadOnly} value={item.licensingplus__license_field__c} name='licensingplus__license_field__c' onChange={this.handleComplianceChange.bind(null, index, '0', true) }>
+            <select className='form-control' disabled={this.props.isReadOnly} value={item[OBJECTPREFIX + 'license_field__c']} name={OBJECTPREFIX + 'license_field__c'} onChange={this.handleComplianceChange.bind(null, index, '0', true) }>
               {this.renderComplianceFields() }
             </select>
           </div>
         );
 
-        var operatorClassname = !this.validate(item.licensingplus__operator__c) ? 'form-group has-error' : ' form-group';
+        var operatorClassname = !this.validate(item[OBJECTPREFIX + 'operator__c']) ? 'form-group has-error' : ' form-group';
         operatorInput = (
           <div className={operatorClassname} >
-            <select className='form-control' disabled={this.props.isReadOnly} value={item.licensingplus__operator__c} name='licensingplus__operator__c' onChange={this.handleComplianceChange.bind(null, index, '1', true) }>
-              {this.renderComplianceOperators(item.licensingplus__license_field__c) }
+            <select className='form-control' disabled={this.props.isReadOnly} value={item[OBJECTPREFIX + 'operator__c']} name={OBJECTPREFIX + 'operator__c'} onChange={this.handleComplianceChange.bind(null, index, '1', true) }>
+              {this.renderComplianceOperators(item[OBJECTPREFIX + 'license_field__c']) }
             </select>
           </div>
         );
 
-        var fieldClassname = !this.validate(item.licensingplus__field__c) ? 'form-group has-error' : ' form-group';
+        var fieldClassname = !this.validate(item[OBJECTPREFIX + 'field__c']) ? 'form-group has-error' : ' form-group';
         fieldInput = (
           <div className={fieldClassname} >
-            <select className='form-control' disabled={this.props.isReadOnly} value={item.licensingplus__field__c} name='licensingplus__field__c' onChange={this.handleComplianceChange.bind(null, index, '2', true) }>
-              {this.renderAdvancedFieldsInCompliance(item.licensingplus__license_field__c) }
+            <select className='form-control' disabled={this.props.isReadOnly} value={item[OBJECTPREFIX + 'field__c']} name={OBJECTPREFIX + 'field__c'} onChange={this.handleComplianceChange.bind(null, index, '2', true) }>
+              {this.renderAdvancedFieldsInCompliance(item[OBJECTPREFIX + 'license_field__c']) }
             </select>
           </div>
         );
@@ -397,42 +429,42 @@ class ObjectRuleSet extends Component {
       let fieldInput;
       let operatorInput;
       return this.props.advancedRulesList.map((item, index) => {
-        var fieldClassname = !this.validate(item.licensingplus__field__c) ? 'form-group has-error' : ' form-group';
+        var fieldClassname = !this.validate(item[OBJECTPREFIX + 'field__c']) ? 'form-group has-error' : ' form-group';
         fieldInput = (
           <div className={fieldClassname} >
-            <select className='form-control' disabled={this.props.isReadOnly} value={item.licensingplus__field__c} name='licensingplus__field__c' onChange={this.handleAdvancedChange.bind(null, index, '0', this.props.sobject.fields[item.licensingplus__field__c], 'licensingplus__field__c') }>
+            <select className='form-control' disabled={this.props.isReadOnly} value={item[OBJECTPREFIX + 'field__c']} name={OBJECTPREFIX + 'field__c'} onChange={this.handleAdvancedChange.bind(null, index, '0', this.props.sobject.fields[item[OBJECTPREFIX + 'field__c']], OBJECTPREFIX + 'field__c') }>
               {this.renderAdvancedFields() }
             </select>
           </div>
         );
-        var fieldType = this.props.sobject.fields[item.licensingplus__field__c];
-        var operatorClassname = !this.validate(item.licensingplus__operator__c) ? 'form-group has-error' : ' form-group';
+        var fieldType = this.props.sobject.fields[item[OBJECTPREFIX + 'field__c']];
+        var operatorClassname = !this.validate(item[OBJECTPREFIX + 'operator__c']) ? 'form-group has-error' : ' form-group';
         operatorInput = (
           <div className={operatorClassname} >
-            <select className='form-control' disabled={this.props.isReadOnly} value={item.licensingplus__operator__c} name='licensingplus__operator__c' onChange={this.handleAdvancedChange.bind(null, index, '1', item.licensingplus__field__c, 'licensingplus__operator__c') }>
-              {this.renderAdvancedOperators(item.licensingplus__field__c) }
+            <select className='form-control' disabled={this.props.isReadOnly} value={item[OBJECTPREFIX + 'operator__c']} name={OBJECTPREFIX + 'operator__c'} onChange={this.handleAdvancedChange.bind(null, index, '1', item[OBJECTPREFIX + 'field__c'], OBJECTPREFIX + 'operator__c') }>
+              {this.renderAdvancedOperators(item[OBJECTPREFIX + 'field__c']) }
             </select>
           </div>
         );
-        var valueClassname = (!this.validate(item.licensingplus__value__c) && item.licensingplus__operator__c !== 'not blank') ? 'form-group has-error' : ' form-group';
-        if (item.licensingplus__operator__c === 'not blank') {
+        var valueClassname = (!this.validate(item[OBJECTPREFIX + 'value__c']) && item[OBJECTPREFIX + 'operator__c'] !== 'not blank') ? 'form-group has-error' : ' form-group';
+        if (item[OBJECTPREFIX + 'operator__c'] === 'not blank') {
           valueInput = (
             <div className={valueClassname} >
-              <input className='form-control' type='text' disabled={true} value='' name='licensingplus__value__c'/>
+              <input className='form-control' type='text' disabled={true} value='' name={OBJECTPREFIX + 'value__c'}/>
             </div>
           );
         }
         else if (fieldType === 'DATE_FIELD' || fieldType === 'DATETIME_FIELD') {
           valueInput = (
             <div className='form-group'>
-              <DatePicker className='form-control' disabled={this.props.isReadOnly} selected={moment(item.licensingplus__value__c) } onChange={this.handleAdvancedChange.bind(null, index, '2', item.licensingplus__field__c, 'licensingplus__value__c') } />
+              <DatePicker className='form-control' disabled={this.props.isReadOnly} selected={moment(item[OBJECTPREFIX + 'value__c']) } onChange={this.handleAdvancedChange.bind(null, index, '2', item[OBJECTPREFIX + 'field__c'], OBJECTPREFIX + 'value__c') } />
             </div>
           );
         }
         else if (fieldType === 'BOOLEAN_FIELD') {
           valueInput = (
             <div className='form-group'>
-              <select ref='licensingplus__value__c' className='form-control' disabled={this.props.isReadOnly} value={item.licensingplus__value__c || 'true'} name='licensingplus__value__c' onChange={this.handleAdvancedChange.bind(null, index, '2', item.licensingplus__field__c, 'licensingplus__value__c') }>
+              <select ref={OBJECTPREFIX + 'value__c'} className='form-control' disabled={this.props.isReadOnly} value={item[OBJECTPREFIX + 'value__c'] || 'true'} name={OBJECTPREFIX + 'value__c'} onChange={this.handleAdvancedChange.bind(null, index, '2', item[OBJECTPREFIX + 'field__c'], OBJECTPREFIX + 'value__c') }>
                 <option value='true' >True</option>
                 <option value='false'>False</option>
               </select>
@@ -442,7 +474,7 @@ class ObjectRuleSet extends Component {
         else {
           valueInput = (
             <div className={valueClassname} >
-              <input className='form-control' type='text' disabled={this.props.isReadOnly} value={_.unescape(item.licensingplus__value__c) || ''} name='licensingplus__value__c' onChange={this.handleAdvancedChange.bind(null, index, '2', item.licensingplus__field__c, 'licensingplus__value__c') }/>
+              <input className='form-control' type='text' disabled={this.props.isReadOnly} value={_.unescape(item[OBJECTPREFIX + 'value__c']) || ''} name={OBJECTPREFIX + 'value__c'} onChange={this.handleAdvancedChange.bind(null, index, '2', item[OBJECTPREFIX + 'field__c'], OBJECTPREFIX + 'value__c') }/>
             </div>
           );
         }
@@ -476,29 +508,32 @@ class ObjectRuleSet extends Component {
 
   renderComplianceRules() {
     let objectName = this.props.params.sobjectname;
-    let isValidSyntax = Utils.checkSyntax(this.props.complianceRuleLogic.licensingplus__logic__c, this.props.complianceRulesList.length);
+    let isValidSyntax = Utils.checkSyntax(this.props.complianceRuleLogic[OBJECTPREFIX + 'logic__c'], this.props.complianceRulesList.length);
     let logic;
     let length = this.props.complianceRulesList.length;
     if ((isValidSyntax && length) || (isValidSyntax && !length)) {
       logic = (
-        <div className='form-group'>
-          <input type='text' className='form-control grid-input' disabled={this.props.isReadOnly} value={this.props.complianceRuleLogic.licensingplus__logic__c || ''} onChange={this.changeComplianceRuleLogic.bind(null, false, this.props.complianceRulesList.length) }></input>
+        <div className='form-group col-md-6'>
+          <input type='text' className='form-control' disabled={this.props.isReadOnly} value={this.props.complianceRuleLogic[OBJECTPREFIX + 'logic__c'] || ''} onChange={this.changeComplianceRuleLogic.bind(null, false, this.props.complianceRulesList.length) }></input>
         </div>
       );
     }
     else {
       logic = (
-        <div className='form-group has-error'>
-          <input type='text' className='form-control grid-input form-control-danger' disabled={this.props.isReadOnly} value={this.props.complianceRuleLogic.licensingplus__logic__c || ''} onChange={this.changeComplianceRuleLogic.bind(null, true, this.props.complianceRulesList.length) }></input>
+        <div className='form-group col-md-6 has-error'>
+          <input type='text' className='form-control form-control-danger' disabled={this.props.isReadOnly} value={this.props.complianceRuleLogic[OBJECTPREFIX + 'logic__c'] || ''} onChange={this.changeComplianceRuleLogic.bind(null, true, this.props.complianceRulesList.length) }></input>
           <small className='text-help'>Invalid logic syntax</small>
         </div>
       );
     }
+    let addComplianceCriteriaButton;
+    if(!this.props.isReadOnly) {
+      addComplianceCriteriaButton = <p className="add-criteria"  onClick={this.addComplianceRule.bind(null) } ><button className='add-btn'>+</button>&nbsp; &nbsp; Add Criteria </p>
+    }
     return (
       <span className='data-table'>
         <div className='heading-table'>
-          <h5>Compliance Pass Criteria</h5>
-          <button className='btn btn-orange' disabled={this.props.isReadOnly} onClick={this.addComplianceRule.bind(null) }>Add Criteria +</button>
+          <span className='linkcolor div-font'>Compliance Pass Criteria</span>
         </div>
         <table className='table table-hover table-fixed custom-table'>
           <thead>
@@ -515,8 +550,11 @@ class ObjectRuleSet extends Component {
             {this.renderComplianceRulesList() }
           </tbody>
         </table>
-        <h5>Compliance Pass Logic</h5>
-        {logic}
+        {addComplianceCriteriaButton}
+        <div className="row">
+          <label className="control-label col-md-3 col-md-offset-3">Compliance Pass Logic</label>
+          {logic}
+        </div>
         <hr className='divider-grid'/>
       </span>
     );
@@ -525,30 +563,32 @@ class ObjectRuleSet extends Component {
   renderAdvancedRules() {
     if (this.props.showAdvancedRule === 'Specific') {
       let objectName = this.props.params.sobjectname;
-      let isValidSyntax = Utils.checkSyntax(this.props.advancedRuleLogic.licensingplus__logic__c, this.props.advancedRulesList.length);
+      let isValidSyntax = Utils.checkSyntax(this.props.advancedRuleLogic[OBJECTPREFIX + 'logic__c'], this.props.advancedRulesList.length);
       let logic;
       let length = this.props.advancedRulesList.length;
       if ((isValidSyntax && length) || (isValidSyntax && !length)) {
         logic = (
-          <div className='form-group'>
-            <input type='text' className='form-control grid-input' disabled={this.props.isReadOnly} value={this.props.advancedRuleLogic.licensingplus__logic__c || ''} onChange={this.changeAdvancedRuleLogic.bind(null, false, this.props.advancedRulesList.length) }></input>
+          <div className='form-group col-md-6'>
+            <input type='text' className='form-control' disabled={this.props.isReadOnly} value={this.props.advancedRuleLogic[OBJECTPREFIX + 'logic__c'] || ''} onChange={this.changeAdvancedRuleLogic.bind(null, false, this.props.advancedRulesList.length) }></input>
           </div>
         );
       }
       else {
         logic = (
-          <div className='form-group has-error'>
-            <input type='text' className='form-control grid-input form-control-danger' disabled={this.props.isReadOnly} value={this.props.advancedRuleLogic.licensingplus__logic__c || ''} onChange={this.changeAdvancedRuleLogic.bind(null, true, this.props.advancedRulesList.length) }></input>
+          <div className='form-group col-md-6 has-error'>
+            <input type='text' className='form-control form-control-danger' disabled={this.props.isReadOnly} value={this.props.advancedRuleLogic[OBJECTPREFIX + 'logic__c'] || ''} onChange={this.changeAdvancedRuleLogic.bind(null, true, this.props.advancedRulesList.length) }></input>
             <small className='text-help'>Invalid logic syntax</small>
           </div>
         );
       }
-
+      let addAdvancedCriteriaButton;
+      if(!this.props.isReadOnly) {
+        addAdvancedCriteriaButton = <p className="add-criteria"  onClick={this.addAdvancedRule.bind(null) } ><button className='add-btn'>+</button>&nbsp; &nbsp; Add Criteria </p>
+      }
       return (
         <span className='data-table'>
           <div className='heading-table'>
-            <h5>Advanced Rule Filtering</h5>
-            <button className='btn btn-orange' disabled={this.props.isReadOnly} onClick={this.addAdvancedRule.bind(null) }>Add Criteria +</button>
+            <span className='linkcolor div-font'>Advanced Rule Filtering</span>
           </div>
           <table className='table table-hover table-fixed custom-table'>
             <thead>
@@ -564,8 +604,11 @@ class ObjectRuleSet extends Component {
               {this.renderAdvancedRulesList() }
             </tbody>
           </table>
-          <h5>Advanced Rule Logic</h5>
-          {logic}
+          {addAdvancedCriteriaButton}
+          <div className="row">
+            <label className="control-label col-md-3 col-md-offset-3">Advanced Rule Logic</label>
+            {logic}
+          </div>
           <hr className='divider-grid'/>
         </span>
       );
@@ -584,66 +627,40 @@ class ObjectRuleSet extends Component {
       );
     }
 
-    var links = (
-      <div className='salesforce-link-rules'>
-        <p>
-          <small><span className='glyphicon glyphicon-question-sign'></span> Need more help?<a className='link' href={constants.VIDEO_LINK} target='_blank'>Watch our video!</a></small>
-        </p>
-        <p>
-          <a className='link' href='/'>Return to Salesforce</a>
-        </p>
-      </div>
-    )
 
-    var back = (
-      <h4>
-        <Link to={`/checklist`}>
-          &lt; Back to checklist
-        </Link>
-      </h4>
-    )
 
-    var sideNavigation = (
-      <div className="col-sm-3 zenefits-nav">
-        {back}
-        <h1>Activate your compliance rule</h1>
-        <p>We have already created a few rules that represent standard rules that most team need.</p>
-        <p>After you have setup the app you can add more rules.</p>
-        {links}
-      </div>
-    );
-
-    if (this.props.checklistComplete) {
-      sideNavigation = (
-        <div className="col-sm-3 zenefits-nav">
-          {back}
-          <ul className="nav nav-pills nav-stacked">
-            <li role="presentation" className="active"><Link to={`/rules`}>Compliance Rules</Link></li>
-            <li role="presentation"><Link to={`/lines`}>Lines of Authority</Link></li>
-          </ul>
-          {links}
-        </div>
-      );
-    }
 
     return (
       <div className='rules-page license-form'>
         {this.renderToast() }
-        <div className='row'>
-          {sideNavigation}
+        <div>
+          <Sidebar activePage='objectRules' checklistComplete={this.props.checklistComplete}/>
           <div className='col-sm-9 inside-container'>
-            <h4>{_.capitalize(objectLabel) } Compliance Rule Set </h4>
-            <h5 className='heading-table'>Rules Set Filter</h5>
-            <div className='heading-table'>
-              <h4>Resident License Check</h4>
-              <small>We ensure agent has active resident license</small>
-              {toggle}
+            <h4 className="sub-heading">{_.capitalize(objectLabel) } Compliance Rule Set <small>
+              <span id="helpToolTipRule" className='fa fa-question-circle  question-icon'></span>
+              <Tooltip   placement="bottom" isOpen={this.state.tooltipOpen} target="helpToolTipRule" toggle={this.toggle}>
+                {_.capitalize(objectLabel) } Compliance Rule Set
+              </Tooltip>
+            </small></h4>
+            <div className='heading-padding'>
+              <span className='div-font linkcolor'>Rule Set Filter</span>
             </div>
-            <span className='filtered-records'>Filtered Records</span>
-            <select className='form-control select-filtered-records' disabled={this.props.isReadOnly} value={this.props.showAdvancedRule} onChange={this.toggleShowAdvancedRule.bind(this) }>
-              <option value='All'>All Records</option>
-              <option value='Specific'>Specific Records</option>
-            </select>
+            <div className='row row-header row-margin'>
+              <div className="col-md-6">
+                <span className='div-font'>Resident License Check</span>
+                <p className="padding linkcolor"><span>We ensure agent has active resident license</span></p>
+              </div>
+              <div className="col-md-6 pull-right-custom">{toggle}</div>
+            </div>
+            <div className='row row-header row-margin'>
+              <div className="col-md-6"><span className='div-font'>Filtered Records</span> </div>
+              <div className="col-md-6 pull-right-custom">
+                <select className='form-control select-filtered-records' disabled={this.props.isReadOnly} value={this.props.showAdvancedRule} onChange={this.toggleShowAdvancedRule.bind(this) }>
+                  <option value='All'>All Records</option>
+                  <option value='Specific'>Specific Records</option>
+                </select>
+              </div>
+            </div>
             <hr className='divider'/>
             {this.renderAdvancedRules() }
             {this.renderComplianceRules() }
@@ -678,7 +695,8 @@ const mapStateToProps = (state) => {
     sobject: state.sobject,
     loaded: state.loaded,
     stateRule: state.stateRule,
-    showToast: state.showToast
+    showToast: state.showToast,
+    isMaintainanceMode:state.isMaintainanceMode
   };
 }
 

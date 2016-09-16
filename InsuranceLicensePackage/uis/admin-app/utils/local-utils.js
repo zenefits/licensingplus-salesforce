@@ -1,8 +1,8 @@
-import TestData from './test-data'
-import _ from 'lodash'
+import TestData from './test-data';
+import _ from 'lodash';
+import {OBJECTPREFIX } from '../constants/constants';
 
-var LicensingPlus = {};
-LicensingPlus.ComplianceController = {
+var ComplianceController = {
   //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   // Sometimes this Controller is MockData, sometimes it is 
   // a real VisualForce Remoting API
@@ -71,12 +71,12 @@ LicensingPlus.ComplianceController = {
     console.log('isActive', isActive);
     setTimeout(() => {
       if (!(typeof objName === "string")) {
-        return fn({}, {type:'exception',message:'ObjectName not defined'});
+        return fn({}, { type: 'exception', message: 'ObjectName not defined' });
       }
       if (!(typeof isActive === "boolean")) {
-        return fn({}, {type:'exception',message:'isActive not defined'});
+        return fn({}, { type: 'exception', message: 'isActive not defined' });
       }
-      return fn({},{ status: 200 });
+      return fn({}, { status: 200 });
     }, 300);
   },
   //END COMPLIANCE RULES VIEW
@@ -110,19 +110,19 @@ LicensingPlus.ComplianceController = {
     //to the same parent object should be delete from the database.
     setTimeout(function () {
       if (!(ruleSetResult instanceof Object)) {
-        return fn({}, {type:'exception',message:'rules not defined'});
+        return fn({}, { type: 'exception', message: 'rules not defined' });
       }
       if (!(typeof objectName === "string")) {
-        return fn({}, {type:'exception',message:'ObjectName not defined'});
+        return fn({}, { type: 'exception', message: 'ObjectName not defined' });
       }
       if (!(ruleSetResult.stateRule instanceof Object)) {
-        return fn({}, {type:'exception',message:'State rule not defined'});
+        return fn({}, { type: 'exception', message: 'State rule not defined' });
       }
-      if ((ruleSetResult.stateRule instanceof Object) && ruleSetResult.stateRule.licensingplus__object__c === '') {
-        return fn({}, {type:'exception',message:'State rule \'licensingplus__object__c\' not defined'});
+      if ((ruleSetResult.stateRule instanceof Object) && ruleSetResult.stateRule[OBJECTPREFIX + 'object__c'] === '') {
+        return fn({}, { type: 'exception', message: 'State rule' + OBJECTPREFIX + '\'object__c\' not defined' });
       }
       // return fn({},{type:'exception',message:'Failed on purpose.'});
-      return fn({}, {status: 200});
+      return fn({}, { status: 200 });
     }, 300);
   },
 
@@ -155,6 +155,45 @@ LicensingPlus.ComplianceController = {
     }, 300);
   },
 
+  importLicenseData: function (procedures, fn) {
+    var successEvent = {
+      result: [
+        {
+          "isSuccess": true,
+          "key": "17418240;1139395;Arizona;2/19/2016"
+        }
+      ],
+      status: true
+    }
+    var errorEvent = {
+      result: [
+        {
+          "errorCode": "NPN_NUMBER_NOT_FOUND",
+          "errorMessage": "Not able to match owner with npn number",
+          "isSuccess": false,
+          "key": "17418240;1139395;Arizona;2/19/2016"
+        }
+      ],
+      status: true
+    };
+    var error = {
+      message: "Unable to convert date '2014-02-12' to Apex type Date.",
+      status: false
+    }
+
+    setTimeout(function () {
+      return fn(successEvent.result, successEvent);
+    }, 200)
+
+    // setTimeout(function () {
+    //   return fn(errorEvent.result, errorEvent);
+    // }, 200)    
+
+    // setTimeout(function () {
+    //   return fn(null, error);
+    // }, 200)
+  },
+
   deleteLineOfAuth: function (row, fn) {
     setTimeout(function () {
       return fn({ status: 200 });
@@ -167,16 +206,46 @@ LicensingPlus.ComplianceController = {
     }, 300);
   },
 
+  getApprovalCriteriaConfig: function (fn) {
+    setTimeout(function () {
+      return fn({ niprSyncConfig: TestData.niprSyncConfig, licenseRuleSetResult: TestData.licenseRuleSetResult }, { status: 200 });
+    }, 300);
+  },
+
+  getApprovalProcessNames: function (fn) {
+    setTimeout(function () {
+      return fn(TestData.approvalProcesses, { status: 200 });
+    }, 300);
+  },
+
+  saveApprovalCriteriaConfig: function (niprSyncConfig, licenseRuleSetResult,fn) {
+    setTimeout(function () {
+      return fn({}, { status: 200 });
+    }, 300);
+  },
+
+  getLicenseApprovalFields: function (fn) {
+    setTimeout(function () {
+      return fn(TestData.licenseApprovalFields, { status: 200 });
+    }, 300);
+  },
+
+  getUserNames: function (searchStr, fn) {
+    setTimeout(function () {
+      var result = TestData.validationUsers.filter(function (user) {
+        return user.Username.toLowerCase().indexOf(searchStr.toLowerCase()) !== -1;
+      });
+      return fn(result, { status: 200 });
+      
+    }, 300);
+  }
+
   //END OBJECT_NAME RULE & RULE LOGIC EDITOR VIEW
   //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-}
+};
 
+//must prefix with LicensingPlus to make it deployable to other development environments
+window.LicensingPlus = {};
+window.LicensingPlus.ComplianceController = ComplianceController;
 
-// this is the tricky / non-react way to ensure our mockdata
-// usese similar API to Salesforce VisualForce Remoting
-if (typeof Visualforce == 'undefined' && typeof VisualForce == 'undefined') {
-  window.LicensingPlus = {};
-  window.LicensingPlus.ComplianceController = LicensingPlus.ComplianceController;
-}
-
-module.exports = LicensingPlus.ComplianceController;
+module.exports = window.LicensingPlus.ComplianceController;

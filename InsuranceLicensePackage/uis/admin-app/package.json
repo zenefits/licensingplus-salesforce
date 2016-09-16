@@ -1,19 +1,22 @@
 {
   "name": "admin-app",
   "description": "Frontend for License management admin app in Salesforce",
-  "main": "index.js",
   "scripts": {
     "build": "npm run clear-dist && webpack",
     "build-prod": "webpack --config webpack.config.prod.js",
     "clear-dist": "rm -Rf dist/",
     "save-resource": "npm run build && cp dist/bundle.js ../../src/staticresources/license_admin_js.resource",
     "save-resource-prod": "npm run build-prod && cp dist/prod-bundle.js ../../src/staticresources/license_admin_js.resource",
-    "start": "open 'http://localhost:3000/#/' && npm run clear-dist && node nodemon.js"
+    "start": "open 'http://localhost:3000/#/' && npm run clear-dist && node nodemon.js",
+    "test": "mocha --reporter spec testSetup.js components/**/*.test.js "
   },
   "dependencies": {
     "ejs": "^2.4.2",
     "express": "^4.13.4",
     "nodemon": "^1.9.2"
+  },
+  "engines": {
+    "node": "^4.4.4"
   },
   "devDependencies": {
     "babel-cli": "^6.9.0",
@@ -23,25 +26,36 @@
     "babel-preset-react": "^6.3.13",
     "babel-register": "^6.3.13",
     "chalk": "^1.1.3",
-    "css-loader": "^0.23.1",
+    "css-loader": "^0.23.1",  
+    "enzyme": "^2.3.0",
+    "expect": "^1.20.1",
+    "dom-scroll-into-view": "^1.2.0",
     "file-loader": "^0.8.5",
     "imagemin-webpack-plugin": "^1.0.7",
+    "jsdom": "^9.2.1",
     "jsx-loader": "^0.13.2",
     "lodash": "^4.13.1",
+    "mocha": "^2.5.3",
     "moment": "^2.13.0",
     "papaparse": "^4.1.2",
+    "promise": "^7.1.1",
     "react": "15.0.2",
+    "react-addons-test-utils": "15.0.2",
+    "react-addons-transition-group": "15.0.2",
     "react-bootstrap": "^0.29.5",
     "react-datepicker": "^0.27.0",
     "react-dom": "15.0.2",
     "react-redux": "^4.4.5",
     "react-router": "^2.4.1",
+    "reactstrap": "^2.2.0",
+    "react-autocomplete": "^1.2.1",
     "react-toggle": "git+https://github.com/gonimbly/react-toggle.git",
     "redux-thunk": "^2.1.0",
     "sass-loader": "^3.2.0",
     "style-loader": "^0.13.1",
     "url-loader": "^0.5.7",
-    "webpack": "^1.13.0"
+    "webpack": "^1.13.0",
+    "xml2js": "^0.4.17"
   },
   "license": "ISC"
 }

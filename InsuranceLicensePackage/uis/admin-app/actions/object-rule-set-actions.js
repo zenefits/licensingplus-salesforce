@@ -1,12 +1,13 @@
 import * as types from './action-types';
 import { hashHistory } from 'react-router';
-import * as constants from '../constants/constants'
-import Utils from '../utils/utils'
+import * as constants from '../constants/constants';
+import { OBJECTPREFIX, CLASSPREFIX} from '../constants/constants';
+import Utils from '../utils/utils';
 import moment from 'moment';
 
 export function getLicenseRuleSetResult(objectName) {
   return function (dispatch) {
-    return LicensingPlus.ComplianceController.getLicenseRuleSetResult(objectName, (ruleSetResult) => {
+    return eval(CLASSPREFIX).getLicenseRuleSetResult(objectName, (ruleSetResult) => {
       dispatch({
         type: types.RULE_SET_RESULT_RECEIVED,
         ruleSetResult: ruleSetResult,
@@ -18,7 +19,7 @@ export function getLicenseRuleSetResult(objectName) {
 
 export function getSobjectWithFields(objectName) {
   return function (dispatch) {
-    return LicensingPlus.ComplianceController.getSobjectWithFields(objectName, (sobjectFields) => {
+    return eval(CLASSPREFIX).getSobjectWithFields(objectName, (sobjectFields) => {
       dispatch({
         type: types.SOBJECT_FIELDS_RECIEVED,
         sobject: sobjectFields
@@ -29,7 +30,7 @@ export function getSobjectWithFields(objectName) {
 
 export function getLicenseFields(objectName) {
   return function (dispatch) {
-    return LicensingPlus.ComplianceController.getSobjectWithFields(objectName, (licenseFields) => {
+    return eval(CLASSPREFIX).getSobjectWithFields(objectName, (licenseFields) => {
       dispatch({
         type: types.LICENSE_FIELDS_RECIEVED,
         licenseSobject: licenseFields
@@ -40,37 +41,37 @@ export function getLicenseFields(objectName) {
 
 export function saveLicenseRuleSetResult(data) {
   return function (dispatch) {
-    if (data.complianceRuleLogic && data.complianceRuleLogic.licensingplus__logic__c) {
-      data.complianceRuleLogic.licensingplus__logic__c = Utils.convertUiLogicToDb(data.complianceRuleLogic.licensingplus__logic__c);
-      data.complianceRuleLogic.licensingplus__object__c = data.stateRule.licensingplus__object__c;
+    if (data.complianceRuleLogic && data.complianceRuleLogic[OBJECTPREFIX+'logic__c']) {
+      data.complianceRuleLogic[OBJECTPREFIX+'logic__c'] = Utils.convertUiLogicToDb(data.complianceRuleLogic[OBJECTPREFIX+'logic__c']);
+      data.complianceRuleLogic[OBJECTPREFIX+'object__c'] = data.stateRule[OBJECTPREFIX+'object__c'];
     }
-    else if (data.complianceRuleLogic && data.complianceRuleLogic.licensingplus__logic__c === '' && !data.complianceRuleLogic.id) {
+    else if (data.complianceRuleLogic && data.complianceRuleLogic[OBJECTPREFIX+'logic__c'] === '' && !data.complianceRuleLogic.id) {
       data.complianceRuleLogic = null;
     }
-    if (data.advancedRuleLogic && data.advancedRuleLogic.licensingplus__logic__c) {
-      data.advancedRuleLogic.licensingplus__logic__c = Utils.convertUiLogicToDb(data.advancedRuleLogic.licensingplus__logic__c);
-      data.advancedRuleLogic.licensingplus__object__c = data.stateRule.licensingplus__object__c;
+    if (data.advancedRuleLogic && data.advancedRuleLogic[OBJECTPREFIX+'logic__c']) {
+      data.advancedRuleLogic[OBJECTPREFIX+'logic__c'] = Utils.convertUiLogicToDb(data.advancedRuleLogic[OBJECTPREFIX+'logic__c']);
+      data.advancedRuleLogic[OBJECTPREFIX+'object__c'] = data.stateRule[OBJECTPREFIX+'object__c'];
     }
-    else if (data.advancedRuleLogic && data.advancedRuleLogic.licensingplus__logic__c === '' && !data.advancedRuleLogic.id) {
+    else if (data.advancedRuleLogic && data.advancedRuleLogic[OBJECTPREFIX+'logic__c'] === '' && !data.advancedRuleLogic.id) {
       data.advancedRuleLogic = null;
     }
 
     if (data.showAdvancedRule === "All") {
       data.deletedRegularFilterRules = _.filter(data.advancedRulesList, 'id');
       data.isFilterRuleLogicRemoved = (data.deletedRegularFilterRules.length > 0) ? true : false;
-      if (data.advancedRuleLogic && data.advancedRuleLogic.licensingplus__logic__c) {
-        data.advancedRuleLogic.licensingplus__logic__c = '';
+      if (data.advancedRuleLogic && data.advancedRuleLogic[OBJECTPREFIX+'logic__c']) {
+        data.advancedRuleLogic[OBJECTPREFIX+'logic__c'] = '';
       }
       data.advancedRulesList = [];
     }
 
-    if (data.residentRule && (data.residentRule.licensingplus__value__c === '' || !data.residentRule.licensingplus__value__c)) {
+    if (data.residentRule && (data.residentRule[OBJECTPREFIX+'value__c'] === '' || !data.residentRule[OBJECTPREFIX+'value__c'])) {
       data.residentRule = null;
     }
 
     if (data.advancedRulesList) {
       data.advancedRulesList = _.map(data.advancedRulesList, (singleRow) => {
-        singleRow.licensingplus__value__c = _.escape(singleRow.licensingplus__value__c)
+        singleRow[OBJECTPREFIX+'value__c'] = _.escape(singleRow[OBJECTPREFIX+'value__c'])
         return singleRow
       })
     }
@@ -91,7 +92,7 @@ export function saveLicenseRuleSetResult(data) {
         }
       ]
     }
-    return LicensingPlus.ComplianceController.saveLicenseRuleSetResult(ruleSetResult, data.stateRule.licensingplus__object__c, (result, event) => {
+    return eval(CLASSPREFIX).saveLicenseRuleSetResult(ruleSetResult, data.stateRule[OBJECTPREFIX+'object__c'], (result, event) => {
       if (event.status) {
         dispatch({
           type: types.SAVED_RULE_SET_RESULT,
