@@ -1,7 +1,9 @@
 import _ from 'lodash';
 import moment from 'moment';
+import * as http from 'http';
 
 var Utils = {
+  csvDelimiter: ',',
   lowKey: function (obj) {
     if (obj) {
       return _.mapKeys(obj, function (val, key) {
@@ -52,7 +54,7 @@ var Utils = {
       }
 
       var num = logic.match(/\d+/g);
-      var numbers=[];
+      var numbers = [];
       if (num) {
         numbers = logic.match(/\d+/g).sort();
       }
@@ -110,7 +112,56 @@ var Utils = {
       splitLogic = splitLogic.toString().replace(/\or/g, '|');
       return splitLogic;
     }
+  },
+
+  get: function (element) {
+    if (!element.nodeType) {
+      return document.getElementById(element);
+    }
+    return element;
+  },
+
+  fixCSVField: function (value) {
+    var fixedValue = value;
+    var addQuotes = (value.indexOf(this.csvDelimiter) !== -1) || (value.indexOf('\r') !== -1) || (value.indexOf('\n') !== -1);
+    var replaceDoubleQuotes = (value.indexOf('"') !== -1);
+
+    if (replaceDoubleQuotes) {
+      fixedValue = fixedValue.replace(/"/g, '""');
+    }
+    if (addQuotes || replaceDoubleQuotes) {
+      fixedValue = '"' + fixedValue + '"';
+    }
+    return fixedValue;
+  },
+
+  tableToCSV: function (table) {
+    var data = "";
+    var csvNewLine = "\r\n";
+    var i, j, row, col;
+    for (i = 0; i < table.rows.length; i++) {
+      row = table.rows[i];
+      for (j = 0; j < row.cells.length; j++) {
+        col = row.cells[j];
+        data = data + (j ? this.csvDelimiter : '') + this.fixCSVField(col.textContent.trim());
+      }
+      data = data + csvNewLine;
+    }
+    return data;
+  },
+
+  exportToCSV: function (tableID, fileName) {
+    let tableElement = this.get(tableID);
+    var csvData = this.tableToCSV(tableElement);
+    var hrefvalue = 'data:text/csv;charset=UTF-8,' + encodeURIComponent(csvData);
+    var a = document.createElement('a');
+    a.href = hrefvalue;
+    a.target = '_blank';
+    a.download = fileName;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
   }
-}
+};
 
 export default Utils

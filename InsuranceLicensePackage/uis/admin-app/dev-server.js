@@ -9,7 +9,7 @@ app.set('views', path.join(__dirname, '/'));
 app.set('view engine', 'ejs');
 
 // routes
-app.get('/*', function(req, res) {
+app.get('/*', function (req, res) {
   res.render('index.html');
 });
 

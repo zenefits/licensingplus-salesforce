@@ -1,9 +1,21 @@
 export const VIDEO_LINK = 'https://vimeo.com/166881985';
 export const EMBED_VIDEO_LINK = 'https://player.vimeo.com/video/166881985';
-export const CHOOSE_FILE = '';
+export const CHOOSE_FILE = 'Choose file';
 export const RULE_EXP = /[^0-9()(and|or)\s]/gi;
 export const DATE_EXP = /^(19[0-9][0-9]|20[0-9][0-9])[-](0[1-9]|[12][0-9]|3[01])[-](0[1-9]|1[012])/g;
-export const COMPLIANCE_OPERATORS_EXCLUDE = ['not blank','in','not in'];
+export const COMPLIANCE_OPERATORS_EXCLUDE = ['not blank', 'in', 'not in'];
+export const HELP_LINKS = {
+  "Licensing+ App Exchange video": "https://vimeo.com/166881985",
+  "Configure lines of authority video": "https://vimeo.com/166881985",
+  "Compliance rules best practices": "/",
+  "Enabling compliance rules on custom objects tutorial": "/",
+  "Setup license approvral process video": "/",
+  "NIPR interation setup video": "/",
+  "Heroku app setup tutorial": "/"
+};
+
+export const CLASSPREFIX = CLASS_PREFIX + 'ComplianceController';
+export const OBJECTPREFIX = NAMESPACE_PREFIX;
 export const FIELD_OPERATORS = {
   "STRING_FIELD": {
     "equals": "equals",
@@ -53,16 +65,16 @@ export const FIELD_OPERATORS = {
 };
 export const BLANK_LISCENSE_RULE_SET_RESULT = {
   "stateRule": {
-    "licensingplus__license_field__c": "LicensingPlus__State__c",
-    "licensingplus__object__c": "",
-    "licensingplus__operator__c": "equals",
-    "licensingplus__field__c": "",
-    "licensingplus__isactive__c": false
+    [OBJECTPREFIX + "license_field__c"]: OBJECTPREFIX + "State__c",
+    [OBJECTPREFIX + "object__c"]: "",
+    [OBJECTPREFIX + "operator__c"]: "equals",
+    [OBJECTPREFIX + "field__c"]: "",
+    [OBJECTPREFIX + "isactive__c"]: false
   },
   "residentLicenseRule": {
-    "licensingplus__object__c": "",
-    "licensingplus__operator__c": "equals",
-    "licensingplus__value__c": null
+    [OBJECTPREFIX + "object__c"]: "",
+    [OBJECTPREFIX + "operator__c"]: "equals",
+    [OBJECTPREFIX + "value__c"]: null
   },
   "ruleSets": [
     {
@@ -75,7 +87,7 @@ export const BLANK_LISCENSE_RULE_SET_RESULT = {
       "isFilterRuleLogicRemoved": false,
       "isLicenseRuleLogicRemoved": false,
       "filterRuleLogic": {
-        
+
       },
       "licenseRuleLogic": {
 
@@ -88,4 +100,46 @@ export const BLANK_LISCENSE_RULE_SET_RESULT = {
       ]
     }
   ]
+}
+
+export const BLANK_LICENSE_APROVAL_RULE_SET_RESULT = {
+  "stateRule": null,
+  "residentLicenseRule": null,
+  "ruleSets": [
+    {
+      "deletedRegularFilterRules": [],
+      "deletedLicenseRules": [],
+      "isFilterRuleLogicRemoved": false,
+      "isLicenseRuleLogicRemoved": false,
+      "filterRuleLogic": {},
+      "licenseRuleLogic": {
+         [OBJECTPREFIX +"object__c"]:  OBJECTPREFIX +"License__c",
+         [OBJECTPREFIX +"isactive__c"]: true,
+      },
+      "licenseRules": [],
+      "regularFilterRules": []
+    }
+  ]
+}
+
+export const SKIPLOA = {
+  [OBJECTPREFIX + "download_spreadsheet__c"]: true,
+  [OBJECTPREFIX + "watch_configuration_video__c"]: true,
+  [OBJECTPREFIX + "send_spreadsheet__c"]: true,
+  [OBJECTPREFIX + "filled_spreadsheet__c"]: true,
+  [OBJECTPREFIX + "configure_loa_skip__c"] : true
+}
+
+export const SKIPCOMPLIANCE = {
+  [OBJECTPREFIX + 'watch_video__c']: true,
+  [OBJECTPREFIX + 'custom_object__c']: true,
+  [OBJECTPREFIX + 'watch_compliance_video__c']: true,
+  [OBJECTPREFIX + 'activate_compliance_skip__c']: true,
+}
+
+export const SKIPNIPR = {
+  [OBJECTPREFIX + "nipr_setup__c"]: true,
+  [OBJECTPREFIX + "nipr_integration_skip__c"] : true,
+  [OBJECTPREFIX + "heroku_application_created__c"] : true,
+  [OBJECTPREFIX + "set_approvals__c"] : true,
 }

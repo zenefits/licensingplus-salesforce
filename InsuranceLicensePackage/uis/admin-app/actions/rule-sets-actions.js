@@ -1,8 +1,8 @@
 import * as types from './action-types';
-
+import { CLASSPREFIX} from '../constants/constants';
 export function toggleLicenseRuleSet(name, index, isactive) {
   return function (dispatch) {
-    return LicensingPlus.ComplianceController.toggleLicenseRuleSet(name, isactive, () => {
+    return eval(CLASSPREFIX).toggleLicenseRuleSet(name, isactive, () => {
       dispatch({
         type: types.RULE_SET_TOGGLED,
         name: name,
@@ -15,7 +15,7 @@ export function toggleLicenseRuleSet(name, index, isactive) {
 
 export function getAllLicenseRuleSetResults() {
   return function (dispatch) {
-    return LicensingPlus.ComplianceController.getAllLicenseRuleSetResults((allRuleSetResults) => {
+    return eval(CLASSPREFIX).getAllLicenseRuleSetResults((allRuleSetResults) => {
       dispatch({
         type: types.ALL_RULES_RECEIVED,
         allRuleSetResults: allRuleSetResults
@@ -26,7 +26,7 @@ export function getAllLicenseRuleSetResults() {
 
 export function getSobjectNames() {
   return function (dispatch) {
-    return LicensingPlus.ComplianceController.getSobjectNames((allSobjectNames) => {
+    return eval(CLASSPREFIX).getSobjectNames((allSobjectNames) => {
       dispatch({
         type: types.ALL_SOBJECT_NAMES_RECEIVED,
         allSobjectNames: allSobjectNames

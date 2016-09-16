@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 import { Link } from 'react-router';
 import { EMBED_VIDEO_LINK } from '../constants/constants';
 
-class WelcomeScreen extends Component {
+export class WelcomeScreen extends Component {
   constructor(props){
     super(props)
     this.state = {
@@ -11,7 +11,6 @@ class WelcomeScreen extends Component {
     }
   }
 
-  
   render() {
     return (
       <div className='license-form welcome'>
@@ -23,7 +22,7 @@ class WelcomeScreen extends Component {
                 License management and flexible controls that you can tailor to your business processes. We built this to ensure our own licensing compliance and thought others could benefit from it as well.    
             </p>
             <div className="welcom-btn-box">
-                <Link to='/checklist' className="welcome-get-started-btn">Get Started</Link>
+                <Link to='/checklist' className="welcome-get-started-btn">Lets Go</Link>
             </div>
             <div className="welcome-vid-container">
                 <div className="col-md-3"></div>

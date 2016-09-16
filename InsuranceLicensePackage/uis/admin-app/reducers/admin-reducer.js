@@ -3,7 +3,9 @@ import moment from 'moment';
 import * as constants from '../constants/constants';
 import * as types from '../actions/action-types';
 import initialState from './initial-state';
-import Utils from '../utils/utils'
+import Utils from '../utils/utils';
+import { OBJECTPREFIX } from '../constants/constants';
+import { hashHistory } from 'react-router';
 
 export default function AdminReducer(state = initialState, action) {
   var errors = [];
@@ -117,7 +119,7 @@ export default function AdminReducer(state = initialState, action) {
       }
       else {
         stateRule = defaultRuleSet.stateRule;
-        stateRule.licensingplus__object__c = action.objectName;
+        stateRule[OBJECTPREFIX + 'object__c'] = action.objectName;
         isNew = true;
       }
 
@@ -128,24 +130,24 @@ export default function AdminReducer(state = initialState, action) {
       else {
         residentLicenseRule = defaultRuleSet.residentLicenseRule;
       }
-      var residentRuleOn = residentLicenseRule.licensingplus__value__c ? true : false;
+      var residentRuleOn = residentLicenseRule[OBJECTPREFIX + 'value__c'] ? true : false;
 
       ruleSet.filterRuleLogic = Utils.lowKey(ruleSet.filterRuleLogic);
       var advancedRuleLogicStr = '';
-      if (ruleSet.filterRuleLogic && ruleSet.filterRuleLogic.licensingplus__logic__c) {
-        advancedRuleLogicStr = Utils.convertDbLogicToUi(ruleSet.filterRuleLogic.licensingplus__logic__c);
+      if (ruleSet.filterRuleLogic && ruleSet.filterRuleLogic[OBJECTPREFIX + 'logic__c']) {
+        advancedRuleLogicStr = Utils.convertDbLogicToUi(ruleSet.filterRuleLogic[OBJECTPREFIX + 'logic__c']);
       }
       ruleSet.licenseRuleLogic = Utils.lowKey(ruleSet.licenseRuleLogic);
       var complianceRuleLogicStr = '';
-      if (ruleSet.licenseRuleLogic && ruleSet.licenseRuleLogic.licensingplus__logic__c) {
-        complianceRuleLogicStr = Utils.convertDbLogicToUi(ruleSet.licenseRuleLogic.licensingplus__logic__c);
+      if (ruleSet.licenseRuleLogic && ruleSet.licenseRuleLogic[OBJECTPREFIX + 'logic__c']) {
+        complianceRuleLogicStr = Utils.convertDbLogicToUi(ruleSet.licenseRuleLogic[OBJECTPREFIX + 'logic__c']);
       }
 
       var advancedRuleLogic = Object.assign({}, state.advancedRuleLogic, ruleSet.filterRuleLogic);
       var complianceRuleLogic = Object.assign({}, state.complianceRuleLogic, ruleSet.licenseRuleLogic);
-      advancedRuleLogic.licensingplus__logic__c = advancedRuleLogicStr;
-      complianceRuleLogic.licensingplus__logic__c = complianceRuleLogicStr;
-      var isReadOnly = (stateRule.licensingplus__isactive__c || stateRule.licensingplus__isactive__c) ? true : false;
+      advancedRuleLogic[OBJECTPREFIX + 'logic__c'] = advancedRuleLogicStr;
+      complianceRuleLogic[OBJECTPREFIX + 'logic__c'] = complianceRuleLogicStr;
+      var isReadOnly = (stateRule[OBJECTPREFIX + 'isactive__c'] || stateRule[OBJECTPREFIX + 'isactive__c']) ? true : false;
       var showAdvancedRule = (ruleSet.regularFilterRules && ruleSet.regularFilterRules.length > 0) ? 'Specific' : 'All';
       return Object.assign({}, state, {
         advancedRulesList: Utils.lowKeyArray(ruleSet.regularFilterRules),
@@ -172,7 +174,7 @@ export default function AdminReducer(state = initialState, action) {
           ruleSetResult.stateRule = Utils.lowKey(ruleSetResult.stateRule)
         }
 
-        var isactive = (ruleSetResult.stateRule.licensingplus__isactive__c || ruleSetResult.stateRule.licensingplus__isactive__c) ? true : false;
+        var isactive = (ruleSetResult.stateRule[OBJECTPREFIX + 'isactive__c'] || ruleSetResult.stateRule[OBJECTPREFIX + 'isactive__c']) ? true : false;
         return {
           name: key,
           isactive: isactive
@@ -214,7 +216,7 @@ export default function AdminReducer(state = initialState, action) {
           logic = logic + " and " + i;
         }
       }
-      complianceRuleLogic.licensingplus__logic__c = logic;
+      complianceRuleLogic[OBJECTPREFIX + 'logic__c'] = logic;
       error = (complianceErrors.length || state.advancedErrors.length);
       var deletedRule = rulesList.splice(action.index, 1);
       if (rulesList.length && deletedRule[0].id) {
@@ -249,7 +251,7 @@ export default function AdminReducer(state = initialState, action) {
           logic = logic + " and " + i;
         }
       }
-      advancedRuleLogic.licensingplus__logic__c = logic;
+      advancedRuleLogic[OBJECTPREFIX + 'logic__c'] = logic;
       var deletedRule = rulesList.splice(action.index, 1);
       if (rulesList.length && deletedRule[0].id) {
         deletedRuleList.push(deletedRule[0]);
@@ -286,17 +288,18 @@ export default function AdminReducer(state = initialState, action) {
         isFilterRuleLogicRemoved = false;
       }
       if (advancedRulesList.length > 0) {
-        advancedRuleLogic.licensingplus__logic__c = advancedRuleLogic.licensingplus__logic__c + " and " + (advancedRulesList.length + 1);
+        advancedRuleLogic[OBJECTPREFIX + 'logic__c'] = advancedRuleLogic[OBJECTPREFIX + 'logic__c'] + " and " + (advancedRulesList.length + 1);
       } else {
-        advancedRuleLogic.licensingplus__logic__c = "1";
+        advancedRuleLogic[OBJECTPREFIX + 'logic__c'] = "1";
       }
-      var rule = {
-        "licensingplus__object__c": action.objectName,
-        "licensingplus__field__c": "",
-        "licensingplus__operator__c": "",
-        "licensingplus__value__c": "",
-        "licensingplus__isactive__c": false,
-      }
+      var rule = {};
+
+      rule[OBJECTPREFIX + 'object__c'] = action.objectName;
+      rule[OBJECTPREFIX + 'field__c'] = "";
+      rule[OBJECTPREFIX + 'operator__c'] = "";
+      rule[OBJECTPREFIX + 'value__c'] = "";
+      rule[OBJECTPREFIX + 'isactive__c'] = false;
+
       advancedRulesList.push(rule);
       return Object.assign({}, state, {
         advancedErrors: advancedErrors,
@@ -317,17 +320,15 @@ export default function AdminReducer(state = initialState, action) {
         isLicenseRuleLogicRemoved = false;
       }
       if (complianceRulesList.length > 0) {
-        complianceRuleLogic.licensingplus__logic__c = complianceRuleLogic.licensingplus__logic__c + " and " + (complianceRulesList.length + 1);
+        complianceRuleLogic[OBJECTPREFIX + 'logic__c'] = complianceRuleLogic[OBJECTPREFIX + 'logic__c'] + " and " + (complianceRulesList.length + 1);
       } else {
-        complianceRuleLogic.licensingplus__logic__c = "1";
+        complianceRuleLogic[OBJECTPREFIX + 'logic__c'] = "1";
       }
-      var rule = {
-        "licensingplus__object__c": action.objectName,
-        "licensingplus__license_field__c": "",
-        "licensingplus__operator__c": "",
-        "licensingplus__field__c": "",
-        "licensingplus__isactive__c": false,
-      }
+      var rule = {};
+      rule[OBJECTPREFIX + 'object__c'] = action.objectName;
+      rule[OBJECTPREFIX + 'license_field__c'] = "";
+      rule[OBJECTPREFIX + 'operator__c'] = "";
+      rule[OBJECTPREFIX + 'isactive__c'] = false;
       complianceRulesList.push(rule);
       return Object.assign({}, state, {
         complianceRulesList: complianceRulesList,
@@ -345,23 +346,23 @@ export default function AdminReducer(state = initialState, action) {
       var error = false;
 
       switch (action.itemName) {
-        case 'licensingplus__field__c':
-          rulesListItem.licensingplus__field__c = action.itemValue;
-          rulesListItem.licensingplus__operator__c = '';
-          rulesListItem.licensingplus__value__c = '';
-          var fieldType = state.sobject.fields[rulesListItem.licensingplus__field__c];
+        case OBJECTPREFIX + 'field__c':
+          rulesListItem[OBJECTPREFIX + 'field__c'] = action.itemValue;
+          rulesListItem[OBJECTPREFIX + 'operator__c'] = '';
+          rulesListItem[OBJECTPREFIX + 'value__c'] = '';
+          var fieldType = state.sobject.fields[rulesListItem[OBJECTPREFIX + 'field__c']];
           if (fieldType === 'BOOLEAN_FIELD') {
-            rulesListItem.licensingplus__value__c = 'true';
+            rulesListItem[OBJECTPREFIX + 'value__c'] = 'true';
             advancedErrors.push(itemIndex + '1');
             advancedErrors = _.without(advancedErrors, itemIndex + '2');
           }
           else if (fieldType === 'DATE_FIELD') {
-            rulesListItem.licensingplus__value__c = Utils.formatSfdcDate(new Date());
+            rulesListItem[OBJECTPREFIX + 'value__c'] = Utils.formatSfdcDate(new Date());
             advancedErrors.push(itemIndex + '1');
             advancedErrors = _.without(advancedErrors, itemIndex + '2');
           }
           else if (fieldType === 'DATETIME_FIELD') {
-            rulesListItem.licensingplus__value__c = Utils.formatSfdcDateTime(new Date());
+            rulesListItem[OBJECTPREFIX + 'value__c'] = Utils.formatSfdcDateTime(new Date());
             advancedErrors.push(itemIndex + '1');
             advancedErrors = _.without(advancedErrors, itemIndex + '2');
           }
@@ -370,35 +371,35 @@ export default function AdminReducer(state = initialState, action) {
           }
           error = true;
           break;
-        case 'licensingplus__operator__c':
-          var fieldType = state.sobject.fields[rulesListItem.licensingplus__field__c];
-          rulesListItem.licensingplus__operator__c = action.itemValue;
-          if (action.itemValue==='not blank'){
+        case OBJECTPREFIX + 'operator__c':
+          var fieldType = state.sobject.fields[rulesListItem[OBJECTPREFIX + 'field__c']];
+          rulesListItem[OBJECTPREFIX + 'operator__c'] = action.itemValue;
+          if (action.itemValue === 'not blank') {
             advancedErrors = _.without(advancedErrors, itemIndex + '2');
-            rulesListItem.licensingplus__value__c = '';
-          } 
+            rulesListItem[OBJECTPREFIX + 'value__c'] = '';
+          }
           else if (fieldType === 'BOOLEAN_FIELD') {
-            rulesListItem.licensingplus__value__c = rulesListItem.licensingplus__value__c?rulesListItem.licensingplus__value__c:'true';
+            rulesListItem[OBJECTPREFIX + 'value__c'] = rulesListItem[OBJECTPREFIX + 'value__c'] ? rulesListItem[OBJECTPREFIX + 'value__c'] : 'true';
           }
           else if (fieldType === 'DATE_FIELD') {
-            rulesListItem.licensingplus__value__c = rulesListItem.licensingplus__value__c?rulesListItem.licensingplus__value__c:Utils.formatSfdcDate(new Date());
+            rulesListItem[OBJECTPREFIX + 'value__c'] = rulesListItem[OBJECTPREFIX + 'value__c'] ? rulesListItem[OBJECTPREFIX + 'value__c'] : Utils.formatSfdcDate(new Date());
           }
           else if (fieldType === 'DATETIME_FIELD') {
-            rulesListItem.licensingplus__value__c = rulesListItem.licensingplus__value__c?rulesListItem.licensingplus__value__c:Utils.formatSfdcDateTime(new Date());
+            rulesListItem[OBJECTPREFIX + 'value__c'] = rulesListItem[OBJECTPREFIX + 'value__c'] ? rulesListItem[OBJECTPREFIX + 'value__c'] : Utils.formatSfdcDateTime(new Date());
           } else {
             advancedErrors.push(itemIndex + '2');
           }
           break;
-        case 'licensingplus__value__c':
-          rulesListItem.licensingplus__value__c = action.itemValue;
-          if (rulesListItem.licensingplus__field__c) {
+        case OBJECTPREFIX + 'value__c':
+          rulesListItem[OBJECTPREFIX + 'value__c'] = action.itemValue;
+          if (rulesListItem[OBJECTPREFIX + 'field__c']) {
             //there may not be a field selected, so check first
-            var fieldType = state.sobject.fields[rulesListItem.licensingplus__field__c]
+            var fieldType = state.sobject.fields[rulesListItem[OBJECTPREFIX + 'field__c']]
             if (fieldType === 'DATE_FIELD') {
-              rulesListItem.licensingplus__value__c = Utils.formatSfdcDate(action.itemValue);
+              rulesListItem[OBJECTPREFIX + 'value__c'] = Utils.formatSfdcDate(action.itemValue);
             }
             else if (fieldType === 'DATETIME_FIELD') {
-              rulesListItem.licensingplus__value__c = Utils.formatSfdcDateTime(action.itemValue);
+              rulesListItem[OBJECTPREFIX + 'value__c'] = Utils.formatSfdcDateTime(action.itemValue);
             }
           }
           break;
@@ -422,7 +423,7 @@ export default function AdminReducer(state = initialState, action) {
 
     case types.CHANGE_ADVANCED_RULE_LOGIC:
       var logic = Object.assign({}, state.advancedRuleLogic);
-      logic.licensingplus__logic__c = action.value;
+      logic[OBJECTPREFIX + 'logic__c'] = action.value;
       var error = false;
       if (action.error) {
         error = true;
@@ -441,24 +442,24 @@ export default function AdminReducer(state = initialState, action) {
       var complianceErrors = Object.assign([], state.complianceErrors)
       var itemIndex = action.index;
       var rulesListItem = rulesList[itemIndex];
-      var isNewRuleListItem = (rulesListItem.licensingplus__field__c != '' && rulesListItem.licensingplus__operator__c != '' && rulesListItem.licensingplus__value__c != '');
+      var isNewRuleListItem = (rulesListItem[OBJECTPREFIX + 'field__c'] != '' && rulesListItem[OBJECTPREFIX + 'operator__c'] != '' && rulesListItem[OBJECTPREFIX + 'value__c'] != '');
       var error = false;
 
       switch (action.itemName) {
-        case 'licensingplus__license_field__c':
-          rulesListItem.licensingplus__license_field__c = action.itemValue;
+        case OBJECTPREFIX + 'license_field__c':
+          rulesListItem[OBJECTPREFIX + 'license_field__c'] = action.itemValue;
           if (isNewRuleListItem) {
-            rulesListItem.licensingplus__operator__c = '';
-            rulesListItem.licensingplus__field__c = '';
+            rulesListItem[OBJECTPREFIX + 'operator__c'] = '';
+            rulesListItem[OBJECTPREFIX + 'field__c'] = '';
             complianceErrors.push(itemIndex + '1', itemIndex + '2');
             error = true;
           }
           break;
-        case 'licensingplus__operator__c':
-          rulesListItem.licensingplus__operator__c = action.itemValue;
+        case OBJECTPREFIX + 'operator__c':
+          rulesListItem[OBJECTPREFIX + 'operator__c'] = action.itemValue;
           break;
-        case 'licensingplus__field__c':
-          rulesListItem.licensingplus__field__c = action.itemValue;
+        case OBJECTPREFIX + 'field__c':
+          rulesListItem[OBJECTPREFIX + 'field__c'] = action.itemValue;
           break;
         default:
           rulesListItem = {};
@@ -481,7 +482,7 @@ export default function AdminReducer(state = initialState, action) {
     case types.CHANGE_COMPLINACE_RULE_LOGIC:
       var logic = Object.assign({}, state.complianceRuleLogic);
       var error = false;
-      logic.licensingplus__logic__c = action.value;
+      logic[OBJECTPREFIX + 'logic__c'] = action.value;
       if (action.error) {
         error = true;
       } else if (state.complianceErrors.length || state.advancedErrors.length) {
@@ -497,10 +498,10 @@ export default function AdminReducer(state = initialState, action) {
     case types.TOGGLE_RESIDENT_RULE:
       var residentRule = Object.assign({}, state.residentRule);
       if (action.value) {
-        residentRule.licensingplus__object__c = action.objectName;
-        residentRule.licensingplus__value__c = 'Resident State';
-        residentRule.licensingplus__license_field__c = 'RecordType.Name';
-        residentRule.licensingplus__operator__c = 'equals';
+        residentRule[OBJECTPREFIX + 'object__c'] = action.objectName;
+        residentRule[OBJECTPREFIX + 'value__c'] = 'Resident State';
+        residentRule[OBJECTPREFIX + 'license_field__c'] = 'RecordType.Name';
+        residentRule[OBJECTPREFIX + 'operator__c'] = 'equals';
       }
       else {
         residentRule = null;
@@ -513,8 +514,8 @@ export default function AdminReducer(state = initialState, action) {
     case types.SELECT_STATE_CHANGE_RULE:
       var stateRule = Object.assign({}, state.stateRule);
       var errors = false;
-      stateRule.licensingplus__field__c = action.itemValue
-      if(stateRule.licensingplus__field__c === ''){
+      stateRule[OBJECTPREFIX + 'field__c'] = action.itemValue
+      if (stateRule[OBJECTPREFIX + 'field__c'] === '') {
         errors = true;
       }
       return Object.assign({}, state, {
@@ -526,7 +527,406 @@ export default function AdminReducer(state = initialState, action) {
       return Object.assign({}, state, {
         showToast: false
       });
+    case types.SET_NIPR_URL:
+      return Object.assign({}, state, {
+        niprShowUrl: true
+      });
 
+    case types.LICENSE_APPROVAL_RESULT_RECEIVED:
+      var filter_toggle = false;
+      var defaultRuleSet = Object.assign({}, constants.BLANK_LICENSE_APROVAL_RULE_SET_RESULT);
+      action.niprSyncConfig = Utils.lowKey(action.niprSyncConfig);
+      var ruleSet;
+      if (action.licencesRuleObject) {
+        action.licencesRuleObject.licenseRuleLogic = Utils.lowKey(action.licencesRuleObject.licenseRuleLogic);
+        action.licencesRuleObject.licenseRules = Utils.lowKeyArray(action.licencesRuleObject.licenseRules);
+        ruleSet = action.licencesRuleObject;
+
+      }
+      else {
+        ruleSet = defaultRuleSet.ruleSets[0];
+      }
+      if (_.filter(ruleSet.licenseRules, { [OBJECTPREFIX + 'isactive__c']: true }).length == ruleSet.licenseRules.length
+        && ruleSet.licenseRuleLogic[OBJECTPREFIX + 'isactive__c'] && _.filter(ruleSet.licenseRules, { [OBJECTPREFIX + 'isactive__c']: true }).length != 0) {
+        filter_toggle = true;
+      }
+      var advancedRuleLogicStr = '';
+      if (ruleSet.licenseRuleLogic && ruleSet.licenseRuleLogic[OBJECTPREFIX + 'logic__c']) {
+        advancedRuleLogicStr = Utils.convertDbLogicToUi(ruleSet.licenseRuleLogic[OBJECTPREFIX + 'logic__c']);
+      }
+      var advancedRuleLogic = Object.assign({}, state.licenseRuleLogic, ruleSet.licenseRuleLogic);
+      advancedRuleLogic[OBJECTPREFIX + 'logic__c'] = advancedRuleLogicStr;
+      var validation_user = { 'Username': action.niprSyncConfig[OBJECTPREFIX + 'nipr_integration_user_name__c'] };
+      let validationUserError=false
+      if(validation_user.Username==="" || validation_user.Username===undefined){
+        validationUserError=true
+      }
+
+      return Object.assign({}, state, {
+        licencesRuleObject: ruleSet,
+        licenseRuleLogic: advancedRuleLogic,
+        niprSyncConfig: action.niprSyncConfig,
+        validationUser: validation_user,
+        loaded: true,
+        errors: false,
+        deletedLicenseRules: ruleSet.deletedLicenseRules,
+        isLicenseRuleLogicRemoved: ruleSet.isLicenseRuleLogicRemoved,
+        automatic_license_approval: filter_toggle,
+        validationUserError:validationUserError
+      });
+
+    case types.LICENSE_APPROVAL_FIELDS_RESULT_RECEIVED:
+      return Object.assign({}, state, {
+        licenseApprovalFileds: action.licenseRuleField
+      });
+
+    case types.SELECT_LICENSE_CHANGE_RULE:
+      var rulesList = Object.assign([], state.licencesRuleObject.licenseRules);
+      var itemIndex = action.index;
+      var rulesListItem = rulesList[itemIndex];
+      var advancedErrors = Object.assign([], state.advancedErrors)
+      var error = false;
+
+      switch (action.itemName) {
+        case OBJECTPREFIX + 'license_field__c':
+          rulesListItem[OBJECTPREFIX + 'license_field__c'] = action.itemValue;
+          rulesListItem[OBJECTPREFIX + 'operator__c'] = '';
+          rulesListItem[OBJECTPREFIX + 'value__c'] = '';
+          var fieldType = state.licenseApprovalFileds.fields[rulesListItem[OBJECTPREFIX + 'license_field__c']];
+          if (fieldType === 'BOOLEAN_FIELD') {
+            rulesListItem[OBJECTPREFIX + 'value__c'] = 'true';
+            advancedErrors.push(itemIndex + '1');
+            advancedErrors = _.without(advancedErrors, itemIndex + '2');
+          }
+          else if (fieldType === 'DATE_FIELD') {
+            rulesListItem[OBJECTPREFIX + 'value__c'] = Utils.formatSfdcDate(new Date());
+            advancedErrors.push(itemIndex + '1');
+            advancedErrors = _.without(advancedErrors, itemIndex + '2');
+          }
+          else if (fieldType === 'DATETIME_FIELD') {
+            rulesListItem[OBJECTPREFIX + 'value__c'] = Utils.formatSfdcDateTime(new Date());
+            advancedErrors.push(itemIndex + '1');
+            advancedErrors = _.without(advancedErrors, itemIndex + '2');
+          }
+          else {
+            advancedErrors.push(itemIndex + '1', itemIndex + '2');
+          }
+          error = true;
+          break;
+        case OBJECTPREFIX + 'operator__c':
+          var fieldType = state.licenseApprovalFileds.fields[rulesListItem[OBJECTPREFIX + 'license_field__c']];
+          rulesListItem[OBJECTPREFIX + 'operator__c'] = action.itemValue;
+          if (action.itemValue === 'not blank') {
+            advancedErrors = _.without(advancedErrors, itemIndex + '2');
+            rulesListItem[OBJECTPREFIX + 'value__c'] = '';
+          }
+          else if (fieldType === 'BOOLEAN_FIELD') {
+            rulesListItem[OBJECTPREFIX + 'value__c'] = rulesListItem[OBJECTPREFIX + 'value__c'] ? rulesListItem[OBJECTPREFIX + 'value__c'] : 'true';
+          }
+          else if (fieldType === 'DATE_FIELD') {
+            rulesListItem[OBJECTPREFIX + 'value__c'] = rulesListItem[OBJECTPREFIX + 'value__c'] ? rulesListItem[OBJECTPREFIX + 'value__c'] : Utils.formatSfdcDate(new Date());
+          }
+          else if (fieldType === 'DATETIME_FIELD') {
+            rulesListItem[OBJECTPREFIX + 'value__c'] = rulesListItem[OBJECTPREFIX + 'value__c'] ? rulesListItem[OBJECTPREFIX + 'value__c'] : Utils.formatSfdcDateTime(new Date());
+          } else {
+            advancedErrors.push(itemIndex + '2');
+          }
+          break;
+        case OBJECTPREFIX + 'value__c':
+          rulesListItem[OBJECTPREFIX + 'value__c'] = action.itemValue;
+          if (rulesListItem[OBJECTPREFIX + 'license_field__c']) {
+            //there may not be a field selected, so check first
+            var fieldType = state.licenseApprovalFileds.fields[rulesListItem[OBJECTPREFIX + 'license_field__c']]
+            if (fieldType === 'DATE_FIELD') {
+              rulesListItem[OBJECTPREFIX + 'value__c'] = Utils.formatSfdcDate(action.itemValue);
+            }
+            else if (fieldType === 'DATETIME_FIELD') {
+              rulesListItem[OBJECTPREFIX + 'value__c'] = Utils.formatSfdcDateTime(action.itemValue);
+            }
+          }
+          break;
+        default:
+          rulesListItem = {};
+      }
+
+      if (!action.error) {
+        advancedErrors = _.without(advancedErrors, itemIndex + action.colIndex);
+      } else if (action.error) {
+        if (_.findIndex(advancedErrors, itemIndex + action.colIndex) == -1) {
+          advancedErrors.push(itemIndex + action.colIndex);
+        }
+      }
+      error = (advancedErrors.length || state.complianceErrors.length);
+      let licencesRuleObject = Object.assign({}, state.licencesRuleObject)
+      licencesRuleObject.licenseRules = rulesList
+      return Object.assign({}, state, {
+        licencesRuleObject: licencesRuleObject,
+        advancedErrors: advancedErrors,
+        errors: error
+      });
+
+    case types.ADD_LICENSE_RULE:
+      var licencesRuleObject = Object.assign([], state.licencesRuleObject);
+      var licenseRuleLogic = Object.assign({}, state.licenseRuleLogic);
+      //var isFilterRuleLogicRemoved = state.isFilterRuleLogicRemoved;
+      var currentIndex = licencesRuleObject.licenseRules.length;
+      var err = [currentIndex + '0', currentIndex + '1', currentIndex + '2']
+      var advancedErrors = _.union(state.advancedErrors, err);
+      if (isFilterRuleLogicRemoved) {
+        //  isFilterRuleLogicRemoved = false;
+      }
+      if (licencesRuleObject.licenseRules.length > 0) {
+        licenseRuleLogic[OBJECTPREFIX + 'logic__c'] = licenseRuleLogic[OBJECTPREFIX + 'logic__c'] + " and " + (licencesRuleObject.licenseRules.length + 1);
+      } else {
+        licenseRuleLogic[OBJECTPREFIX + 'logic__c'] = "1";
+      }
+      var rule = {};
+
+      rule[OBJECTPREFIX + 'object__c'] = OBJECTPREFIX + 'License__c';
+      rule[OBJECTPREFIX + 'license_field__c'] = "";
+      rule[OBJECTPREFIX + 'operator__c'] = "";
+      rule[OBJECTPREFIX + 'value__c'] = "";
+      rule[OBJECTPREFIX + 'isactive__c'] = true;
+
+      licencesRuleObject.licenseRules.push(rule);
+      return Object.assign({}, state, {
+        advancedErrors: advancedErrors,
+        licencesRuleObject: licencesRuleObject,
+        licenseRuleLogic: licenseRuleLogic,
+        //isFilterRuleLogicRemoved: isFilterRuleLogicRemoved,
+        errors: true
+      });
+
+    case types.DELETE_LICENSE_RULE:
+      var licencesRuleObject = Object.assign([], state.licencesRuleObject);
+      var licenseRuleLogic = Object.assign({}, state.licenseRuleLogic);
+      var deletedRuleList = Object.assign([], state.deletedLicenseRules);
+      var isLogicRemoved = state.isLicenseRuleLogicRemoved;
+      var advancedErrors = Object.assign([], state.advancedErrors);
+      var error = false;
+      advancedErrors = _.without(advancedErrors, action.index + '0', action.index + '1', action.index + '2');
+      var logic = "";
+      if (licencesRuleObject.licenseRules.length - 1 > 0) {
+        logic = "1";
+        for (var i = 2; i < licencesRuleObject.licenseRules.length; i++) {
+          logic = logic + " and " + i;
+        }
+      }
+      licenseRuleLogic[OBJECTPREFIX + 'logic__c'] = logic;
+      var deletedRule = licencesRuleObject.licenseRules.splice(action.index, 1);
+      deletedRule[0][OBJECTPREFIX + 'isactive__c'] = false;
+      if (licencesRuleObject.licenseRules.length && deletedRule[0].id) {
+        deletedRuleList.push(deletedRule[0]);
+      } else if (!licencesRuleObject.licenseRules.length && deletedRule[0].id) {
+        deletedRuleList.push(deletedRule[0]);
+        isLogicRemoved = true;
+      } else if (!licencesRuleObject.licenseRules.length) {
+        isLogicRemoved = true;
+      }
+
+      error = (advancedErrors.length);
+      return Object.assign({}, state, {
+        licencesRuleObject: licencesRuleObject,
+        licenseRuleLogic: licenseRuleLogic,
+        deletedLicenseRules: deletedRuleList,
+        isLicenseRuleLogicRemoved: isLogicRemoved,
+        advancedErrors: advancedErrors,
+        errors: error
+      });
+
+    case types.CHANGE_LICENSE_RULE_LOGIC:
+      var logic = Object.assign({}, state.licenseRuleLogic);
+      logic[OBJECTPREFIX + 'logic__c'] = action.value;
+      var error = false;
+      if (action.error) {
+        error = true;
+      } else if (state.advancedErrors.length) {
+        error = true;
+      } else {
+        error = false;
+      }
+      return Object.assign({}, state, {
+        licenseRuleLogic: logic,
+        errors: error
+      });
+
+    case types.TOGGLE_ACTIVATE_LICENSE:
+      var licencesRuleObject = Object.assign([], state.licencesRuleObject);
+      var licenseRuleLogic = Object.assign({}, state.licenseRuleLogic);
+      var deletedRuleList = Object.assign([], state.deletedLicenseRules);
+      var isLogicRemoved = state.isLicenseRuleLogicRemoved;
+      licencesRuleObject.deletedLicenseRules = deletedRuleList;
+      licencesRuleObject.isLicenseRuleLogicRemoved = isLogicRemoved;
+      if (!action.value) {
+        _.map(licencesRuleObject.licenseRules, (value, key) => {
+          licencesRuleObject.licenseRules[key][OBJECTPREFIX + "isactive__c"] = false;
+        })
+        if (licencesRuleObject.licenseRules.length != 0) {
+          licenseRuleLogic[OBJECTPREFIX + "isactive__c"] = false;
+          licencesRuleObject.licenseRuleLogic = licenseRuleLogic;
+        }
+      } else {
+        _.map(licencesRuleObject.licenseRules, (value, key) => {
+          licencesRuleObject.licenseRules[key][OBJECTPREFIX + "isactive__c"] = true;
+        })
+        if (licencesRuleObject.licenseRules.length != 0) {
+          licenseRuleLogic[OBJECTPREFIX + "isactive__c"] = true;
+          licencesRuleObject.licenseRuleLogic = licenseRuleLogic;
+        }
+      }
+      //licencesRuleObject.licenseRuleLogic[OBJECTPREFIX + "isactive__c"] = true;
+      return Object.assign({}, state, {
+        automatic_license_approval: action.value,
+        licenseRuleLogic: licenseRuleLogic
+      });
+
+    case types.TOGGLE_FORCE_EXPIRE:
+      var niprSyncConfig = Object.assign({}, state.niprSyncConfig);
+      niprSyncConfig[OBJECTPREFIX + "forceexpire__c"] = action.value;
+      return Object.assign({}, state, {
+        niprSyncConfig: niprSyncConfig
+      });
+
+    case types.ON_CHANGE_APPROVAL_PROCESS:
+      var niprSyncConfig = Object.assign({}, state.niprSyncConfig);
+      niprSyncConfig[OBJECTPREFIX + "approvalprocess__c"] = action.value;
+      return Object.assign({}, state, {
+        niprSyncConfig: niprSyncConfig
+      });
+
+    case types.ON_VALIDATION_USER_RECEIVE:
+      return Object.assign({}, state, {
+        validationUserList: action.usersList
+      });
+
+    case types.ON_CHANGE_USER_SEARCH_STRING:
+      return Object.assign({}, state, {
+        validationUser: action.value,
+      });
+
+    case types.SAVE_LICENSE_APPROVAL_RULE:
+      hashHistory.push('/db');
+      return state;
+
+    case types.ON_APPROVAL_PROCESS_RECEIVE:
+      return Object.assign({}, state, {
+        approvalProcessList: action.approvalProcessList,
+      });
+
+    case types.CLEAR_USER_SEARCH_RESULT:
+      return Object.assign({}, state, {
+        validationUserList: [],
+      });
+
+    case types.XML_RECEIVED:
+      return Object.assign({}, state, {
+        xmlReceived: action.xmlReceived,
+        fileName: action.fileName
+      });
+
+    case types.PRODUCERS_UPLOAD_INSERTED:
+      var insertedProcedures = Utils.lowKeyArray(action.insertedProcedures);
+      var newState = Object.assign({}, state);
+      if (_.isArray(action.errorMessages)) {
+        action.errorMessages.map(function (item, i) {
+          if (!item.isSuccess) {
+            newState.errorMessages.push(item);
+          }
+        }, this);
+      }
+      return Object.assign({}, state, {
+        xmlReceived: {},
+        insertedProcedures: insertedProcedures,
+        progressBarValue: state.progressBarValue + action.progressBarValue,
+        errorMessages: newState.errorMessages,
+        showToast: action.showToast
+      });
+
+    case types.SHOW_PROGRESS:
+      return Object.assign({}, state, {
+        showProgress: action.showProgress,
+      });
+
+    case types.UPLOAD_SUCCESS:
+      return Object.assign({}, state, {
+        progressBarValue: 0,
+        showProgress: false,
+        showToast: true
+      });
+
+    case types.UPLOAD_ERROR:
+      return Object.assign({}, state, {
+        progressBarValue: 0,
+        showProgress: false,
+      });
+    case types.UPDATE_PROGRESS:
+      return Object.assign({}, state, {
+        progressBarValue: action.progressValue,
+        showProgress: action.showProgress
+      });
+
+    case types.UPLOAD_STARTED:
+      return Object.assign({}, state, {
+        xmlReceived: {},
+        insertedProcedures: [],
+        showProgress: true,
+        progressBarValue: 5,
+        errorMessages: [],
+        fileName: constants.CHOOSE_FILE
+      });
+
+    case types.SET_URL_ERROR:
+      return Object.assign({}, state, {
+        herokuURLError: action.value,
+        herokuURLSuccess: !action.value
+      });
+
+    case types.HEROKU_URL_CHANGE:
+      return Object.assign({}, state, {
+        herokuURL: action.value
+      });
+
+    case types.IS_MAINTAINANCE_MODE:
+      return Object.assign({}, state, {
+        isMaintainanceMode: true
+      });
+
+    case types.SHOW_INVALID_TOAST:
+      return Object.assign({}, state, {
+        showInvalidToast: true,
+        showProgress: false
+      });
+
+    case types.HIDE_INVALID_TOAST:
+      return Object.assign({}, state, {
+        showInvalidToast: false
+      });
+
+    case types.SHOW_INVALID_DB_TOAST:
+      return Object.assign({}, state, {
+        showInvalidDbToast: true,
+        showProgress: false
+      });
+
+    case types.HIDE_INVALID_DB_TOAST:
+      return Object.assign({}, state, {
+        showInvalidDbToast: false
+      });
+
+    case types.SHOW_INVALID_FILE_TOAST:
+      return Object.assign({}, state, {
+        showInvalidFileToast: true,
+        showProgress: false
+      });
+
+    case types.HIDE_INVALID_FILE_TOAST:
+      return Object.assign({}, state, {
+        showInvalidFileToast: false
+      });
+    case types.VALIDATION_USER_ERROR:
+      return Object.assign({}, state, {
+        validationUserError: action.value
+      });
     default:
       return state;
   }

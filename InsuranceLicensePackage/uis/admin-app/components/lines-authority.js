@@ -2,24 +2,29 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import Papa from 'papaparse';
 import * as constants from '../constants/constants';
+import { OBJECTPREFIX } from '../constants/constants';
 import Utils from '../utils/utils';
 import { Link } from 'react-router';
-import { deleteLineOfAuth, cancelPreview, getLinesOfAuth, insertLinesOfAuth, openCsv } from '../actions/lines-authority-actions';
-import {hideToast} from '../actions/object-rule-set-actions'; 
+import { deleteLineOfAuth, cancelPreview, getLinesOfAuth, insertLinesOfAuth, openCsv, showInvalidToast, hideInvalidToast, hideInvalidFileToast, showInvalidFileToast } from '../actions/lines-authority-actions';
+import {hideToast} from '../actions/object-rule-set-actions';
+import Sidebar from './sidebar.container';
 
-class LinesAuthority extends Component {
+export class LinesAuthority extends Component {
   constructor() {
     super();
-     this.state = {
+    this.state = {
       showToast: false,
-     }
+    }
     this.deleteLineOfAuth = this.deleteLineOfAuth.bind(this);
     this.cancelPreview = this.cancelPreview.bind(this);
+    this.hideNiprInvalidToast = this.hideNiprInvalidToast.bind(this);
+    this.hideNiprInvalidFileToast = this.hideNiprInvalidFileToast.bind(this);
   }
 
   componentDidMount() {
     // javascript remoting to get existing lines of auth values
     this.props.getLinesOfAuth();
+    this.props.hideNiprInvalidToast();
   }
 
   hideToast(event) {
@@ -27,42 +32,84 @@ class LinesAuthority extends Component {
     this.props.hideToast();
   }
 
+  hideNiprInvalidToast(event) {
+    event.preventDefault();
+    this.props.hideNiprInvalidToast();
+  }
+
+  hideNiprInvalidFileToast(event) {
+    event.preventDefault();
+    this.props.hideNiprInvalidFileToast();
+  }
+
   renderToast() {
     if (this.props.showToast) {
       return (
         <div className='alert alert-danger toast' >
           <a onClick={this.props.hideToast.bind(null) }>Dismiss</a>
-          <strong className='glyphicon glyphicon-alert'></strong> Something went wrong, check the CSV format is correct
+          <strong className='fa fa-exclamation-triangle'></strong> Something went wrong, check the CSV format is correct
         </div>
       );
     }
   }
 
-  openCsv( ev ) {
-    var file = ev.target.files[ 0 ];
-    var config = {
-      header: true,
-      dynamicTyping: true,
-      complete: (results) => {
-        var previewRows = results.data.map( ( row, index ) => {
-            // return mapObj( obj, csv2SfdcMap )
-            row = Utils.lowKey(row);
-            var uniqueName = row['loa name'] + this.props.sfdcRows.length + index;
-            return {
-              name: uniqueName,
-              licensingplus__loa_name__c: row['loa name'],
-              licensingplus__type__c: row.type
-            }
-          })
-          .filter( ( obj ) => {
-            return (obj.licensingplus__loa_name__c && obj.licensingplus__type__c) ? true : false;
-          });
-
-        this.props.openCsv(previewRows, file.name);
-      }
+  renderInvalidToast() {
+    if (this.props.showInvalidToast) {
+      return (
+        <div className='alert alert-danger toast' >
+          <a onClick={this.hideNiprInvalidToast }>Dismiss</a>
+          <strong className='fa fa-exclamation-triangle'></strong>Invalid File
+        </div>
+      );
     }
+  }
 
-    Papa.parse( file, config );
+  renderInvalidFileToast() {
+    if (this.props.showInvalidFileToast) {
+      return (
+        <div className='alert alert-danger toast' >
+          <a onClick={this.hideNiprInvalidFileToast }>Dismiss</a>
+          <strong className='fa fa-exclamation-triangle'></strong>File columns should be equal to 2.
+        </div>
+      );
+    }
+  }
+
+  openCsv(ev) {
+    var file = ev.target.files[0];
+    if (file.name.toLowerCase().indexOf('.csv') !== -1) {
+      var config = {
+        header: true,
+        dynamicTyping: true,
+        complete: (results) => {
+          if (!_.isUndefined(results.data) && !_.isUndefined(results.data[0])) {
+            var count = Object.keys(results.data[0]).length;
+            if (count == 2) {
+              var previewRows = results.data.map((row, index) => {           
+                // return mapObj( obj, csv2SfdcMap )
+                row = Utils.lowKey(row);
+                var uniqueName = row['loa name'].substring(0, 30) + this.props.sfdcRows.length + index;
+                return {
+                  name: uniqueName,
+                  [OBJECTPREFIX + 'loa_name__c']: row['loa name'],
+                  [OBJECTPREFIX + 'type__c']: row.type
+                }
+              })
+                .filter((obj) => {
+                  return (obj[OBJECTPREFIX + 'loa_name__c'] && obj[OBJECTPREFIX + 'type__c']) ? true : false;
+                });
+              this.props.openCsv(previewRows, file.name);
+
+            } else {
+              this.props.showNiprInvalidFileToast();
+            }
+          }
+        }
+      }
+      Papa.parse(file, config);
+    } else {
+      this.props.showNiprInvalidToast();
+    }
   }
 
   insertLinesOfAuth() {
@@ -80,20 +127,20 @@ class LinesAuthority extends Component {
     let dataRows = (this.props.previewRows.length > 0) ? this.props.previewRows : this.props.sfdcRows
     let rows = dataRows.map((loaRow, index) => {
       let row;
-      if(this.isPreviewMode()){
+      if (this.isPreviewMode()) {
         row = (
-          <tr key={index}>
-            <td>{loaRow.licensingplus__loa_name__c}</td>
-            <td>{loaRow.licensingplus__type__c}</td>
+          <tr key={index} className={index % 2 == 0 ? 'row-odd' : 'row-even'}>
+            <td>{loaRow[OBJECTPREFIX + 'loa_name__c']}</td>
+            <td>{loaRow[OBJECTPREFIX + 'type__c']}</td>
           </tr>
         );
       }
       else {
         row = (
-          <tr key={index}>
-            <td>{_.unescape(loaRow.licensingplus__loa_name__c)}</td>
+          <tr key={index} className= {index % 2 == 0 ? 'row-odd' : 'row-even'}>
+            <td>{_.unescape(loaRow[OBJECTPREFIX + 'loa_name__c']) }</td>
             <td>
-              {_.unescape(loaRow.licensingplus__type__c)}
+              {_.unescape(loaRow[OBJECTPREFIX + 'type__c']) }
             </td>
             <td>
               <button type='button' className='add-btn' onClick={this.deleteLineOfAuth.bind(null, loaRow) }>-</button>
@@ -106,7 +153,7 @@ class LinesAuthority extends Component {
 
     return rows;
   }
-  
+
   isPreviewMode() {
     return this.props.previewRows.length > 0;
   }
@@ -117,6 +164,7 @@ class LinesAuthority extends Component {
       preview = (<div className='heading-table'><h3>Preview</h3></div>);
       upload = <input onClick={this.insertLinesOfAuth.bind(this) } className='btn btn-orange' type='button' value='Save' />;
       cancel = <input className='btn btn-white' onClick={this.cancelPreview.bind(this) } type='button' value='Cancel' />;
+
       dataTable = (
         <table className='table'>
           <thead>
@@ -133,7 +181,7 @@ class LinesAuthority extends Component {
       );
     }
     else if (this.props.sfdcRows && this.props.sfdcRows.length > 0) {
-      preview = (<div className='heading-table'><h3>Lines of authority</h3><small>These are your saved items.</small></div>);
+      preview = (<div className='heading-table'><h5 className="font-color">Preview Spreadsheet</h5></div>);
       dataTable = (
         <table className='table'>
           <thead>
@@ -161,66 +209,33 @@ class LinesAuthority extends Component {
     );
   }
   render() {
-    var links = (
-      <div className='salesforce-link-lines'>
-        <p>
-          <small><span className='glyphicon glyphicon-question-sign'></span> Need more help?<a className='link' href={constants.VIDEO_LINK} target='_blank'>Watch our video!</a></small>
-        </p>
-        <p>
-          <a className='link' href='/'>Return to Salesforce</a>
-        </p>
-      </div>
-    )
-    var back = (
-      <h4>
-        <Link to={`/checklist`}>
-          &lt; Back to checklist
-        </Link>
-      </h4>
-    )
-
-    var sideNavigation = (
-      <div className='col-sm-3 zenefits-nav'>
-        {back}
-        <h1>Configure lines of authority</h1>
-        <p>Make sure your compliance team has filled out the spreadsheet and classified your lines of authority into master groups.</p>
-        <p><b>The Lines of Authority mapping sample is the result of research we conducted in Q1 2016. This is a sample only and does not replace legal or other professional advice.  It is your continued responsibility to understand and comply with applicable laws and regulations that affect your business.</b></p>
-        {links}
-      </div>
-    );
-
-    if (this.props.checklistComplete) {
-      sideNavigation = (
-        <div className='col-sm-3 zenefits-nav'>
-          {back}
-          <ul className='nav nav-pills nav-stacked'>
-            <li role='presentation'><Link to={`/rules`}>Compliance Rules</Link></li>
-            <li role='presentation' className='active'><Link to={`/lines`}>Lines of Authority</Link></li>
-          </ul>
-          {links}
-        </div>
-      );
+    var nextButton;
+    if (this.props.isMaintainanceMode || this.isPreviewMode()) {
+      nextButton = true;
+    } else {
+      nextButton = false;
     }
     return (
-      <div className='license-form'>
-        {this.renderToast()}
-        <div className='row'>
-          {sideNavigation}
+      <div className='license-form div-float'>
+        {this.renderToast() }
+        {this.renderInvalidToast() }
+        {this.renderInvalidFileToast() }
+        <div>
+          <Sidebar activePage='lines' checklistComplete={this.props.checklistComplete}/>
           <div className='col-sm-9 inside-container'>
-            <h4>Configure lines of authority</h4>
-            <p>
-              <small>Upload your lines of authority spreadsheet.</small>
-            </p>
+            <h4 className="sub-heading">Upload your lines of authority spreadsheet</h4>
             <br/>
             <form onChange={this.openCsv.bind(this) }>
               <label className='file'>
-              <span className='csvInput'></span>
+                <span className='csvInput'></span>
                 <input type='file' id='csvInput' title=' '/>
-                <span className='file-custom' data-file-name={this.props.fileName}>Choose file</span>
+                <span className='file-custom choose-button' data-file-name={this.props.fileName}>Choose file</span>
               </label>
             </form>
-            <hr/>
             {this.renderDataTable() }
+            <Link to={`/compliancechecklist`} className={nextButton ? 'btn donebtn-visibility' : 'btn btn-warning btn-right next-button'}>
+              Next
+            </Link>
           </div>
         </div>
         <hr />
@@ -235,7 +250,10 @@ const mapStateToProps = (state) => {
     previewRows: state.previewRows,
     sfdcRows: state.sfdcRows,
     showToast: state.showToast,
-    fileName: state.fileName
+    fileName: state.fileName,
+    isMaintainanceMode: state.isMaintainanceMode,
+    showInvalidToast: state.showInvalidToast,
+    showInvalidFileToast: state.showInvalidFileToast
   };
 }
 
@@ -258,6 +276,18 @@ const mapDispatchToProps = (dispatch) => {
     },
     hideToast: () => {
       dispatch(hideToast());
+    },
+    hideNiprInvalidToast: () => {
+      dispatch(hideInvalidToast());
+    },
+    showNiprInvalidToast: () => {
+      dispatch(showInvalidToast());
+    },
+    hideNiprInvalidFileToast: () => {
+      dispatch(hideInvalidFileToast());
+    },
+    showNiprInvalidFileToast: () => {
+      dispatch(showInvalidFileToast());
     }
   }
 }
