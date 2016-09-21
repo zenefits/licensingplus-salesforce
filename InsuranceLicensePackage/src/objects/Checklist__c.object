@@ -12,6 +12,15 @@
         <type>Checkbox</type>
     </fields>
     <fields>
+        <fullName>completed_setup__c</fullName>
+        <defaultValue>false</defaultValue>
+        <deprecated>false</deprecated>
+        <externalId>false</externalId>
+        <label>completed setup</label>
+        <trackTrending>false</trackTrending>
+        <type>Checkbox</type>
+    </fields>
+    <fields>
         <fullName>configure_loa_skip__c</fullName>
         <defaultValue>false</defaultValue>
         <deprecated>false</deprecated>
