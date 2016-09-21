@@ -56,10 +56,10 @@ public with sharing class NIPRLicenseSyncHelper {
         AppConfig.getAppNamespacedName('state__c')};
     
     public NIPRLicenseSyncHelper(List<NIPRLicense> niprLicenses, NIPRSyncReportBuilder reportBuilder, LicenseRuleHelper ruleHelper) {
-    	this.reportBuilder = reportBuilder;
-        this.niprLicenses = niprLicenses;
+        this.reportBuilder = reportBuilder;
         this.ruleHelper = ruleHelper;
         
+        this.niprLicenses = new List<NIPRLicense>();
         this.licensesToApprove = new List<License__c>();        
         this.npnNumbers = new Set<String>();
         this.states = new Set<String>();
@@ -72,15 +72,16 @@ public with sharing class NIPRLicenseSyncHelper {
         this.responseByKey = new Map<String, NIPRSyncApiResponse.LicenseSyncResponse>();
         this.ownerInfoByNpnNumber = new Map<String, OwnerInfo>();
         
-        init();
+        // filter out required information missing nipr alert
+        init(niprLicenses);
     }
     
     public List<NIPRSyncApiResponse.LicenseSyncResponse> syncLicenses() {
-		Set<String> licenseQueryFields = licenseFields.clone();
-		licenseQueryFields.add(AppConfig.getAppNamespacedName('status__c'));
+        Set<String> licenseQueryFields = licenseFields.clone();
+        licenseQueryFields.add(AppConfig.getAppNamespacedName('status__c'));
       
-		LicenseRuleHelper.enforceCRUDAndFLS(AppConfig.getAppNamespacedName('License__c'), licenseQueryFields, 'query', false);  
-		LicenseRuleHelper.enforceCRUDAndFLS(AppConfig.getAppNamespacedName('Line_of_Authority__c'), new Set<String>(), 'query', false);   
+        LicenseRuleHelper.enforceCRUDAndFLS(AppConfig.getAppNamespacedName('License__c'), licenseQueryFields, 'query', false);  
+        LicenseRuleHelper.enforceCRUDAndFLS(AppConfig.getAppNamespacedName('Line_of_Authority__c'), new Set<String>(), 'query', false);   
       
         List<License__c> existingIncompleteLicenses = [SELECT nipr_update_date__c, nipr_manual_override__c, ownerid, id, npn_number__c, number__c, resident_license__r.npn_number__c, effective_date__c, state__c,  (SELECT id, name FROM Lines_of_Authority__r) 
                                             FROM License__c WHERE (npn_number__c = null AND resident_license__r.npn_number__c=null) OR number__c = null OR effective_date__c = null];
@@ -381,15 +382,27 @@ public with sharing class NIPRLicenseSyncHelper {
       this.reportBuilder.logErrorReport('NIPRLicenseSyncHelper', method, message);
     }
     
-    private void init() {
+    private void init(List<NIPRLicense> licenses) {
         //key will be (npn number, state, effective date, license number)
-        for (NIPRLicense nipr : this.niprLicenses) {
-          String originalState = nipr.state;
-          nipr.state = LicensingUtils.stateMap.get(nipr.state);                    
-          if (nipr.state == null) {
-             logInfo('init', '[LICENSE ERROR] not able to find state ' + originalState);
-             continue;
-          }                   
+        for (NIPRLicense nipr : licenses) {
+            if (nipr.effectiveDate==null || nipr.npnNumber==null || nipr.state==null || nipr.licenseNumber==null) {
+                String key = getNIPRLicenseKey(nipr);
+                this.totalFailures += 1;
+                String errorMessage = NIPRSyncError.errorMessageByType.get(NIPRSyncError.SyncError.REQUIRED_INFO_MISSING);
+                NIPRSyncApiResponse.LicenseSyncResponse response = NIPRSyncApiResponse.getLicenseSyncResponse(key, false, NIPRSyncError.SyncError.REQUIRED_INFO_MISSING, errorMessage);
+                this.responseByKey.put(key, response);
+                logError('init', '[LICENSE ERROR] required information is missing ' + key);            
+                continue;
+            }
+            
+            this.niprLicenses.add(nipr);
+            
+            String originalState = nipr.state;
+            nipr.state = LicensingUtils.stateMap.get(nipr.state);                    
+            if (nipr.state == null) {
+                logInfo('init', '[LICENSE ERROR] not able to find state ' + originalState);
+                continue;
+            }                   
 
             this.npnNumbers.add(nipr.npnNumber);
             this.states.add(nipr.state);        
@@ -722,10 +735,10 @@ public with sharing class NIPRLicenseSyncHelper {
     
     private String getNIPRLicenseKey(License__c nipr) {
         String npnNumber = nipr.npn_number__c!=null ? nipr.npn_number__c : nipr.resident_license__r.npn_number__c;
-        return npnNumber + ';' + nipr.number__c + ';' + nipr.state__c + ';' + nipr.effective_date__c.format();
+        return npnNumber + ';' + nipr.number__c + ';' + nipr.state__c + ';' + (nipr.effective_date__c!=null ? nipr.effective_date__c.format() : null);
     }
     
     private String getNIPRLicenseKey(NIPRLicense nipr) {
-        return nipr.npnNumber + ';' + nipr.licenseNumber + ';' + nipr.state + ';' + nipr.effectiveDate.format();
+        return nipr.npnNumber + ';' + nipr.licenseNumber + ';' + nipr.state + ';' + (nipr.effectiveDate!=null ? nipr.effectiveDate.format() : null);
     }
 }
