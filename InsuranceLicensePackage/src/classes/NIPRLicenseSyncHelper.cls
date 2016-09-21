@@ -688,12 +688,6 @@ public with sharing class NIPRLicenseSyncHelper {
                 }
             } else {
                 logInfo('updateLicense', String.format('[LICENSE ERROR] inactive line of authority - {0} for license - {1}', new String[]{loa.name, key}));
-                
-                /* how to handle inactive loa
-                if (existingLOA!=null) {
-                    logInfo('deleteLOA', String.format('DELETE existing line of authority - {0} found for license - {1}', new String[]{loa.name, key}));
-                    this.loaToDelete.add(existingLOA);
-                }*/
             }
         }
         
