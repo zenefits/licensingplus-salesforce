@@ -2,7 +2,6 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { Link } from 'react-router';
 import { toggleChecklist } from '../actions/checklist-actions';
-import { VIDEO_LINK } from '../constants/constants';
 import Utils from '../utils/utils';
 import Sidebar from './sidebar.container';
 import { Tooltip } from 'reactstrap';
@@ -81,15 +80,15 @@ export class NIPRSetupView extends Component {
         return (
             <div className="col-sm-9 getting-started inside-container">
                 <h4 className="sub-heading">NIPR Integration Setup <small><span id='helpToolTipNipr' className='fa fa-question-circle question-icon-size'></span></small> </h4>
-                <Tooltip placement="bottom" isOpen={this.state.tooltipOpen} target="helpToolTipNipr" toggle={this.toggle}>
-                    NIPR Integration Setup
+                <Tooltip placement="top left" isOpen={this.state.tooltipOpen} target="helpToolTipNipr" toggle={this.toggle}>
+                    Integrate with the National Insurance Producer Registry to keep your license database current.
                 </Tooltip>
                 <br/>
-                <p>In order to manage the NIPR integration daily feed you need to setup a simple 3rd party application
-                (Heroku). We have pre-configured the setup to make it as easy as possible for you, 5 minutes and
+                <p>In order to manage the NIPR integration daily feed you need to set up a simple 3rd party application
+                (Heroku). We have pre-configured the setup to make it as easy as possible for you — 5 minutes and
                     a few clicks is all it takes.</p>
                 <br/>
-                <p>To complete the NIPR integration you also need to create an NIPR Producer Database Account which can be setup via email through NIPR. Note that it can take NIPR a few business days to
+                <p>To complete the NIPR integration you also need to create a NIPR Producer Database Account which can be set up via email through NIPR. Note that it can take NIPR a few business days to
                     process.</p>
                 <br/>
 

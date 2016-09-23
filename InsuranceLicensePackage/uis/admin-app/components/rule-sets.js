@@ -4,7 +4,6 @@ import { connect } from 'react-redux';
 import Toggle from 'react-toggle'
 import { toggleLicenseRuleSet, getAllLicenseRuleSetResults, getSobjectNames } from '../actions/rule-sets-actions';
 import { DropdownButton, MenuItem } from 'react-bootstrap';
-import { VIDEO_LINK } from '../constants/constants';
 import Sidebar from './sidebar.container';
 import _ from 'lodash';
 

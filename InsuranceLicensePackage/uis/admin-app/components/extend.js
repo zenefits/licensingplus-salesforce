@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import { Link } from 'react-router';
 import { connect } from 'react-redux';
-import { EMBED_VIDEO_LINK } from '../constants/constants';
 
 export class Extend extends Component {
   constructor(props) {
@@ -34,20 +33,6 @@ export class Extend extends Component {
   render() {
     return (
       <div className='license-form welcome'>
-        <div className='row welcome-main-row'>
-          <h1 className="welcome-main-heading">
-            Recommended next steps
-          </h1>
-          <div className="welcome-vid-container">
-            <div className="col-md-3"></div>
-            <div className="col-md-6">
-              <div className="embed-responsive embed-responsive-16by9 welcome-vid-box">
-                <iframe className="embed-responsive-item" src={EMBED_VIDEO_LINK}></iframe>
-              </div>
-            </div>
-            <div className="col-md-3"></div>
-          </div>
-        </div>
         <div className='row welcome-main-row'>
           <h1 className="welcome-main-heading2">
             Extend application to your custom objects

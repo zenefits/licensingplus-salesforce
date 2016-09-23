@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 import { Link } from 'react-router';
 import {updateMaintenanceMode} from '../actions/upload-actions';
 import { toggleChecklist } from '../actions/checklist-actions';
-import { VIDEO_LINK, OBJECTPREFIX,SKIPNIPR} from '../constants/constants';
+import { OBJECTPREFIX,SKIPNIPR} from '../constants/constants';
 import _ from 'lodash';
 import NIPRCheckView from './nipr-checklist.view';
 

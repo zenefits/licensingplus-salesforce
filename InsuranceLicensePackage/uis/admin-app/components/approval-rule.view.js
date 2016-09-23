@@ -10,7 +10,7 @@ import {OBJECTPREFIX } from '../constants/constants';
 import * as constants from '../constants/constants';
 import Utils from '../utils/utils';
 import Autocomplete from 'react-autocomplete';
-import { VIDEO_LINK} from '../constants/constants';
+import { APPROVAL_VIDEO_LINK } from '../constants/constants';
 import Sidebar from './sidebar.container';
 import { Tooltip } from 'reactstrap';
 
@@ -69,21 +69,21 @@ export class ApprovalView extends Component {
                <h4 className="sub-heading">License Approval Criteria
                     &nbsp;<small>
                         <span id='helpToolTip0' className='fa fa-question-circle question-icon-size'></span>
-                        <Tooltip  key='helpToolTip0' placement="bottom" isOpen={this.state.tooltipOpen1} target='helpToolTip0' toggle={this.toggle.bind(this,"1")}>
-                            Lorem Ipsum
+                        <Tooltip  key='helpToolTip0' placement="top left" isOpen={this.state.tooltipOpen1} target='helpToolTip0' toggle={this.toggle.bind(this,"1")}>
+                            Determine the approval criteria for licenses submitted via NIPR integration.
                         </Tooltip>
                     </small>
 
                 </h4>
 
-                <p><a href={VIDEO_LINK} target='_blank'>Watch the Approval Criteria configuration video</a></p>
+                <p><a href={APPROVAL_VIDEO_LINK} target='_blank'>Watch the Approval Criteria configuration video</a></p>
                 <br></br>
                 <div className="row">
                     <div className="form-group">
                         <label className="control-label col-sm-6  col-md-6">Choose Approval Process <small>
                             <span id='helpToolTip1' className='fa fa-question-circle question-icon-size'></span></small></label>
-                        <Tooltip key='helpToolTip1' placement="bottom" isOpen={this.state.tooltipOpen2} target='helpToolTip1' toggle={this.toggle.bind(this,"2")}>
-                            Lorem Ipsum
+                        <Tooltip key='helpToolTip1' placement="top left" isOpen={this.state.tooltipOpen2} target='helpToolTip1' toggle={this.toggle.bind(this,"2")}>
+                            Select a Salesforce approval process for license updates that are not auto approved.
                         </Tooltip>
                         {processName}
                     </div>
@@ -92,8 +92,8 @@ export class ApprovalView extends Component {
                     <div className="form-group">
                         <label className="control-label col-sm-6 col-md-6">Validation Rule Exception <small>
                             <span id='helpToolTip2' className='fa fa-question-circle question-icon-size'></span></small></label>
-                        <Tooltip key='helpToolTip2' placement="bottom" isOpen={this.state.tooltipOpen3} target='helpToolTip2' toggle={this.toggle.bind(this,"3")}>
-                            Lorem Ipsum
+                        <Tooltip key='helpToolTip2' placement="top left" isOpen={this.state.tooltipOpen3} target='helpToolTip2' toggle={this.toggle.bind(this,"3")}>
+                            This user will be the NIPR integration user. This user makes all NIPR license data changes.
                         </Tooltip>
                         <div className="col-sm-4 col-md-4 validation-rule-field">
                             <Autocomplete
@@ -124,8 +124,8 @@ export class ApprovalView extends Component {
                     <div className="form-group">
                         <label className="control-label col-sm-6 col-md-6">Force Expire  <small>
                             <span key='3' id='helpToolTip3' className='fa fa-question-circle question-icon-size'></span></small></label>
-                        <Tooltip key='helpToolTip3' placement="bottom" isOpen={this.state.tooltipOpen4} target='helpToolTip3' toggle={this.toggle.bind(this,"4")}>
-                            Lorem Ipsum
+                        <Tooltip key='helpToolTip3' placement="top left" isOpen={this.state.tooltipOpen4} target='helpToolTip3' toggle={this.toggle.bind(this,"4")}>
+                            If NIPR reports a license as inactive the system will automatically force expire the license so it is no longer active.
                         </Tooltip>
                         <div className="col-sm-6 col-md-6 pull-right">
                             {toggle}
@@ -136,7 +136,7 @@ export class ApprovalView extends Component {
                 <h5 className="control-label">License Approval Rule Set</h5>
                 <div className="row">
                     <div className="form-group">
-                        <label className="control-label col-sm-6 col-md-6">Activate automatic license approval</label>
+                        <label className="control-label col-sm-6 col-md-6">Activate Automatic License Approval</label>
                         <div className="col-sm-6 col-md-6 pull-right">
                             {filter_toggle}
                         </div>
@@ -220,7 +220,7 @@ export class ApprovalView extends Component {
         } else {
             return (
                 <tr>
-                    <td colspan='5'>
+                    <td colSpan='5'>
                         No rules added
                     </td>
                 </tr>

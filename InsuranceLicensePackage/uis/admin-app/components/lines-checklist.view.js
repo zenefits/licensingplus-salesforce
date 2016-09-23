@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { Link } from 'react-router';
-import { VIDEO_LINK, OBJECTPREFIX, SKIPCOMPLIANCE} from '../constants/constants';
+import { CONFIGURATION_VIDEO_LINK, OBJECTPREFIX, SKIPCOMPLIANCE} from '../constants/constants';
 import _ from 'lodash';
 import Sidebar from './sidebar.container';
 
@@ -59,7 +59,7 @@ export class LinesCheckView extends Component {
                         <div className='checkbox checkbox-container'>
                             <label>
                                 <input type='checkbox' id='2' checked={this.props.checklist[OBJECTPREFIX + 'watch_configuration_video__c']} onChange={this.props.toggleChecklist.bind(this, OBJECTPREFIX + 'watch_configuration_video__c') }></input>
-                                <label htmlFor='2' className='label-check'>Watch our <a href={VIDEO_LINK} target='_blank'>configuration video</a></label>
+                                <label htmlFor='2' className='label-check'>Watch the <a href={CONFIGURATION_VIDEO_LINK} target='_blank'>configuration video</a></label>
                             </label>
                         </div>
                         <div className='checkbox checkbox-container'>

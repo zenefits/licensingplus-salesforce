@@ -498,7 +498,7 @@ export class ObjectRuleSet extends Component {
     } else {
       return (
         <tr>
-          <td colspan='5'>
+          <td colSpan='5'>
             No rules added
           </td>
         </tr>
@@ -638,8 +638,8 @@ export class ObjectRuleSet extends Component {
           <div className='col-sm-9 inside-container'>
             <h4 className="sub-heading">{_.capitalize(objectLabel) } Compliance Rule Set <small>
               <span id="helpToolTipRule" className='fa fa-question-circle  question-icon'></span>
-              <Tooltip   placement="bottom" isOpen={this.state.tooltipOpen} target="helpToolTipRule" toggle={this.toggle}>
-                {_.capitalize(objectLabel) } Compliance Rule Set
+              <Tooltip placement="top left" isOpen={this.state.tooltipOpen} target="helpToolTipRule" toggle={this.toggle}>
+                Create business rules to enforce licensing controls on ownership. You will have to create one for each object.
               </Tooltip>
             </small></h4>
             <div className='heading-padding'>

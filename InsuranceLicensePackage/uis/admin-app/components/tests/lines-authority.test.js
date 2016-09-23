@@ -23,6 +23,6 @@ function setup() {
 describe('LinesAuthority Component Tests', () => {
   it('renders LinesAuthority component', () => {
     const wrapper = setup();
-    expect(wrapper.find('h4').last().text()).toEqual('Upload your lines of authority spreadsheet');
+    expect(wrapper.find('h4').last().text()).toEqual('Upload Your Lines of Authority Spreadsheet');
   });
 });

@@ -2,7 +2,6 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { Link } from 'react-router';
 import { toggleChecklist } from '../actions/checklist-actions';
-import { VIDEO_LINK } from '../constants/constants';
 import {setNiprShowUrl, checkHerokURL, onChangeHerokuURL} from '../actions/nipr-setup-actions';
 import NIPRSetupView from './NIPR-setup.view';
 import { Router, Route, hashHistory } from 'react-router';

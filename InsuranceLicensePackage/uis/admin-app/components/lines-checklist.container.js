@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { Link } from 'react-router';
 import { toggleChecklist } from '../actions/checklist-actions';
-import { VIDEO_LINK, OBJECTPREFIX, SKIPLOA} from '../constants/constants';
+import { OBJECTPREFIX, SKIPLOA} from '../constants/constants';
 import _ from 'lodash';
 import LinesCheckView from './lines-checklist.view';
 
