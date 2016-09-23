@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { Link } from 'react-router';
-import { VIDEO_LINK, OBJECTPREFIX, SKIPCOMPLIANCE} from '../constants/constants';
+import { COMPLIANCE_VIDEO_LINK, CONFIGURATION_VIDEO_LINK, NIPR_VIDEO_LINK, OBJECTPREFIX, SKIPCOMPLIANCE } from '../constants/constants';
 import _ from 'lodash';
 import MaintainaceSidebar from './sidebar.maintainance.view';
 var _csvTemplateLink = (typeof StaticResource === 'undefined') ? '#' : StaticResource.CONFIGURATION_LOA;
@@ -16,7 +16,7 @@ class CheckListComplete extends Component {
                     <h2>Activate compliance rules</h2>
                     <div className='checkbox checkbox-container'>
                         <label className="padding-zero">
-                            <label htmlFor='5' className='font-big'> Watch our video on <a href={VIDEO_LINK} target='_blank'>compliance rules best practices</a></label>
+                            <label htmlFor='5' className='font-big'> Watch our video on <a href={COMPLIANCE_VIDEO_LINK} target='_blank'>compliance rules best practices</a></label>
                         </label>
                     </div>
                     <div className='checkbox checkbox-container'>
@@ -40,7 +40,7 @@ class CheckListComplete extends Component {
                     </div>
                     <div className='checkbox checkbox-container'>
                         <label className="padding-zero">
-                            <label htmlFor='2' className='font-big'>Watch our <a href={VIDEO_LINK} target='_blank'>configuration video</a></label>
+                            <label htmlFor='2' className='font-big'>Watch our <a href={CONFIGURATION_VIDEO_LINK} target='_blank'>configuration video</a></label>
                         </label>
                     </div>
                     <div className='checkbox checkbox-container'>
@@ -64,7 +64,7 @@ class CheckListComplete extends Component {
                     <h2>Integrate NIPR </h2>
                     <div className='checkbox checkbox-container'>
                         <label  className="padding-zero">
-                            <label htmlFor='7' className='font-big'>Watch our video on <a href="#/nipr">setting up NIPR integration</a></label>
+                            <label htmlFor='7' className='font-big'>Watch our video on <a href={NIPR_VIDEO_LINK} target='_blank'>setting up NIPR integration</a></label>
                         </label>
                     </div>
                 </div>

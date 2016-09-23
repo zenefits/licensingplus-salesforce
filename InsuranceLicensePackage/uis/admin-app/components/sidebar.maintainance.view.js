@@ -2,7 +2,6 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { Link } from 'react-router';
 import { toggleChecklist } from '../actions/checklist-actions';
-import { VIDEO_LINK } from '../constants/constants';
 import Utils from '../utils/utils';
 import { Tooltip } from 'reactstrap';
 
@@ -38,10 +37,7 @@ export class MaintainaceSidebar extends Component {
                 </ul>
                 <div className='salesforce-link-checklist'>
                     <p className='btn-return-padding'>
-                        <small><span id="helpToolTip" className='fa fa-question-circle'></span> Need more help?<Link className="link" to={`/help`}>Go to help center</Link></small>
-                        <Tooltip placement="bottom" isOpen={this.state.tooltipOpen} target="helpToolTip" toggle={this.toggle}>
-                            Lorem Ipsum
-                        </Tooltip>
+                        <small>Need more help?<a href='https://www.zenefits.com/licensingplus/help/' target='_blank' className='link'>Go to Help Center</a></small>
                     </p>
                     <p className='btn-return-padding'>
                         <a href='/'><button className="btn btn-return" >Return to Salesforce</button></a>

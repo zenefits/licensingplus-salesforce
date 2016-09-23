@@ -17,7 +17,7 @@ describe('NIPRChecklist Component Tests', () => {
 
     it('renders NIPRChecklist component', () => {
         const wrapper = setup();
-        expect(wrapper.find('h2').first().text()).toEqual('Integrate NIPR ');
+        expect(wrapper.find('h2').first().text()).toEqual('Integrate NIPR');
     });
 
     it('Skip button should be present', () => {

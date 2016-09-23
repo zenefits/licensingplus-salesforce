@@ -5,7 +5,7 @@ import { connect } from 'react-redux';
 import { parseString } from 'xml2js';
 import { uploadError,readXml, importLicenseData, uploadStarted, updateProgressValue, uploadSuccess, updateMaintenanceMode, showInvalidDbToast, hideInvalidDbToast } from '../actions/upload-actions';
 import { ProgressBar } from 'react-bootstrap';
-import { VIDEO_LINK } from '../constants/constants';
+import { DB_VIDEO_LINK } from '../constants/constants';
 import Utils from '../utils/utils';
 import { hideToast } from '../actions/upload-actions';
 import { Tooltip } from 'reactstrap';
@@ -103,7 +103,7 @@ export class Upload extends Component {
                                     return {
                                         npnNumber: producer['$'].National_Producer_Number,
                                         className: license['$'].Class,
-                                        effectiveDate: new Date(Utils.formatSfdcDate(license['$'].License_Issue_Date)).toUTCString(),
+                                        effectiveDate: !_.isEmpty(license['$'].License_Issue_Date) ? new Date(Utils.formatSfdcDate(license['$'].License_Issue_Date)).toUTCString() : null,
                                         expirationDate: !_.isEmpty(license['$'].License_Expiration_Date) ? new Date(Utils.formatSfdcDate(license['$'].License_Expiration_Date)).toUTCString() : null,
                                         niprUpdateDate: new Date().toUTCString(),
                                         state: license['$'].State_Code,
@@ -159,7 +159,7 @@ export class Upload extends Component {
                     <label className='file'>
                         <span className='csvInput'></span>
                         <input type='file' id='csvInput' title='' accept="text/xml"/>
-                        <span className='file-custom' title={this.props.fileName} data-file-name={this.props.fileName}><span className="choose-button">Choose file</span></span>
+                        <span className='file-custom' title={this.props.fileName} data-file-name={this.props.fileName}><span className="choose-button">Choose File</span></span>
                     </label>
                 </form>
             )
@@ -208,12 +208,12 @@ export class Upload extends Component {
 
                     <div className='col-md-9 inside-container'>
                         <h4 className="sub-heading">License Database Maintenance <small><span id="helpToolTipDb" className='fa fa-question-circle question-icon-size'></span></small></h4>
-                        <Tooltip placement="bottom" isOpen={this.state.tooltipOpen} target="helpToolTipDb" toggle={this.toggle}>
-                            License Database Maintenance
+                        <Tooltip placement="top left" isOpen={this.state.tooltipOpen} target="helpToolTipDb" toggle={this.toggle}>
+                            Use NIPR PDB reports to batch upload licenses for one of multiple producers.
                         </Tooltip>
-                        <p><a href={VIDEO_LINK} target='_blank'>Watch our tutorial video on License Database maintenance</a></p>
+                        <p><a href={DB_VIDEO_LINK} target='_blank'>Watch our tutorial video on License Database maintenance</a></p>
                         <br></br>
-                        <h5>Upload your NIPR PDB batch xml file</h5>
+                        <h5>Upload Your NIPR PDB Batch XML File</h5>
                         <div className="license-db-div">
                             { this.renderChooseFileForm() }
                             { this.renderPregressBar() }

@@ -362,6 +362,13 @@ body {
     border-bottom: #EAEAEA 2px solid;
 }
 
+.congratulations {
+    background-image: url("./assets/img/congratulations.gif");
+    background-position: center;
+    height: 300px;
+    width: 600px;
+}
+
 .inside-container{
   padding:60px; 
 }
@@ -598,7 +605,6 @@ table.custom-table td {
 }
 .rules-page .inside-container .heading-table {
   font-size:21px !important;
-  color: #d6d6c2;
 }
 .rules-page .inside-container .heading-table h4 {
     font-size: 17px;
@@ -914,7 +920,6 @@ input {
 }
 
 .license-db-text {
-  color: darkgray;
   margin: 0px
 }
 
@@ -1068,10 +1073,6 @@ input#autocomplete + div {
 .btn-right{
   float: right;
 }
-
-.linkcolor {
-  color:gainsboro !important;
- }
  
  .text-padding {
    padding-top: 5px;

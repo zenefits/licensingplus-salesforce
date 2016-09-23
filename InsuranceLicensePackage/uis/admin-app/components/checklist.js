@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import { Link } from 'react-router';
 import { connect } from 'react-redux';
-import { VIDEO_LINK } from '../constants/constants';
 import Sidebar from './sidebar.container';
 
 export class Welcome extends Component {
@@ -23,7 +22,7 @@ export class Welcome extends Component {
             <h5>3. NIPR integration</h5>
             <br></br>
             <Link to={`/lineschecklist`} className='link btn btn-warning btn-checklist'>
-              Get Started
+              Lets Go
             </Link>
           </div>
         </div>

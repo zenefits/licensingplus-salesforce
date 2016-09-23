@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { Link } from 'react-router';
 import { toggleChecklist } from '../actions/checklist-actions';
-import { VIDEO_LINK, OBJECTPREFIX, SKIPCOMPLIANCE} from '../constants/constants';
+import { COMPLIANCE_VIDEO_LINK, OBJECTPREFIX, SKIPCOMPLIANCE} from '../constants/constants';
 import _ from 'lodash';
 import Sidebar from './sidebar.container';
 
@@ -68,7 +68,7 @@ export class ComplianceCheck extends Component {
                         <div className='checkbox checkbox-container'>
                             <label>
                                 <input type='checkbox' id='5' checked={this.props.checklist[OBJECTPREFIX + 'watch_video__c']} onChange={this.toggleChecklist.bind(this, OBJECTPREFIX + 'watch_video__c') }></input>
-                                <label htmlFor='5' className='label-check'> Watch our video on <a href={VIDEO_LINK} target='_blank'>compliance rules best practices</a></label>
+                                <label htmlFor='5' className='label-check'> Watch our video on <a href={COMPLIANCE_VIDEO_LINK} target='_blank'>compliance rules best practices</a></label>
                             </label>
                         </div>
                         <div className='checkbox checkbox-container'>

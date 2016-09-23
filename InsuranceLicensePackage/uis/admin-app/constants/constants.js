@@ -1,18 +1,13 @@
-export const VIDEO_LINK = 'https://vimeo.com/166881985';
-export const EMBED_VIDEO_LINK = 'https://player.vimeo.com/video/166881985';
-export const CHOOSE_FILE = 'Choose file';
+export const APPROVAL_VIDEO_LINK = 'https://vimeo.com/183026614';
+export const COMPLIANCE_VIDEO_LINK = 'https://vimeo.com/183025507';
+export const CONFIGURATION_VIDEO_LINK = 'https://vimeo.com/183024977';
+export const DB_VIDEO_LINK = 'https://vimeo.com/183026890';
+export const EMBED_VIDEO_LINK = 'https://player.vimeo.com/video/182492617';
+export const NIPR_VIDEO_LINK = 'https://vimeo.com/183026583';
+export const CHOOSE_FILE = 'Choose File';
 export const RULE_EXP = /[^0-9()(and|or)\s]/gi;
 export const DATE_EXP = /^(19[0-9][0-9]|20[0-9][0-9])[-](0[1-9]|[12][0-9]|3[01])[-](0[1-9]|1[012])/g;
 export const COMPLIANCE_OPERATORS_EXCLUDE = ['not blank', 'in', 'not in'];
-export const HELP_LINKS = {
-  "Licensing+ App Exchange video": "https://vimeo.com/166881985",
-  "Configure lines of authority video": "https://vimeo.com/166881985",
-  "Compliance rules best practices": "/",
-  "Enabling compliance rules on custom objects tutorial": "/",
-  "Setup license approvral process video": "/",
-  "NIPR interation setup video": "/",
-  "Heroku app setup tutorial": "/"
-};
 
 export const CLASSPREFIX = CLASS_PREFIX + 'ComplianceController';
 export const OBJECTPREFIX = NAMESPACE_PREFIX;

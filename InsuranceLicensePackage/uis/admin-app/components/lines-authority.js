@@ -181,7 +181,7 @@ export class LinesAuthority extends Component {
       );
     }
     else if (this.props.sfdcRows && this.props.sfdcRows.length > 0) {
-      preview = (<div className='heading-table'><h5 className="font-color">Preview Spreadsheet</h5></div>);
+      preview = (<div className='heading-table'><h5>Preview Spreadsheet</h5></div>);
       dataTable = (
         <table className='table'>
           <thead>
@@ -223,13 +223,13 @@ export class LinesAuthority extends Component {
         <div>
           <Sidebar activePage='lines' checklistComplete={this.props.checklistComplete}/>
           <div className='col-sm-9 inside-container'>
-            <h4 className="sub-heading">Upload your lines of authority spreadsheet</h4>
+            <h4 className="sub-heading">Upload Your Lines of Authority Spreadsheet</h4>
             <br/>
             <form onChange={this.openCsv.bind(this) }>
               <label className='file'>
                 <span className='csvInput'></span>
                 <input type='file' id='csvInput' title=' '/>
-                <span className='file-custom choose-button' data-file-name={this.props.fileName}>Choose file</span>
+                <span className='file-custom choose-button' data-file-name={this.props.fileName}>Choose File</span>
               </label>
             </form>
             {this.renderDataTable() }

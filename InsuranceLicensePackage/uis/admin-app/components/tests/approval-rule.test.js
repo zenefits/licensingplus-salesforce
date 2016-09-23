@@ -47,7 +47,7 @@ describe('ApprovalView Tests', () => {
         const wrapper = setup();
         expect(wrapper.find('.data-table').length).toEqual(0);
     });
-    it.only('advance rule table should be shown', () => {
+    it('advance rule table should be shown', () => {
         const wrapper = setup();
         wrapper.setProps({
             automatic_license_approval: true
@@ -57,7 +57,7 @@ describe('ApprovalView Tests', () => {
         
         expect(tableHeaders.length).toEqual(5);
         expect(tableHeaders.at(0).text()).toEqual('Rule Number');
-        expect(tableHeaders.at(1).text()).toEqual('License Field');
+        expect(tableHeaders.at(1).text()).toEqual('Insurance License');
         expect(tableHeaders.at(2).text()).toEqual('Operator');
         expect(tableHeaders.at(3).text()).toEqual('Value');
         expect(tableHeaders.at(4).text()).toEqual('');

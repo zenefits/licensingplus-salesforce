@@ -19,10 +19,10 @@ export class WelcomeScreen extends Component {
                 Welcome to Licensing +
             </h1>
             <p className="welcome-para">
-                License management and flexible controls that you can tailor to your business processes. We built this to ensure our own licensing compliance and thought others could benefit from it as well.    
+                Licensing+ is the first and only app built to integrate insurance license compliance directly into Salesforce. By automatically cross-checking state requirements against individual agent status, Licensing+ helps ensure that credentials are always up to date—for free!
             </p>
             <div className="welcom-btn-box">
-                <Link to='/checklist' className="welcome-get-started-btn">Lets Go</Link>
+                <Link to='/checklist' className="welcome-get-started-btn link btn btn-warning">Get Started</Link>
             </div>
             <div className="welcome-vid-container">
                 <div className="col-md-3"></div>

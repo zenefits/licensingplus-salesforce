@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { Link } from 'react-router';
-import { VIDEO_LINK, OBJECTPREFIX, SKIPCOMPLIANCE} from '../constants/constants';
+import { NIPR_VIDEO_LINK, OBJECTPREFIX, SKIPCOMPLIANCE} from '../constants/constants';
 import _ from 'lodash';
 import Sidebar from './sidebar.container';
 
@@ -37,7 +37,7 @@ export class NiprCheckView extends Component {
                     <div className='checkbox checkbox-container'>
                         <label>
                             <input type='checkbox'  checked={this.props.checklist[OBJECTPREFIX + 'nipr_setup__c']} id='7' onChange={this.props.toggleChecklist.bind(this, OBJECTPREFIX + 'nipr_setup__c') } ></input>
-                            <label htmlFor='7' className='label-check'> Watch our video on <a href="#/nipr">setting up NIPR integration</a></label>
+                            <label htmlFor='7' className='label-check'> Watch our video on <a href={NIPR_VIDEO_LINK} target='_blank'>setting up NIPR integration</a></label>
                         </label>
                     </div>
                     <div>

@@ -2,7 +2,6 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { Link } from 'react-router';
 import { toggleChecklist } from '../actions/checklist-actions';
-import { VIDEO_LINK } from '../constants/constants';
 import Utils from '../utils/utils';
 import LicenseDBSidebar from './sidebar.license-db.view';
 import MaintainaceSidebar from './sidebar.maintainance.view';
